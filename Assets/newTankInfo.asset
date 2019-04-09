@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: 
   MaxTorque: 6000
-  AccelerateRate: 60000
+  AccelerateRate: 6e+13
   MaxSteer: 40
-  BrakeTorque: 6e+9
+  BrakeTorque: 1e+9
+  JumpForce: 2000000
+  AirControl: 0.06

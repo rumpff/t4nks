@@ -10,4 +10,6 @@ public class TankInfo : ScriptableObject
     public float AccelerateRate;
     public float MaxSteer;
     public float BrakeTorque;
+    public float JumpForce;
+    public float AirControl;
 }

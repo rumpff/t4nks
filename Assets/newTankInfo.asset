@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e03cb3699f5bc79439ae7f8b6171682c, type: 3}
   m_Name: newTankInfo
   m_EditorClassIdentifier: 
-  Name: 
+  Name: Default boi
   MaxTorque: 6000
-  AccelerateRate: 6e+13
+  AccelerateRate: 6000
   MaxSteer: 40
   BrakeTorque: 1e+9
   JumpForce: 2000000
-  AirControl: 0.06
+  AirJumpAmount: 1
+  AirControl: 60000

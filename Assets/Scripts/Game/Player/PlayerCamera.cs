@@ -41,7 +41,7 @@ public class PlayerCamera : MonoBehaviour
 
         // Lerp therotation
         m_ViewAngle = Mathf.LerpAngle(m_ViewAngle, m_angleDest + m_AimOffset.x, LerpInterpolation);
-        m_HeightAngle = Mathf.Lerp(m_HeightAngle, m_BaseHeight + m_AimOffset.y, LerpInterpolation); 
+        m_HeightAngle = Mathf.Lerp(m_HeightAngle, m_BaseHeight + m_AimOffset.y, LerpInterpolation);
 
         // Calculate the final position
         m_X = m_playerPos.x + Mathf.Sin((m_ViewAngle - 180) * Mathf.Deg2Rad) * (Mathf.Cos(m_HeightAngle * Mathf.Deg2Rad) * m_Distance);
@@ -69,7 +69,7 @@ public class PlayerCamera : MonoBehaviour
 
         m_AimOffset = new Vector2(
             m_Player.RawAim.x * 45.0f,
-            m_Player.RawAim.y * 15.0f);
+            m_Player.RawAim.y * 20); // 15.0f
     }
 
     private float LerpInterpolation

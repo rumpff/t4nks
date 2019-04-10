@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
     private readonly string m_DriveableTag = "Driveable";
     private readonly string m_TireTag = "TankTire";
     private readonly Vector2 m_MaxAim = new Vector2(67.5f, 22.5f);
+    private readonly float m_JumpCooldownLength = 0.3f;
 
     [SerializeField]
     private Transform m_TankHead, m_TankBarrel;
@@ -30,8 +31,6 @@ public class Player : MonoBehaviour
     private float m_BrakeTorque = 0;
     private float m_StreerAngle = 0;
 
-    private Vector3 m_TankTorque;
-
     private float m_TorqueInput;
     private float m_StreerInput;
     private bool m_BrakeInput;
@@ -39,8 +38,8 @@ public class Player : MonoBehaviour
     private Vector2 m_AimInput;
     private Vector2 m_AirControlInput;
 
-    private float m_jumpCooldown = 0;
-    private readonly float m_jumpCooldownLength = 0.3f;
+    private float m_JumpCooldown = 0;
+    private int m_JumpsLeft = 0;
 
     private void Awake()
     {
@@ -78,7 +77,7 @@ public class Player : MonoBehaviour
         m_StreerInput = XCI.GetAxis(XboxAxis.LeftStickX, m_Controller);
 
         m_BrakeInput = XCI.GetButton(XboxButton.X, m_Controller);
-        m_JumpInput = XCI.GetButton(XboxButton.A, m_Controller);
+        m_JumpInput = XCI.GetButtonDown(XboxButton.A, m_Controller);
 
         m_AimInput = new Vector2(
             XCI.GetAxis(XboxAxis.RightStickX, m_Controller),
@@ -92,7 +91,10 @@ public class Player : MonoBehaviour
     private void CarThing()
     {
         // Handle torque
-        float torqueDest = m_TorqueInput * m_TankInfo.MaxTorque;
+        float torqueDest = 0;
+
+        if(IsOnGround())
+            torqueDest = m_TorqueInput * m_TankInfo.MaxTorque;
 
         if (m_Torque != torqueDest)
         {
@@ -131,43 +133,56 @@ public class Player : MonoBehaviour
         if (IsOnGround())
             return; // Not in the air
 
-        m_TankTorque = new Vector3(m_AirControlInput.y, m_AirControlInput.x, 0.0f);
-
-        m_RigidBody.angularVelocity += m_TankTorque * m_TankInfo.AirControl;
+        m_RigidBody.AddTorque(transform.up * (m_AirControlInput.x * m_TankInfo.AirControl));
+        m_RigidBody.AddTorque(-transform.right * (m_AirControlInput.y * m_TankInfo.AirControl));
     }
 
     private void JumpThing()
     {
 
-        if (m_JumpInput && m_jumpCooldown == 0)
+        if (m_JumpInput && m_JumpCooldown == 0)
         {
-            if (!IsOnGround())
-                return; // Not on the ground
+            if (m_JumpsLeft <= 0)
+                return;                
 
             Vector3 jumpDirection = Vector3.zero;
 
-            // Get the average direction from all the surfaces the wheels are touching
-            // eg when with only 2 wheels on a slope
-            for (int i = 0; i < m_WheelHits.Count; i++)
+            if(IsOnGround())
             {
-                jumpDirection += m_WheelHits[i].normal;
+                // Get the average direction from all the surfaces the wheels are touching
+                // eg when with only 2 wheels on a slope
+                for (int i = 0; i < m_WheelHits.Count; i++)
+                {
+                    jumpDirection += m_WheelHits[i].normal;
+                }
+
+                jumpDirection /= m_WheelHits.Count;
+            }
+            else
+            {
+                // We are in the air so we take the direction of the tank
+                jumpDirection = transform.up;
             }
 
-            jumpDirection /= m_WheelHits.Count;
 
             m_RigidBody.AddForce(jumpDirection * m_TankInfo.JumpForce);
 
             // Set a jump cooldown so that we have better control over the jump height
             // The cooldown shouldn't be noticable but should prevent triggerin jump multiple times in the same jump
             // eg when the wheels stay on the ground for a bit while the tank is already flying
-            m_jumpCooldown = m_jumpCooldownLength;
+            m_JumpCooldown = m_JumpCooldownLength;
+
+            m_JumpsLeft--;
         }
     }
 
     private void TimerThing()
     {
-        // Jumpcooldown
-        m_jumpCooldown = Mathf.Clamp(m_jumpCooldown - Time.deltaTime, 0, m_jumpCooldownLength);
+        // Jumping
+        m_JumpCooldown = Mathf.Clamp(m_JumpCooldown - Time.deltaTime, 0, m_JumpCooldownLength);
+
+        if (IsOnGround())
+            m_JumpsLeft = m_TankInfo.AirJumpAmount;
     }
 
     private void ApplyCarMotion()

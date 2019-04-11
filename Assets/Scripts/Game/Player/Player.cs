@@ -8,10 +8,12 @@ public class Player : MonoBehaviour
     private readonly string m_DriveableTag = "Driveable";
     private readonly string m_TireTag = "TankTire";
     private readonly Vector2 m_MaxAim = new Vector2(67.5f, 22.5f);
-    private readonly float m_JumpCooldownLength = 0.3f;
+    private readonly float m_JumpCooldownLength = 0.03f;
 
     [SerializeField]
     private Transform m_TankHead, m_TankBarrel;
+
+    private PlayerWeapon m_PlayerWeapon;
 
     [SerializeField]
     private XboxController m_Controller;
@@ -44,12 +46,12 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         m_WheelHits = new List<WheelHit>();
+        m_PlayerWeapon = GetComponent<PlayerWeapon>();
+        m_RigidBody = GetComponent<Rigidbody>();
     }
 
     private void Start()
     {
-        m_RigidBody = GetComponent<Rigidbody>();
-
         StartCoroutine(ReadWheelHits());
     }
 
@@ -59,7 +61,7 @@ public class Player : MonoBehaviour
         GetInput();
 
         CarThing();
-        AimThing();
+        //AimThing();
 
         TimerThing();
     }
@@ -248,5 +250,15 @@ public class Player : MonoBehaviour
     public Vector2 RawAim
     {
         get { return new Vector2(m_AimRotation.x / m_MaxAim.x, m_AimRotation.y / m_MaxAim.y); }
+    }
+
+    public XboxController Controller
+    {
+        get { return m_Controller; }
+    }
+
+    public PlayerWeapon PlayerWeapon
+    {
+        get { return m_PlayerWeapon; }
     }
 }

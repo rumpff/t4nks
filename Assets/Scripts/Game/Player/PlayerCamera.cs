@@ -32,8 +32,8 @@ public class PlayerCamera : MonoBehaviour
     // The positions of the camera
     private float m_X, m_Y, m_Z;
 
-    // The player's position
-    private Vector3 m_playerPos;
+    // The player's thingz
+    private Vector3 m_PlayerPos;
 
     void FixedUpdate()
     {
@@ -41,12 +41,12 @@ public class PlayerCamera : MonoBehaviour
 
         // Lerp therotation
         m_ViewAngle = Mathf.LerpAngle(m_ViewAngle, m_angleDest + m_AimOffset.x, LerpInterpolation);
-        m_HeightAngle = Mathf.Lerp(m_HeightAngle, m_BaseHeight + m_AimOffset.y, LerpInterpolation);
+        m_HeightAngle = Mathf.LerpAngle(m_HeightAngle, m_BaseHeight + m_AimOffset.y, LerpInterpolation);
 
         // Calculate the final position
-        m_X = m_playerPos.x + Mathf.Sin((m_ViewAngle - 180) * Mathf.Deg2Rad) * (Mathf.Cos(m_HeightAngle * Mathf.Deg2Rad) * m_Distance);
-        m_Y = m_playerPos.y + Mathf.Sin(m_HeightAngle * Mathf.Deg2Rad) * m_Distance;
-        m_Z = m_playerPos.z + Mathf.Cos((m_ViewAngle - 180) * Mathf.Deg2Rad) * (Mathf.Cos(m_HeightAngle * Mathf.Deg2Rad) * m_Distance);
+        m_X = m_PlayerPos.x + Mathf.Sin((m_ViewAngle - 180) * Mathf.Deg2Rad) * (Mathf.Cos(m_HeightAngle * Mathf.Deg2Rad) * m_Distance);
+        m_Y = m_PlayerPos.y + Mathf.Sin(m_HeightAngle * Mathf.Deg2Rad) * m_Distance;
+        m_Z = m_PlayerPos.z + Mathf.Cos((m_ViewAngle - 180) * Mathf.Deg2Rad) * (Mathf.Cos(m_HeightAngle * Mathf.Deg2Rad) * m_Distance);
 
         // Apply the new values
         transform.position = new Vector3(m_X, m_Y, m_Z);
@@ -59,12 +59,10 @@ public class PlayerCamera : MonoBehaviour
         m_Y = transform.position.y;
         m_Z = transform.position.z;
 
-        m_playerPos.x = m_Player.transform.position.x;
-        m_playerPos.y = m_Player.transform.position.y;
-        m_playerPos.z = m_Player.transform.position.z;
+        m_PlayerPos = m_Player.transform.position;
 
         // Only update the angle when the player is on the ground
-        if(m_Player.IsOnGround())
+        if (m_Player.IsOnGround())
             m_angleDest = m_Player.transform.eulerAngles.y;
 
         m_AimOffset = new Vector2(

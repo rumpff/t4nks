@@ -6348,8 +6348,8 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
-  far clip plane: 1000
+  near clip plane: 0.1
+  far clip plane: 5000
   field of view: 90
   orthographic: 0
   orthographic size: 5
@@ -6375,9 +6375,9 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 534669902}
-  m_LocalRotation: {x: 0.2584818, y: -0, z: -0, w: 0.9660162}
-  m_LocalPosition: {x: 0, y: 14.610001, z: 1.4900002}
-  m_LocalScale: {x: 1, y: 1.5990318, z: 1.5990318}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
@@ -6482,7 +6482,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-37628
+  m_Name: pb_Mesh5182
   serializedVersion: 9
   m_SubMeshes:
   - serializedVersion: 2
@@ -7288,7 +7288,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-107368
+  m_Name: pb_Mesh5052
   serializedVersion: 9
   m_SubMeshes:
   - serializedVersion: 2
@@ -7491,6 +7491,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_TankHead: {fileID: 133185737}
   m_TankBarrel: {fileID: 941229573}
+  m_ProjectilePrefab: {fileID: 0}
 --- !u!4 &1883721256
 Transform:
   m_ObjectHideFlags: 0
@@ -7594,7 +7595,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-8966
+  m_Name: pb_Mesh5124
   serializedVersion: 9
   m_SubMeshes:
   - serializedVersion: 2

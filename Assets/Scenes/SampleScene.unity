@@ -6395,7 +6395,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Player: {fileID: 1883721258}
-  m_Distance: 7.5
+  m_BaseDistance: 7.5
   m_BaseHeight: 28
   m_LerpInterpolation: 9
 --- !u!114 &534669907
@@ -6665,6 +6665,7 @@ Transform:
   m_Children:
   - {fileID: 2056903695}
   - {fileID: 1700922120}
+  - {fileID: 1957427519}
   m_Father: {fileID: 133185737}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -7489,9 +7490,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c529232b9051a5b438b5088f546440ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_EquippedWeapon: {fileID: 11400000, guid: 4d15d8a8828872f498cfdfc19f131dfe, type: 2}
   m_TankHead: {fileID: 133185737}
   m_TankBarrel: {fileID: 941229573}
-  m_ProjectilePrefab: {fileID: 0}
+  m_BarrelEnd: {fileID: 1957427519}
+  m_ProjectilePrefab: {fileID: 4915445817152070343, guid: c99cc595de50a4c4b895fe7eda1d3c7b,
+    type: 3}
 --- !u!4 &1883721256
 Transform:
   m_ObjectHideFlags: 0
@@ -7528,6 +7532,36 @@ MonoBehaviour:
   m_WheelBackLeft: {fileID: 1583415482}
   m_WheelBackRight: {fileID: 374722632}
   m_TankInfo: {fileID: 11400000, guid: 40375e96c74cebc4daf353a6cd6a2054, type: 2}
+--- !u!1 &1957427518
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1957427519}
+  m_Layer: 0
+  m_Name: BarrelEnd
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1957427519
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1957427518}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 5.4}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 941229573}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2025211941
 GameObject:
   m_ObjectHideFlags: 0
@@ -7595,7 +7629,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh5124
+  m_Name: pb_Mesh5556
   serializedVersion: 9
   m_SubMeshes:
   - serializedVersion: 2

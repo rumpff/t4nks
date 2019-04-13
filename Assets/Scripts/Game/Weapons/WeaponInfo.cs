@@ -10,4 +10,6 @@ public class WeaponInfo : ScriptableObject
     public float InitialForce;
     public float AccuracyPercentage;
     public float Mass;
+    public float Cooldown;
+    public float CameraImpact;
 }

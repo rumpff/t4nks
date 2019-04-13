@@ -9,7 +9,10 @@ public class PlayerWeapon : MonoBehaviour
     private readonly Vector2 m_MaxAim = new Vector2(67.5f, 22.5f);
 
     [SerializeField]
-    private Transform m_TankHead, m_TankBarrel;
+    private WeaponInfo m_EquippedWeapon;
+
+    [SerializeField]
+    private Transform m_TankHead, m_TankBarrel, m_BarrelEnd;
     [SerializeField]
     private GameObject m_ProjectilePrefab;
 
@@ -20,7 +23,7 @@ public class PlayerWeapon : MonoBehaviour
 
     private float m_ShootCooldown;
 
-    private Vector2 m_AimRotation;
+    private Vector2 m_AimDirection;
 
     private void Awake()
     {
@@ -32,6 +35,7 @@ public class PlayerWeapon : MonoBehaviour
     {
         GetInput();
         AimThing();
+        ShootThing();
 
         TimerThing();
     }
@@ -46,19 +50,26 @@ public class PlayerWeapon : MonoBehaviour
 
     private void AimThing()
     {
-        m_AimRotation = Vector2.Lerp(m_AimRotation, new Vector2(
+        m_AimDirection = Vector2.Lerp(m_AimDirection, new Vector2(
             m_AimInput.x * m_MaxAim.x, m_AimInput.y * m_MaxAim.y), 14.0f * Time.deltaTime);
 
         // Apply Rotation
-        m_TankHead.localEulerAngles = new Vector3(0.0f, m_AimRotation.x, 0.0f);
-        m_TankBarrel.localEulerAngles = new Vector3(m_AimRotation.y, 0.0f, 0.0f);
+        m_TankHead.localEulerAngles = new Vector3(0.0f, m_AimDirection.x, 0.0f);
+        m_TankBarrel.localEulerAngles = new Vector3(m_AimDirection.y, 0.0f, 0.0f);
     }
 
     private void ShootThing()
     {
         if(m_ShootInput && m_ShootCooldown == 0)
         {
-            Projectile p = Instantiate(m_ProjectilePrefab)
+            Quaternion projectileRotation = Quaternion.Euler(m_TankBarrel.eulerAngles.x, m_TankHead.eulerAngles.y, m_Player.transform.eulerAngles.z);
+
+            Projectile p = Instantiate(m_ProjectilePrefab, m_BarrelEnd.position, projectileRotation).GetComponent<Projectile>();
+
+            p.Initalize(m_EquippedWeapon, m_TankBarrel.forward);
+
+            m_ShootCooldown = m_EquippedWeapon.Cooldown;
+            m_Player.Camera.Bump = (-m_TankBarrel.forward * m_EquippedWeapon.CameraImpact);
         }
     }
 
@@ -75,6 +86,6 @@ public class PlayerWeapon : MonoBehaviour
     /// </summary>
     public Vector2 RawAim
     {
-        get { return new Vector2(m_AimRotation.x / m_MaxAim.x, m_AimRotation.y / m_MaxAim.y); }
+        get { return new Vector2(m_AimDirection.x / m_MaxAim.x, m_AimDirection.y / m_MaxAim.y); }
     }
 }

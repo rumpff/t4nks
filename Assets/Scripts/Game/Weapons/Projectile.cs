@@ -13,6 +13,6 @@ public class Projectile : MonoBehaviour
 
     public void Initalize(WeaponInfo weaponInfo, Vector3 aimDirection)
     {
-
+        m_Rigidbody.AddForce(aimDirection * weaponInfo.InitialForce);
     }
 }

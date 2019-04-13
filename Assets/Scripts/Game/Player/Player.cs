@@ -14,6 +14,8 @@ public class Player : MonoBehaviour
 
     private PlayerWeapon m_PlayerWeapon;
 
+    private PlayerCamera m_Camera;
+
     [SerializeField]
     private XboxController m_Controller;
 
@@ -245,6 +247,11 @@ public class Player : MonoBehaviour
         return normal;
     }
 
+    public void SetCamera(PlayerCamera c)
+    {
+        m_Camera = c;
+    }
+
     /// <summary>
     /// Absolute aim rotation
     /// </summary>
@@ -261,5 +268,10 @@ public class Player : MonoBehaviour
     public PlayerWeapon PlayerWeapon
     {
         get { return m_PlayerWeapon; }
+    }
+
+    public PlayerCamera Camera
+    {
+        get { return m_Camera; }
     }
 }

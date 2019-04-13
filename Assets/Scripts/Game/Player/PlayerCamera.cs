@@ -9,7 +9,8 @@ public class PlayerCamera : MonoBehaviour
     private Player m_Player;                                        
 
     [SerializeField] // The distance of the camera to the object
-    private float m_Distance;                                       
+    private float m_BaseDistance;
+    private float m_Distance;
 
     [SerializeField] // The angle of the camera on the Y axis
     [Range(0.0f, 89.99f)]
@@ -29,35 +30,45 @@ public class PlayerCamera : MonoBehaviour
     private float m_ViewAngle;
     private float m_HeightAngle;
 
-    // The positions of the camera
-    private float m_X, m_Y, m_Z;
+    private Vector3 m_BumpOffset;
+
+    // The position of the camera
+    private Vector3 m_Position;
 
     // The player's thingz
     private Vector3 m_PlayerPos;
 
-    void FixedUpdate()
+    private void Start()
+    {
+        m_Player.SetCamera(this);
+    }
+
+    private void FixedUpdate()
     {
         UpdateVariables();
 
         // Lerp therotation
         m_ViewAngle = Mathf.LerpAngle(m_ViewAngle, m_angleDest + m_AimOffset.x, LerpInterpolation);
         m_HeightAngle = Mathf.LerpAngle(m_HeightAngle, m_BaseHeight + m_AimOffset.y, LerpInterpolation);
+        m_Distance = m_BaseDistance;
+
+        m_BumpOffset = Vector3.Lerp(m_BumpOffset, Vector3.zero, LerpInterpolation);
 
         // Calculate the final position
-        m_X = m_PlayerPos.x + Mathf.Sin((m_ViewAngle - 180) * Mathf.Deg2Rad) * (Mathf.Cos(m_HeightAngle * Mathf.Deg2Rad) * m_Distance);
-        m_Y = m_PlayerPos.y + Mathf.Sin(m_HeightAngle * Mathf.Deg2Rad) * m_Distance;
-        m_Z = m_PlayerPos.z + Mathf.Cos((m_ViewAngle - 180) * Mathf.Deg2Rad) * (Mathf.Cos(m_HeightAngle * Mathf.Deg2Rad) * m_Distance);
+        m_Position.x = m_PlayerPos.x + Mathf.Sin((m_ViewAngle - 180) * Mathf.Deg2Rad) * (Mathf.Cos(m_HeightAngle * Mathf.Deg2Rad) * m_Distance);
+        m_Position.y = m_PlayerPos.y + Mathf.Sin(m_HeightAngle * Mathf.Deg2Rad) * m_Distance;
+        m_Position.z = m_PlayerPos.z + Mathf.Cos((m_ViewAngle - 180) * Mathf.Deg2Rad) * (Mathf.Cos(m_HeightAngle * Mathf.Deg2Rad) * m_Distance);
+
+        m_Position += m_BumpOffset;
 
         // Apply the new values
-        transform.position = new Vector3(m_X, m_Y, m_Z);
+        transform.position = m_Position;
         transform.LookAt(m_Player.transform);
     }
 
     private void UpdateVariables()
     {
-        m_X = transform.position.x;
-        m_Y = transform.position.y;
-        m_Z = transform.position.z;
+        m_Position = transform.position;
 
         m_PlayerPos = m_Player.transform.position;
 
@@ -73,5 +84,11 @@ public class PlayerCamera : MonoBehaviour
     private float LerpInterpolation
     {
         get { return m_LerpInterpolation * Time.deltaTime; }
+    }
+
+    public Vector3 Bump
+    {
+        get { return m_BumpOffset; }
+        set { m_BumpOffset = value; }
     }
 }

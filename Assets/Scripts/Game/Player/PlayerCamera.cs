@@ -47,7 +47,7 @@ public class PlayerCamera : MonoBehaviour
     {
         UpdateVariables();
 
-        // Lerp therotation
+        // Lerp the rotation
         m_ViewAngle = Mathf.LerpAngle(m_ViewAngle, m_angleDest + m_AimOffset.x, LerpInterpolation);
         m_HeightAngle = Mathf.LerpAngle(m_HeightAngle, m_BaseHeight + m_AimOffset.y, LerpInterpolation);
         m_Distance = m_BaseDistance;

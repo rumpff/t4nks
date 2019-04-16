@@ -70,6 +70,7 @@ public class PlayerWeapon : MonoBehaviour
 
             m_ShootCooldown = m_EquippedWeapon.Cooldown;
             m_Player.Camera.Bump = (-m_TankBarrel.forward * m_EquippedWeapon.CameraImpact);
+            m_Player.AddForce(-m_TankBarrel.forward * m_EquippedWeapon.TankForce);
         }
     }
 

@@ -28,6 +28,9 @@ public class Player : MonoBehaviour
     [SerializeField]
     private TankInfo m_TankInfo;
 
+    [SerializeField]
+    private GameObject[] m_DeathObjects;
+
     private Vector2 m_AimRotation;
 
     private float m_Torque = 0;
@@ -73,12 +76,22 @@ public class Player : MonoBehaviour
         JumpThing();
     }
 
+    private void OnDestroy()
+    {
+        foreach (GameObject g in m_DeathObjects)
+        {
+            Instantiate(g, transform.position, Quaternion.Euler(0, 0, 0));
+        }
+
+        //m_Camera.
+    }
+
     private void GetInput()
     {
         m_TorqueInput = XCI.GetAxis(XboxAxis.LeftStickY, m_Controller);
         m_StreerInput = XCI.GetAxis(XboxAxis.LeftStickX, m_Controller);
 
-        m_BrakeInput = XCI.GetButton(XboxButton.X, m_Controller);
+        m_BrakeInput = XCI.GetButton(XboxButton.LeftBumper, m_Controller);
         m_JumpInput = XCI.GetButtonDown(XboxButton.A, m_Controller);
 
         m_AimInput = new Vector2(
@@ -250,6 +263,11 @@ public class Player : MonoBehaviour
     public void SetCamera(PlayerCamera c)
     {
         m_Camera = c;
+    }
+
+    public void AddForce(Vector3 force)
+    {
+        m_RigidBody.AddForce(force);
     }
 
     /// <summary>

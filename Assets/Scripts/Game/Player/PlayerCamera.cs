@@ -77,8 +77,8 @@ public class PlayerCamera : MonoBehaviour
             m_angleDest = m_Player.transform.eulerAngles.y;
 
         m_AimOffset = new Vector2(
-            m_Player.PlayerWeapon.RawAim.x * 45.0f,
-            m_Player.PlayerWeapon.RawAim.y * 20); // 15.0f
+            m_Player.Weapon.RawAim.x * 45.0f,
+            m_Player.Weapon.RawAim.y * 20); // 15.0f
     }
 
     private float LerpInterpolation

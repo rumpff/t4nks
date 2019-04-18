@@ -670,8 +670,9 @@ GameObject:
   m_Component:
   - component: {fileID: 6350327769385851274}
   - component: {fileID: 6350327769385851272}
-  - component: {fileID: 6350327769385851271}
+  - component: {fileID: 6182709735206841215}
   - component: {fileID: 6350327769385851268}
+  - component: {fileID: 6350327769385851271}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -714,24 +715,19 @@ MonoBehaviour:
   m_WheelFrontRight: {fileID: 6350327769519087493}
   m_WheelBackLeft: {fileID: 6350327768951854872}
   m_WheelBackRight: {fileID: 6350327767742564330}
-  m_TankInfo: {fileID: 11400000, guid: 40375e96c74cebc4daf353a6cd6a2054, type: 2}
-  m_DeathObjects: []
---- !u!54 &6350327769385851271
-Rigidbody:
+  m_TankProperties: {fileID: 11400000, guid: 40375e96c74cebc4daf353a6cd6a2054, type: 2}
+--- !u!114 &6182709735206841215
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6350327769385851270}
-  serializedVersion: 2
-  m_Mass: 3000
-  m_Drag: 0
-  m_AngularDrag: 0
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 1
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc1fb873d2fa23a4e855f9f28b2e360b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &6350327769385851268
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -750,6 +746,22 @@ MonoBehaviour:
   m_BarrelEnd: {fileID: 6350327769316355741}
   m_ProjectilePrefab: {fileID: 4915445817152070343, guid: c99cc595de50a4c4b895fe7eda1d3c7b,
     type: 3}
+--- !u!54 &6350327769385851271
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6350327769385851270}
+  serializedVersion: 2
+  m_Mass: 3000
+  m_Drag: 0
+  m_AngularDrag: 0
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 1
 --- !u!1 &6350327769499092321
 GameObject:
   m_ObjectHideFlags: 0

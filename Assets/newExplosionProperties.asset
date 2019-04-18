@@ -9,15 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e03cb3699f5bc79439ae7f8b6171682c, type: 3}
-  m_Name: newTankInfo
+  m_Script: {fileID: 11500000, guid: 8ca323a81f22c3b4e91e9bdda954f909, type: 3}
+  m_Name: newExplosionProperties
   m_EditorClassIdentifier: 
-  Name: Default boi
-  MaxHealth: 100
-  MaxTorque: 6000
-  AccelerateRate: 6000
-  MaxSteer: 40
-  BrakeTorque: 1e+9
-  JumpForce: 2000000
-  AirJumpAmount: 1
-  AirControl: 60000
+  BaseDamage: 50
+  ExplosionForce: 3000000
+  ExplosionRadius: 20
+  MaxLifeTime: 2.5

@@ -17,9 +17,11 @@ MonoBehaviour:
   InitialForce: 10000
   TankForce: 1000000
   AccuracyPercentage: 0
-  BaseDamage: 0
   Mass: 1
   Cooldown: 1
   CameraImpact: 0.5
-  OnHitSpawnObjects:
-  - {fileID: 1121192042590650, guid: e1b08032bec16ba4eb1ae23cbd572664, type: 3}
+  BurnoutTime: 5
+  Explosion: {fileID: 1429774812742334492, guid: a190bdf81d9c3d4468a966b7f998602b,
+    type: 3}
+  ExplosionProperties: {fileID: 11400000, guid: a99dd22dd5aceed4e9b9eee3fa9aef98,
+    type: 2}

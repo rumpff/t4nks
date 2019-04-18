@@ -9,7 +9,7 @@ public class PlayerWeapon : MonoBehaviour
     private readonly Vector2 m_MaxAim = new Vector2(67.5f, 22.5f);
 
     [SerializeField]
-    private WeaponInfo m_EquippedWeapon;
+    private WeaponProperties m_EquippedWeapon;
 
     [SerializeField]
     private Transform m_TankHead, m_TankBarrel, m_BarrelEnd;

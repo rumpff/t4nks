@@ -12,8 +12,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     private Transform m_TankHead, m_TankBarrel;
 
-    private PlayerWeapon m_PlayerWeapon;
-
+    private PlayerWeapon m_Weapon;
+    private PlayerHealth m_Health;
     private PlayerCamera m_Camera;
 
     [SerializeField]
@@ -26,10 +26,7 @@ public class Player : MonoBehaviour
     private Rigidbody m_RigidBody;
 
     [SerializeField]
-    private TankInfo m_TankInfo;
-
-    [SerializeField]
-    private GameObject[] m_DeathObjects;
+    private TankProperties m_TankProperties;
 
     private Vector2 m_AimRotation;
 
@@ -48,13 +45,16 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
-        m_WheelHits = new List<WheelHit>();
-        m_PlayerWeapon = GetComponent<PlayerWeapon>();
+        m_Weapon = GetComponent<PlayerWeapon>();
+        m_Health = GetComponent<PlayerHealth>();
         m_RigidBody = GetComponent<Rigidbody>();
+
+        m_WheelHits = new List<WheelHit>();
     }
 
     private void Start()
     {
+        m_Health.InitalizeHealth(m_TankProperties.MaxHealth);
         StartCoroutine(ReadWheelHits());
     }
 
@@ -74,16 +74,6 @@ public class Player : MonoBehaviour
         ApplyCarMotion();
         AircontrolThing();
         JumpThing();
-    }
-
-    private void OnDestroy()
-    {
-        foreach (GameObject g in m_DeathObjects)
-        {
-            Instantiate(g, transform.position, Quaternion.Euler(0, 0, 0));
-        }
-
-        //m_Camera.
     }
 
     private void GetInput()
@@ -109,12 +99,12 @@ public class Player : MonoBehaviour
         float torqueDest = 0;
 
         if(IsOnGround())
-            torqueDest = m_TorqueInput * m_TankInfo.MaxTorque;
+            torqueDest = m_TorqueInput * m_TankProperties.MaxTorque;
 
         if (m_Torque != torqueDest)
         {
             float changeDir = Mathf.Sign(torqueDest - m_Torque);
-            m_Torque += changeDir * (m_TankInfo.AccelerateRate * Time.deltaTime);
+            m_Torque += changeDir * (m_TankProperties.AccelerateRate * Time.deltaTime);
 
             // Prevent overshooting
             if(changeDir == 1 && (m_Torque > torqueDest) ||
@@ -127,10 +117,10 @@ public class Player : MonoBehaviour
 
 
         // Handle steer
-        m_StreerAngle = Mathf.Lerp(m_StreerAngle, m_StreerInput * m_TankInfo.MaxSteer, 12 * Time.deltaTime);
+        m_StreerAngle = Mathf.Lerp(m_StreerAngle, m_StreerInput * m_TankProperties.MaxSteer, 12 * Time.deltaTime);
 
         // Handle brake
-        m_BrakeTorque = (m_BrakeInput) ? m_TankInfo.BrakeTorque : 0;
+        m_BrakeTorque = (m_BrakeInput) ? m_TankProperties.BrakeTorque : 0;
     }
 
     private void AimThing()
@@ -148,13 +138,12 @@ public class Player : MonoBehaviour
         if (IsOnGround())
             return; // Not in the air
 
-        m_RigidBody.AddTorque(transform.up * (m_AirControlInput.x * m_TankInfo.AirControl));
-        m_RigidBody.AddTorque(-transform.right * (m_AirControlInput.y * m_TankInfo.AirControl));
+        m_RigidBody.AddTorque(transform.up * (m_AirControlInput.x * m_TankProperties.AirControl));
+        m_RigidBody.AddTorque(-transform.right * (m_AirControlInput.y * m_TankProperties.AirControl));
     }
 
     private void JumpThing()
     {
-
         if (m_JumpInput)
         {
             if (m_JumpsLeft <= 0)
@@ -162,7 +151,7 @@ public class Player : MonoBehaviour
 
             Vector3 jumpDirection = GetGroundNormal(transform.up);
 
-            m_RigidBody.AddForce(jumpDirection * m_TankInfo.JumpForce);
+            m_RigidBody.AddForce(jumpDirection * m_TankProperties.JumpForce);
 
             m_JumpsLeft--;
         }
@@ -172,7 +161,7 @@ public class Player : MonoBehaviour
     {
         // Jumping
         if (IsOnGround())
-            m_JumpsLeft = m_TankInfo.AirJumpAmount;
+            m_JumpsLeft = m_TankProperties.AirJumpAmount;
     }
 
     private void ApplyCarMotion()
@@ -283,13 +272,23 @@ public class Player : MonoBehaviour
         get { return m_Controller; }
     }
 
-    public PlayerWeapon PlayerWeapon
+    public PlayerHealth Health
     {
-        get { return m_PlayerWeapon; }
+        get { return m_Health; }
+    }
+
+    public PlayerWeapon Weapon
+    {
+        get { return m_Weapon; }
     }
 
     public PlayerCamera Camera
     {
         get { return m_Camera; }
+    }
+
+    public Rigidbody Rigidbody
+    {
+        get { return m_RigidBody; }
     }
 }

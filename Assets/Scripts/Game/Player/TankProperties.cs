@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "newTankInfo", menuName = "t4nk/Tank Info")]
-public class TankInfo : ScriptableObject
+[CreateAssetMenu(fileName = "newTankProperties", menuName = "t4nk/Tank Properties")]
+public class TankProperties : ScriptableObject
 {
     public string Name;
+    public float MaxHealth;
     public float MaxTorque;
     public float AccelerateRate;
     public float MaxSteer;

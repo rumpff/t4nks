@@ -6,7 +6,8 @@ public class PlayerCamera : MonoBehaviour
 {
 
     [SerializeField] // The object that needs to be followed
-    private Player m_Player;                                        
+    private Player m_Player; 
+    private Camera m_Camera;
 
     [SerializeField] // The distance of the camera to the object
     private float m_BaseDistance;
@@ -40,6 +41,7 @@ public class PlayerCamera : MonoBehaviour
 
     private void Start()
     {
+        m_Camera = GetComponent<Camera>();
         m_Player.SetCamera(this);
     }
 
@@ -90,5 +92,10 @@ public class PlayerCamera : MonoBehaviour
     {
         get { return m_BumpOffset; }
         set { m_BumpOffset = value; }
+    }
+
+    public Camera Camera
+    {
+        get { return m_Camera; }
     }
 }

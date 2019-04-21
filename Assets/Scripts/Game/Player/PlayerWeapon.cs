@@ -89,4 +89,17 @@ public class PlayerWeapon : MonoBehaviour
     {
         get { return new Vector2(m_AimDirection.x / m_MaxAim.x, m_AimDirection.y / m_MaxAim.y); }
     }
+
+    
+    public Vector3 AimPosition()
+    {
+        Ray ray = new Ray(m_TankBarrel.position, m_TankBarrel.forward);
+        bool hasHit = Physics.Raycast(ray, out RaycastHit hit, 256.0f);
+
+        if (hasHit)
+            return hit.point;
+
+        else // Defaults to x meters in front of tank if noting is hit
+            return (m_TankBarrel.position + (m_TankBarrel.forward * 50));
+    }
 }

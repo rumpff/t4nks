@@ -18,7 +18,7 @@ MonoBehaviour:
   TankForce: 1000000
   AccuracyPercentage: 0
   Mass: 1
-  Cooldown: 1
+  Cooldown: 0.3
   CameraImpact: 0.5
   BurnoutTime: 5
   Explosion: {fileID: 1429774812742334492, guid: a190bdf81d9c3d4468a966b7f998602b,

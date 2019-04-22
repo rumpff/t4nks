@@ -15,7 +15,7 @@ MonoBehaviour:
   Name: Default Cannon
   Mesh: {fileID: 0}
   InitialForce: 10000
-  TankForce: 3000000
+  TankForce: 1000000
   AccuracyPercentage: 0
   Mass: 1
   Cooldown: 1

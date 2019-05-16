@@ -55,7 +55,14 @@ public class Player : MonoBehaviour
     private void Start()
     {
         m_Health.InitalizeHealth(m_TankProperties.MaxHealth);
+        m_Health.Death += OnDeath;
+
         StartCoroutine(ReadWheelHits());
+    }
+
+    private void OnDestroy()
+    {
+        m_Health.Death -= OnDeath;
     }
 
     private void Update()
@@ -113,8 +120,6 @@ public class Player : MonoBehaviour
                 m_Torque = torqueDest;
             }
         }
-
-
 
         // Handle steer
         m_StreerAngle = Mathf.Lerp(m_StreerAngle, m_StreerInput * m_TankProperties.MaxSteer, 12 * Time.deltaTime);
@@ -186,6 +191,11 @@ public class Player : MonoBehaviour
 
         m_WheelBackLeft.brakeTorque = m_BrakeTorque;
         m_WheelBackRight.brakeTorque = m_BrakeTorque;
+    }
+
+    private void OnDeath()
+    {
+        Debug.Log("ded");
     }
 
     private IEnumerator ReadWheelHits()

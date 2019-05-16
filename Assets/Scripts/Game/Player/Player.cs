@@ -195,7 +195,7 @@ public class Player : MonoBehaviour
 
     private void OnDeath()
     {
-        Debug.Log("ded");
+        
     }
 
     private IEnumerator ReadWheelHits()

@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
     private GameObject m_PlayerCameraPrefab;
     private GameObject m_PlayerUIPrefab;
 
-    private GamePlayer[] m_Players;
+    public GamePlayer[] Players { get; private set; }
 
     private void Awake()
     {
@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
     private void InitalizeGame()
     {
         // Debug filling this rn
-        m_Players = new GamePlayer[]
+        Players = new GamePlayer[]
         {
             new GamePlayer(new PlayerProperties() { Controller = XboxCtrlrInput.XboxController.First, Name = "jaap", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}),
             new GamePlayer(new PlayerProperties() { Controller = XboxCtrlrInput.XboxController.Second, Name = "bob", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties})
@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour
 
         // Create cameras
         CameraProperties defaultCameraProperty = Resources.Load("Properties/Camera/DefaultCamera") as CameraProperties;
-        for (int i = 0; i < m_Players.Length; i++)
+        for (int i = 0; i < Players.Length; i++)
         {
             // Spawn camra
             GameObject cObject = Instantiate(m_PlayerCameraPrefab);
@@ -43,26 +43,26 @@ public class GameManager : MonoBehaviour
             PlayerCamera pCamera = cObject.GetComponent<PlayerCamera>();
             pCamera.Initalize(i, defaultCameraProperty, this);
 
-            m_Players[i].Camera = pCamera;
+            Players[i].Camera = pCamera;
         }
 
         // Create players
-        for (int i = 0; i < m_Players.Length; i++)
+        for (int i = 0; i < Players.Length; i++)
         {
-            SpawnPlayer(ref m_Players[i]);
+            SpawnPlayer(ref Players[i]);
         }
 
         // Create UIs
-        for (int i = 0; i < m_Players.Length; i++)
+        for (int i = 0; i < Players.Length; i++)
         {
             // Spawn UI
             GameObject uObject = Instantiate(m_PlayerUIPrefab);
             uObject.name = "PlayerUI (" + (i + 1) + ")";
 
             PlayerUI pUI = uObject.GetComponent<PlayerUI>();
-            pUI.Initalize(i, m_Players[i].Camera.Camera, this);
+            pUI.Initalize(i, this);
 
-            m_Players[i].UI = pUI;
+            Players[i].UI = pUI;
         }
     }
 

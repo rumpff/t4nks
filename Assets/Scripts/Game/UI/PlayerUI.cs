@@ -9,22 +9,20 @@ public class PlayerUI : MonoBehaviour
     private int m_PlayerIndex;
     private GameManager m_GameManager;
     private Canvas m_Canvas;
-    private Camera m_Camera;
     private RectTransform m_RectTransform;
 
     private RectTransform m_Rectile;
 
-    public void Initalize(int playerIndex, Camera assignedCamera, GameManager gameManger)
+    public void Initalize(int playerIndex, GameManager gameManger)
     {
         m_GameManager = gameManger;
-        m_Camera = assignedCamera;
         m_PlayerIndex = playerIndex;
 
         m_RectTransform = GetComponent<RectTransform>();
         m_Canvas = GetComponent<Canvas>();
 
         m_Canvas.renderMode = RenderMode.ScreenSpaceCamera;
-        m_Canvas.worldCamera = m_Camera;
+        m_Canvas.worldCamera = m_GameManager.Players[m_PlayerIndex].Camera.Camera;
 
         // Find children
         m_Rectile = transform.Find("Rectile") as RectTransform;
@@ -37,8 +35,11 @@ public class PlayerUI : MonoBehaviour
 
     private void CalculateRectilePosition()
     {
-        Vector3 physicalPosition = m_Player.Weapon.AimPosition();
-        Vector3 viewportPosition = m_Player.Camera.Camera.WorldToViewportPoint(physicalPosition);
+        if (m_GameManager.Players[m_PlayerIndex].Player == null)
+            return;
+
+        Vector3 physicalPosition = m_GameManager.Players[m_PlayerIndex].Player.Weapon.AimPosition();
+        Vector3 viewportPosition = m_GameManager.Players[m_PlayerIndex].Camera.Camera.WorldToViewportPoint(physicalPosition);
 
         // Prevent the rectile from coming back when the position is behind the camera
         viewportPosition *= Mathf.Sign(viewportPosition.z);     

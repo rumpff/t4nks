@@ -5,11 +5,10 @@ using UnityEngine;
 public class PlayerCamera : MonoBehaviour
 {
 
-    [SerializeField] // The object that needs to be followed
-    private Player m_Player; 
     private Camera m_Camera;
     private CameraProperties m_CameraProperties;
     private GameManager m_GameManager;
+    private int m_PlayerIndex;
 
     [SerializeField] // The distance of the camera to the object
     private float m_BaseDistance;
@@ -43,11 +42,11 @@ public class PlayerCamera : MonoBehaviour
 
     public void Initalize(int playerIndex, CameraProperties cameraProperties, GameManager gameManager)
     {
+        m_PlayerIndex = playerIndex;
         m_CameraProperties = cameraProperties;
         m_GameManager = gameManager;
 
         m_Camera = GetComponent<Camera>();
-        //m_Player.SetCamera(this);
     }
 
 
@@ -71,22 +70,27 @@ public class PlayerCamera : MonoBehaviour
 
         // Apply the new values
         transform.position = m_Position;
-        transform.LookAt(m_Player.transform);
+
+        if(m_GameManager.Players[m_PlayerIndex].Player != null)
+            transform.LookAt(m_GameManager.Players[m_PlayerIndex].Player.transform);
     }
 
     private void UpdateVariables()
     {
+        if (m_GameManager.Players[m_PlayerIndex].Player == null)
+            return;
+
         m_Position = transform.position;
 
-        m_PlayerPos = m_Player.transform.position;
+        m_PlayerPos = m_GameManager.Players[m_PlayerIndex].Player.transform.position;
 
         // Only update the angle when the player is on the ground
-        if (m_Player.IsOnGround())
-            m_angleDest = m_Player.transform.eulerAngles.y;
+        if (m_GameManager.Players[m_PlayerIndex].Player.IsOnGround())
+            m_angleDest = m_GameManager.Players[m_PlayerIndex].Player.transform.eulerAngles.y;
 
         m_AimOffset = new Vector2(
-            m_Player.Weapon.RawAim.x * 45.0f,
-            m_Player.Weapon.RawAim.y * 20); // 15.0f
+            m_GameManager.Players[m_PlayerIndex].Player.Weapon.RawAim.x * 45.0f,
+            m_GameManager.Players[m_PlayerIndex].Player.Weapon.RawAim.y * 20); // 15.0f
     }
 
     private float LerpInterpolation

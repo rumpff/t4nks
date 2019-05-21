@@ -28,8 +28,8 @@ public class GameManager : MonoBehaviour
         // Debug filling this rn
         Players = new GamePlayer[]
         {
-            new GamePlayer(new PlayerProperties() { Controller = XboxCtrlrInput.XboxController.First, Name = "jaap", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}),
-            new GamePlayer(new PlayerProperties() { Controller = XboxCtrlrInput.XboxController.Second, Name = "bob", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties})
+            new GamePlayer(new PlayerProperties() { Controller = XboxCtrlrInput.XboxController.First, Name = "jaap", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 0),
+            new GamePlayer(new PlayerProperties() { Controller = XboxCtrlrInput.XboxController.Second, Name = "bob", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 1)
         };
 
         // Create cameras
@@ -77,6 +77,8 @@ public class GameManager : MonoBehaviour
         };
 
         GameObject pObject = Instantiate(m_PlayerPrefab, pos, Quaternion.Euler(Vector3.zero));
+        pObject.name = "Player " + (player.Index + 1);
+
         Player p = pObject.GetComponent<Player>();
 
         p.Initalize(player.Properties, player.Camera);
@@ -92,11 +94,13 @@ public struct GamePlayer
     public PlayerState State;
     public PlayerCamera Camera;
     public PlayerUI UI;
+    public int Index;
 
-    public GamePlayer(PlayerProperties properties)
+    public GamePlayer(PlayerProperties properties, int index)
     {
         Properties = properties;
         State = PlayerState.Alive;
+        Index = index;
 
         // These values will be assigned once they're created
         Player = null;

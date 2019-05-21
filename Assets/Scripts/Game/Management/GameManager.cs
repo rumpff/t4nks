@@ -29,9 +29,9 @@ public class GameManager : MonoBehaviour
         Players = new GamePlayer[]
         {
             new GamePlayer(new PlayerProperties() { Controller = XboxCtrlrInput.XboxController.First, Name = "jaap", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 0),
-            new GamePlayer(new PlayerProperties() { Controller = XboxCtrlrInput.XboxController.Second, Name = "bob", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 1),
-            new GamePlayer(new PlayerProperties() { Controller = XboxCtrlrInput.XboxController.First, Name = "jaap", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 2),
-            new GamePlayer(new PlayerProperties() { Controller = XboxCtrlrInput.XboxController.Second, Name = "bob", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 3)
+            new GamePlayer(new PlayerProperties() { Controller = XboxCtrlrInput.XboxController.Second, Name = "bob", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 1)//,
+            //new GamePlayer(new PlayerProperties() { Controller = XboxCtrlrInput.XboxController.Third, Name = "jaap", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 2),
+            //new GamePlayer(new PlayerProperties() { Controller = XboxCtrlrInput.XboxController.Fourth, Name = "bob", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 3)
         };
 
         // Create cameras

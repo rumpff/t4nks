@@ -40,13 +40,14 @@ public class PlayerCamera : MonoBehaviour
     // The player's thingz
     private Vector3 m_PlayerPos;
 
-    public void Initalize(int playerIndex, CameraProperties cameraProperties, GameManager gameManager)
+    public void Initalize(int playerIndex, CameraProperties cameraProperties, Rect viewport, GameManager gameManager)
     {
         m_PlayerIndex = playerIndex;
         m_CameraProperties = cameraProperties;
         m_GameManager = gameManager;
 
         m_Camera = GetComponent<Camera>();
+        m_Camera.rect = viewport;
     }
 
 

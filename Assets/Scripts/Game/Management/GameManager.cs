@@ -29,7 +29,9 @@ public class GameManager : MonoBehaviour
         Players = new GamePlayer[]
         {
             new GamePlayer(new PlayerProperties() { Controller = XboxCtrlrInput.XboxController.First, Name = "jaap", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 0),
-            new GamePlayer(new PlayerProperties() { Controller = XboxCtrlrInput.XboxController.Second, Name = "bob", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 1)
+            new GamePlayer(new PlayerProperties() { Controller = XboxCtrlrInput.XboxController.Second, Name = "bob", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 1),
+            new GamePlayer(new PlayerProperties() { Controller = XboxCtrlrInput.XboxController.First, Name = "jaap", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 2),
+            new GamePlayer(new PlayerProperties() { Controller = XboxCtrlrInput.XboxController.Second, Name = "bob", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 3)
         };
 
         // Create cameras
@@ -41,7 +43,7 @@ public class GameManager : MonoBehaviour
             cObject.name = "PlayerCamera (" + (i + 1) + ")";
 
             PlayerCamera pCamera = cObject.GetComponent<PlayerCamera>();
-            pCamera.Initalize(i, defaultCameraProperty, this);
+            pCamera.Initalize(i, defaultCameraProperty, CalculateCameraRect(i, Players.Length), this);
 
             Players[i].Camera = pCamera;
         }
@@ -83,6 +85,90 @@ public class GameManager : MonoBehaviour
 
         p.Initalize(player.Properties, player.Camera);
         player.Player = p;
+    }
+
+    private Rect CalculateCameraRect(int index, int cameraAmount)
+    {
+        switch(cameraAmount)
+        {
+            case 2:
+                switch (index + 1)
+                {
+                    case 1:
+                        return new Rect(0.0f, 0.5f, 1.0f, 0.5f);
+
+                    case 2:
+                        return new Rect(0.0f, 0.0f, 1.0f, 0.5f);
+                }
+                break;
+
+            case 3:
+                switch (index + 1)
+                {
+                    case 1:
+                        return new Rect(0.0f, 0.5f, 1.0f, 0.5f);
+
+                    case 2:
+                        return new Rect(0.0f, 0.0f, 0.5f, 0.5f);
+
+                    case 3:
+                        return new Rect(0.5f, 0.0f, 0.5f, 0.5f);
+                }
+                break;
+
+            case 4:
+                switch (index + 1)
+                {
+                    case 1:
+                        return new Rect(0.0f, 0.5f, 0.5f, 0.5f);
+
+                    case 2:
+                        return new Rect(0.5f, 0.5f, 0.5f, 0.5f);
+
+                    case 3:
+                        return new Rect(0.0f, 0.0f, 0.5f, 0.5f);
+
+                    case 4:
+                        return new Rect(0.5f, 0.0f, 0.5f, 0.5f);
+                }
+                break;
+        }
+
+        return new Rect(0, 0, 1, 1);
+
+        #region i tried
+        /*
+        float x;
+        float y;
+        float w;
+        float h;
+
+        y = 0.5f * (index > cameraAmount ? 1 : 0);
+        h = 0.5f;
+
+        int halveAmount = cameraAmount / 2;
+        int halveIndex = index;
+        bool isEven = (cameraAmount % 2 == 0);
+
+
+        if(y == 0.5f) // Port is on the lower half
+        {
+            // If we're on the bottom remove the amount of screens on top off our index
+            halveIndex -= halveAmount;
+            if (!isEven)
+            {
+                halveAmount++;
+            }
+        }
+
+         x = (halveIndex / halveAmount);
+         w = 1.0f / halveAmount;
+
+
+        Rect rect = new Rect(x, y, w, h);
+        return rect;
+        */
+        #endregion
     }
 }
 

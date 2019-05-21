@@ -8,6 +8,8 @@ public class PlayerCamera : MonoBehaviour
     [SerializeField] // The object that needs to be followed
     private Player m_Player; 
     private Camera m_Camera;
+    private CameraProperties m_CameraProperties;
+    private GameManager m_GameManager;
 
     [SerializeField] // The distance of the camera to the object
     private float m_BaseDistance;
@@ -39,11 +41,15 @@ public class PlayerCamera : MonoBehaviour
     // The player's thingz
     private Vector3 m_PlayerPos;
 
-    private void Start()
+    public void Initalize(int playerIndex, CameraProperties cameraProperties, GameManager gameManager)
     {
+        m_CameraProperties = cameraProperties;
+        m_GameManager = gameManager;
+
         m_Camera = GetComponent<Camera>();
-        m_Player.SetCamera(this);
+        //m_Player.SetCamera(this);
     }
+
 
     private void FixedUpdate()
     {

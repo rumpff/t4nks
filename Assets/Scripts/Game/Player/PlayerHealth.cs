@@ -48,5 +48,8 @@ public class PlayerHealth : MonoBehaviour
     {
         if (Death != null)
             Death.Invoke();
+
+        // Since we destroy this instance we remove all subscribers
+        Death = null;
     }
 }

@@ -7,6 +7,4 @@ public class PlayerProperties : ScriptableObject
     public string Name;
     public TankProperties Tank;
     public XboxController Controller;
-
-    //ik ben lekker
 }

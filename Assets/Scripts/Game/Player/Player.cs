@@ -9,6 +9,9 @@ public class Player : MonoBehaviour
     private readonly string m_TireTag = "TankTire";
     private readonly Vector2 m_MaxAim = new Vector2(67.5f, 22.5f);
 
+    private PlayerProperties m_PlayerProperties;
+    private TankProperties m_TankProperties;
+
     [SerializeField]
     private Transform m_TankHead, m_TankBarrel;
 
@@ -24,9 +27,6 @@ public class Player : MonoBehaviour
     private List<WheelHit> m_WheelHits;
 
     private Rigidbody m_RigidBody;
-
-    [SerializeField]
-    private TankProperties m_TankProperties;
 
     private Vector2 m_AimRotation;
 
@@ -52,8 +52,16 @@ public class Player : MonoBehaviour
         m_WheelHits = new List<WheelHit>();
     }
 
-    private void Start()
+    public void Initalize(PlayerProperties playerProperties, PlayerCamera playerCamera)
     {
+        m_PlayerProperties = playerProperties;
+        m_Camera = playerCamera;
+
+        // Assign properties
+        m_Controller = m_PlayerProperties.Controller;
+        m_TankProperties = m_PlayerProperties.Tank;
+
+        // Initalize health
         m_Health.InitalizeHealth(m_TankProperties.MaxHealth);
         m_Health.Death += OnDeath;
 

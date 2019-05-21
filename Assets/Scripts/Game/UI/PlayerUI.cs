@@ -6,16 +6,28 @@ public class PlayerUI : MonoBehaviour
 {
     [SerializeField]
     private Player m_Player;
+    private int m_PlayerIndex;
+    private GameManager m_GameManager;
     private Canvas m_Canvas;
-    private RectTransform m_Rect;
+    private Camera m_Camera;
+    private RectTransform m_RectTransform;
 
-    [SerializeField]
-    private RectTransform TESTEBOI;
+    private RectTransform m_Rectile;
 
-    private void Start()
+    public void Initalize(int playerIndex, Camera assignedCamera, GameManager gameManger)
     {
-        m_Rect = GetComponent<RectTransform>();
+        m_GameManager = gameManger;
+        m_Camera = assignedCamera;
+        m_PlayerIndex = playerIndex;
+
+        m_RectTransform = GetComponent<RectTransform>();
         m_Canvas = GetComponent<Canvas>();
+
+        m_Canvas.renderMode = RenderMode.ScreenSpaceCamera;
+        m_Canvas.worldCamera = m_Camera;
+
+        // Find children
+        m_Rectile = transform.Find("Rectile") as RectTransform;
     }
 
     private void Update()
@@ -32,9 +44,9 @@ public class PlayerUI : MonoBehaviour
         viewportPosition *= Mathf.Sign(viewportPosition.z);     
 
         Vector2 canvasPosition = new Vector2(
-         ((viewportPosition.x * m_Rect.sizeDelta.x) - (m_Rect.sizeDelta.x * 0.5f)),
-         ((viewportPosition.y * m_Rect.sizeDelta.y) - (m_Rect.sizeDelta.y * 0.5f)));
+         ((viewportPosition.x * m_RectTransform.sizeDelta.x) - (m_RectTransform.sizeDelta.x * 0.5f)),
+         ((viewportPosition.y * m_RectTransform.sizeDelta.y) - (m_RectTransform.sizeDelta.y * 0.5f)));
 
-        TESTEBOI.anchoredPosition = canvasPosition;
+        m_Rectile.anchoredPosition = canvasPosition;
     }
 }

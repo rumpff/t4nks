@@ -1,12 +1,15 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using XboxCtrlrInput;
 
 public class GameManager : MonoBehaviour
 {
     private GameObject m_PlayerPrefab;
     private GameObject m_PlayerCameraPrefab;
     private GameObject m_PlayerUIPrefab;
+
+    private GameRules m_GameRules;
+    private SpawnLocations m_SpawnLocations;
 
     public GamePlayer[] Players { get; private set; }
 
@@ -16,16 +19,21 @@ public class GameManager : MonoBehaviour
         m_PlayerPrefab = Resources.Load("Prefabs/Player") as GameObject;
         m_PlayerCameraPrefab = Resources.Load("Prefabs/PlayerCamera") as GameObject;
         m_PlayerUIPrefab = Resources.Load("Prefabs/PlayerUI") as GameObject;
+
+        // Debug - Create gamerules
+        m_GameRules = new GameRules();
     }
 
     private void Start()
     {
+        m_SpawnLocations = GetComponentInChildren<SpawnLocations>();
+
         InitalizeGame();
     }
 
     private void InitalizeGame()
     {
-        // Debug filling this rn
+        // Debug - create players
         Players = new GamePlayer[]
         {
             new GamePlayer(new PlayerProperties() { Controller = XboxCtrlrInput.XboxController.First, Name = "jaap", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 0),
@@ -51,7 +59,7 @@ public class GameManager : MonoBehaviour
         // Create players
         for (int i = 0; i < Players.Length; i++)
         {
-            SpawnPlayer(ref Players[i]);
+            SpawnPlayer(i);
         }
 
         // Create UIs
@@ -68,23 +76,49 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void SpawnPlayer(ref GamePlayer player)
+    private void SpawnPlayer(int playerId)
     {
-        // For now create a random spawn position
-        Vector3 pos = new Vector3
-        {
-            x = Random.Range(-220.0f, 220.0f),
-            y = 10.0f,
-            z = Random.Range(-220.0f, 220.0f)
-        };
+        // Get a location
+        Vector3 pos = new Vector3();
+        Vector3 rot = new Vector3();
 
-        GameObject pObject = Instantiate(m_PlayerPrefab, pos, Quaternion.Euler(Vector3.zero));
-        pObject.name = "Player " + (player.Index + 1);
+        pos = m_SpawnLocations.RandomLocation();
+        rot.y = Random.Range(0.0f, 360.0f);
+
+        GameObject pObject = Instantiate(m_PlayerPrefab, pos, Quaternion.Euler(rot));
+        pObject.name = "Player " + (Players[playerId].Index + 1);
 
         Player p = pObject.GetComponent<Player>();
 
-        p.Initalize(player.Properties, player.Camera);
-        player.Player = p;
+        p.Initalize(Players[playerId].Index, Players[playerId].Properties, Players[playerId].Camera);
+        p.DestroyedEvent += OnPlayerDeath;
+        Players[playerId].Player = p;
+        Players[playerId].State = PlayerState.Alive;
+
+    }
+
+    private IEnumerator RespawnPlayer(int playerId)
+    {
+        Players[playerId].AllowedToRespawn = false;
+
+        yield return new WaitForSeconds(m_GameRules.RespawnDelay);
+
+        Players[playerId].AllowedToRespawn = true;
+
+        // Wait for the player until they want to respawn
+        while(!XCI.GetButton(XboxButton.A, Players[playerId].Player.Controller))
+        {
+            yield return new WaitForEndOfFrame();
+        }
+
+        // Spawn the player
+        SpawnPlayer(playerId);
+    }
+
+    public void OnPlayerDeath(int playerId)
+    {
+        Players[playerId].State = PlayerState.Destroyed;
+        StartCoroutine(RespawnPlayer(playerId));
     }
 
     private Rect CalculateCameraRect(int index, int cameraAmount)
@@ -182,11 +216,14 @@ public struct GamePlayer
     public PlayerUI UI;
     public int Index;
 
+    public bool AllowedToRespawn;
+
     public GamePlayer(PlayerProperties properties, int index)
     {
         Properties = properties;
         State = PlayerState.Alive;
         Index = index;
+        AllowedToRespawn = false;
 
         // These values will be assigned once they're created
         Player = null;

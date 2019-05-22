@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour
@@ -8,7 +6,7 @@ public class PlayerHealth : MonoBehaviour
     private float m_Health;
     private float m_MaxHealth;
 
-    public event Action Death;
+    public event Action DeathEvent;
 
     public void InitalizeHealth(float maxHealth)
     {
@@ -40,16 +38,14 @@ public class PlayerHealth : MonoBehaviour
         // Check if the player is dead
         if (m_Health <= 0.0f)
             OnDeath();
-
-
     }
 
     protected virtual void OnDeath()
     {
-        if (Death != null)
-            Death.Invoke();
+        if (DeathEvent != null)
+            DeathEvent.Invoke();
 
         // Since we destroy this instance we remove all subscribers
-        Death = null;
+        DeathEvent = null;
     }
 }

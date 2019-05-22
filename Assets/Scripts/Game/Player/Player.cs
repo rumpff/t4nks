@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using XboxCtrlrInput;
@@ -9,15 +10,19 @@ public class Player : MonoBehaviour
     private readonly string m_TireTag = "TankTire";
     private readonly Vector2 m_MaxAim = new Vector2(67.5f, 22.5f);
 
+    public delegate void Destroyed(int playerId);
+    public event Destroyed DestroyedEvent;
+
+    private int m_PlayerIndex;
     private PlayerProperties m_PlayerProperties;
     private TankProperties m_TankProperties;
 
+    public PlayerHealth Health { get; private set; }
+    public PlayerWeapon Weapon { get; private set; }
+    public PlayerCamera Camera { get; private set; }
+
     [SerializeField]
     private Transform m_TankHead, m_TankBarrel;
-
-    private PlayerWeapon m_Weapon;
-    private PlayerHealth m_Health;
-    private PlayerCamera m_Camera;
 
     [SerializeField]
     private XboxController m_Controller;
@@ -45,32 +50,28 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
-        m_Weapon = GetComponent<PlayerWeapon>();
-        m_Health = GetComponent<PlayerHealth>();
+        Weapon = GetComponent<PlayerWeapon>();
+        Health = GetComponent<PlayerHealth>();
         m_RigidBody = GetComponent<Rigidbody>();
 
         m_WheelHits = new List<WheelHit>();
     }
 
-    public void Initalize(PlayerProperties playerProperties, PlayerCamera playerCamera)
+    public void Initalize(int playerIndex, PlayerProperties playerProperties, PlayerCamera playerCamera)
     {
+        m_PlayerIndex = playerIndex;
         m_PlayerProperties = playerProperties;
-        m_Camera = playerCamera;
+        Camera = playerCamera;
 
         // Assign properties
         m_Controller = m_PlayerProperties.Controller;
         m_TankProperties = m_PlayerProperties.Tank;
 
         // Initalize health
-        m_Health.InitalizeHealth(m_TankProperties.MaxHealth);
-        m_Health.Death += OnDeath;
+        Health.InitalizeHealth(m_TankProperties.MaxHealth);
+        Health.DeathEvent += OnDeath;
 
         StartCoroutine(ReadWheelHits());
-    }
-
-    private void OnDestroy()
-    {
-        m_Health.Death -= OnDeath;
     }
 
     private void Update()
@@ -203,7 +204,12 @@ public class Player : MonoBehaviour
 
     private void OnDeath()
     {
-        
+        if (DestroyedEvent != null)
+            DestroyedEvent.Invoke(m_PlayerIndex);
+
+        DestroyedEvent = null;
+
+        Destroy(gameObject);
     }
 
     private IEnumerator ReadWheelHits()
@@ -269,7 +275,7 @@ public class Player : MonoBehaviour
 
     public void SetCamera(PlayerCamera c)
     {
-        m_Camera = c;
+        Camera = c;
     }
 
     public void AddForce(Vector3 force)
@@ -290,20 +296,7 @@ public class Player : MonoBehaviour
         get { return m_Controller; }
     }
 
-    public PlayerHealth Health
-    {
-        get { return m_Health; }
-    }
 
-    public PlayerWeapon Weapon
-    {
-        get { return m_Weapon; }
-    }
-
-    public PlayerCamera Camera
-    {
-        get { return m_Camera; }
-    }
 
     public Rigidbody Rigidbody
     {

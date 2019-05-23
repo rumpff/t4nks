@@ -1501,4 +1501,4 @@ MonoBehaviour:
     value: 0.1
   fastMode:
     overrideState: 1
-    value: 0
+    value: 1

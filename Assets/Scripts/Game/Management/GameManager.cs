@@ -36,10 +36,10 @@ public class GameManager : MonoBehaviour
         // Debug - create players
         Players = new GamePlayer[]
         {
-            new GamePlayer(new PlayerProperties() { Controller = XboxCtrlrInput.XboxController.First, Name = "jaap", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 0),
-            new GamePlayer(new PlayerProperties() { Controller = XboxCtrlrInput.XboxController.Second, Name = "bob", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 1)//,
-            //new GamePlayer(new PlayerProperties() { Controller = XboxCtrlrInput.XboxController.Third, Name = "jaap", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 2),
-            //new GamePlayer(new PlayerProperties() { Controller = XboxCtrlrInput.XboxController.Fourth, Name = "bob", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 3)
+            new GamePlayer(new PlayerProperties() { Controller = XboxController.First, Name = "jaap", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 0),
+            new GamePlayer(new PlayerProperties() { Controller = XboxController.Second, Name = "bob", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 1),
+            new GamePlayer(new PlayerProperties() { Controller = XboxController.Third, Name = "jaap", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 2)//,
+            //new GamePlayer(new PlayerProperties() { Controller = XboxController.Fourth, Name = "bob", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 3)
         };
 
         // Create cameras
@@ -90,7 +90,7 @@ public class GameManager : MonoBehaviour
 
         Player p = pObject.GetComponent<Player>();
 
-        p.Initalize(Players[playerId].Index, Players[playerId].Properties, Players[playerId].Camera);
+        p.Initalize(Players[playerId].Index, Players[playerId].Properties, Players[playerId].Camera, this);
         p.DestroyedEvent += OnPlayerDeath;
         Players[playerId].Player = p;
         Players[playerId].State = PlayerState.Alive;
@@ -205,34 +205,3 @@ public class GameManager : MonoBehaviour
         #endregion
     }
 }
-
-public struct GamePlayer
-{
-    public PlayerProperties Properties;
-
-    public Player Player;
-    public PlayerState State;
-    public PlayerCamera Camera;
-    public PlayerUI UI;
-    public int Index;
-
-    public bool AllowedToRespawn;
-
-    public GamePlayer(PlayerProperties properties, int index)
-    {
-        Properties = properties;
-        State = PlayerState.Alive;
-        Index = index;
-        AllowedToRespawn = false;
-
-        // These values will be assigned once they're created
-        Player = null;
-        Camera = null;
-        UI = null;
-    }
-}
-
-public enum PlayerState
-{
-    Alive, Destroyed
-};

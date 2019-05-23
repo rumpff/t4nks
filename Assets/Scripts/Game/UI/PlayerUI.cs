@@ -1,36 +1,43 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class PlayerUI : MonoBehaviour
 {
-    [SerializeField]
     private Player m_Player;
     private int m_PlayerIndex;
     private GameManager m_GameManager;
     private Canvas m_Canvas;
     private RectTransform m_RectTransform;
 
-    private RectTransform m_Rectile;
+    [SerializeField] private RectTransform m_Rectile;
+    [Space(5)]
+    [SerializeField] private Image m_DamageOverlay;
+    [SerializeField] private Image  m_Healthbar;
+    [Space(5)]
+    [SerializeField] private TextMeshProUGUI m_ScoreText;
 
     public void Initalize(int playerIndex, GameManager gameManger)
     {
         m_GameManager = gameManger;
         m_PlayerIndex = playerIndex;
 
+        m_Player = m_GameManager.Players[playerIndex].Player;
+
         m_RectTransform = GetComponent<RectTransform>();
         m_Canvas = GetComponent<Canvas>();
 
         m_Canvas.renderMode = RenderMode.ScreenSpaceCamera;
         m_Canvas.worldCamera = m_GameManager.Players[m_PlayerIndex].Camera.Camera;
-
-        // Find children
-        m_Rectile = transform.Find("Rectile") as RectTransform;
     }
 
     private void Update()
     {
         CalculateRectilePosition();
+        UpdateDamageOverlay();
+        UpdateHealthbar();
     }
 
     private void CalculateRectilePosition()
@@ -49,5 +56,33 @@ public class PlayerUI : MonoBehaviour
          ((viewportPosition.y * m_RectTransform.sizeDelta.y) - (m_RectTransform.sizeDelta.y * 0.5f)));
 
         m_Rectile.anchoredPosition = canvasPosition;
+    }
+
+    private void UpdateDamageOverlay()
+    {
+        Color c = m_DamageOverlay.color;
+        c.a = Mathf.Lerp(c.a, 0, 6 * Time.deltaTime);
+
+        m_DamageOverlay.color = c;
+    }
+
+    private void UpdateHealthbar()
+    {
+        float f = m_Player.Health.Health / m_Player.Health.MaxHealth;
+        float a = m_Healthbar.fillAmount;
+
+        a = Mathf.Lerp(a, f, 12 * Time.deltaTime);
+
+        m_Healthbar.fillAmount = a;
+    }
+
+    public void AddDamageEffect(float damageAmount, float maxHealth)
+    {
+        float p = damageAmount / (maxHealth / 2);
+
+        Color c = m_DamageOverlay.color;
+        c.a = p;
+
+        m_DamageOverlay.color = c;
     }
 }

@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class Explosion : MonoBehaviour
 {
+    private Player m_Owner;
     private ExplosionProperties m_Properties;
     private bool m_IsInitialized = false;
 
     private float m_LifeTime = 0;
 
-    public void Initalize(ExplosionProperties properties)
+    public void Initalize(Player owner, ExplosionProperties properties)
     {
+        m_Owner = owner;
         m_Properties = properties;
 
         DamageNearbyPlayers();
@@ -54,7 +56,9 @@ public class Explosion : MonoBehaviour
             float damageDropoff = (playerDistance / m_Properties.ExplosionRadius);
             float damage = m_Properties.BaseDamage - (m_Properties.BaseDamage * damageDropoff);
 
-            Debug.Log("Damage: " + damage);
+            // Lower the damage if it is self-inflicted
+            if (p == m_Owner)
+                damage /= 3;
 
             p.Health.DamagePlayer(damage);
 

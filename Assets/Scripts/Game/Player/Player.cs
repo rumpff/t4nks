@@ -10,6 +10,8 @@ public class Player : MonoBehaviour
     private readonly string m_TireTag = "TankTire";
     private readonly Vector2 m_MaxAim = new Vector2(67.5f, 22.5f);
 
+    private GameManager m_GameManager;
+
     public delegate void Destroyed(int playerId);
     public event Destroyed DestroyedEvent;
 
@@ -57,11 +59,12 @@ public class Player : MonoBehaviour
         m_WheelHits = new List<WheelHit>();
     }
 
-    public void Initalize(int playerIndex, PlayerProperties playerProperties, PlayerCamera playerCamera)
+    public void Initalize(int playerIndex, PlayerProperties playerProperties, PlayerCamera playerCamera, GameManager gameManager)
     {
         m_PlayerIndex = playerIndex;
         m_PlayerProperties = playerProperties;
         Camera = playerCamera;
+        m_GameManager = gameManager;
 
         // Assign properties
         m_Controller = m_PlayerProperties.Controller;
@@ -70,6 +73,7 @@ public class Player : MonoBehaviour
         // Initalize health
         Health.InitalizeHealth(m_TankProperties.MaxHealth);
         Health.DeathEvent += OnDeath;
+        Health.DamageEvent += OnDamage;
 
         StartCoroutine(ReadWheelHits());
     }
@@ -202,6 +206,29 @@ public class Player : MonoBehaviour
         m_WheelBackRight.brakeTorque = m_BrakeTorque;
     }
 
+    private void CreateExplosionDebris()
+    {
+        MeshFilter[] meshes = GetComponentsInChildren<MeshFilter>();
+        List<GameObject> debris = new List<GameObject>();
+
+        for (int i = 0; i < debris.Count; i++)
+        {
+            GameObject o = Instantiate(new GameObject(("Player" + m_PlayerIndex + "debris part")));
+
+            o.transform.position = meshes[i].transform.position;
+            o.transform.rotation = meshes[i].transform.rotation;
+            o.transform.localScale = meshes[i].transform.localScale;
+
+            o.AddComponent<MeshFilter>().mesh = meshes[i].mesh;
+            o.AddComponent<MeshRenderer>().materials = meshes[i].GetComponent<MeshRenderer>().materials;
+            o.AddComponent<SphereCollider>();
+            o.AddComponent<Rigidbody>();
+
+            debris.Add(o);
+        }
+
+    }
+
     private void OnDeath()
     {
         if (DestroyedEvent != null)
@@ -209,7 +236,13 @@ public class Player : MonoBehaviour
 
         DestroyedEvent = null;
 
+        CreateExplosionDebris();
         Destroy(gameObject);
+    }
+
+    public void OnDamage(float damageAmount)
+    {
+        m_GameManager.Players[m_PlayerIndex].UI.AddDamageEffect(damageAmount, m_PlayerProperties.Tank.MaxHealth);
     }
 
     private IEnumerator ReadWheelHits()
@@ -296,10 +329,13 @@ public class Player : MonoBehaviour
         get { return m_Controller; }
     }
 
-
-
     public Rigidbody Rigidbody
     {
         get { return m_RigidBody; }
+    }
+
+    public int Index
+    {
+        get { return m_PlayerIndex; }
     }
 }

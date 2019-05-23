@@ -66,7 +66,7 @@ public class PlayerWeapon : MonoBehaviour
 
             Projectile p = Instantiate(m_ProjectilePrefab, m_BarrelEnd.position, projectileRotation).GetComponent<Projectile>();
 
-            p.Initalize(m_EquippedWeapon, m_TankBarrel.forward);
+            p.Initalize(m_Player, m_EquippedWeapon, m_TankBarrel.forward);
 
             m_ShootCooldown = m_EquippedWeapon.Cooldown;
             m_Player.Camera.Bump = (-m_TankBarrel.forward * m_EquippedWeapon.CameraImpact);

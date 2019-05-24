@@ -87,6 +87,9 @@ public class Player : MonoBehaviour
         //AimThing();
 
         TimerThing();
+
+        if (XCI.GetButton(XboxButton.Y, m_Controller))
+            Health.DamagePlayer(1);
     }
 
     private void FixedUpdate()
@@ -206,14 +209,19 @@ public class Player : MonoBehaviour
         m_WheelBackRight.brakeTorque = m_BrakeTorque;
     }
 
-    private void CreateExplosionDebris()
+    private void ExplodeTank()
     {
+        Debug.Log("boem");
         MeshFilter[] meshes = GetComponentsInChildren<MeshFilter>();
         List<GameObject> debris = new List<GameObject>();
 
-        for (int i = 0; i < debris.Count; i++)
+        Vector3 tankVelocity = Rigidbody.velocity;
+
+        // Copy the tank in loose parts
+        for (int i = 0; i < meshes.Length; i++)
         {
-            GameObject o = Instantiate(new GameObject(("Player" + m_PlayerIndex + "debris part")));
+            Debug.Log("maak nieuw blokke");
+            GameObject o = new GameObject(("Player" + m_PlayerIndex + "debris part"));
 
             o.transform.position = meshes[i].transform.position;
             o.transform.rotation = meshes[i].transform.rotation;
@@ -221,12 +229,21 @@ public class Player : MonoBehaviour
 
             o.AddComponent<MeshFilter>().mesh = meshes[i].mesh;
             o.AddComponent<MeshRenderer>().materials = meshes[i].GetComponent<MeshRenderer>().materials;
-            o.AddComponent<SphereCollider>();
-            o.AddComponent<Rigidbody>();
+            o.AddComponent<BoxCollider>();
+
+            Rigidbody rb = o.AddComponent<Rigidbody>();
+            o.AddComponent<Explodable>();
+
+            rb.mass = 3000;
+            rb.velocity = tankVelocity;
+            rb.AddExplosionForce(4000000, transform.position, 10);
 
             debris.Add(o);
         }
 
+        // Create the explosion
+        GameObject e = Instantiate(m_TankProperties.ExplosionPrefab);
+        e.transform.position = transform.position;
     }
 
     private void OnDeath()
@@ -236,7 +253,7 @@ public class Player : MonoBehaviour
 
         DestroyedEvent = null;
 
-        CreateExplosionDebris();
+        ExplodeTank();
         Destroy(gameObject);
     }
 

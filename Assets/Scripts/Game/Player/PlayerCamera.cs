@@ -40,6 +40,14 @@ public class PlayerCamera : MonoBehaviour
     // The player's thingz
     private Vector3 m_PlayerPos;
 
+    // Screenshake
+    private readonly float m_ScreenshakeMaxPosition = 2;
+    private readonly float m_ScreenshakeMaxRotation = 20;
+
+    private float m_ScreenshakeAmount;
+    private Vector3 m_ScreenshakePosition;
+    private Vector3 m_ScreenshakeRotation;
+
     public void Initalize(int playerIndex, CameraProperties cameraProperties, Rect viewport, GameManager gameManager)
     {
         m_PlayerIndex = playerIndex;
@@ -50,6 +58,13 @@ public class PlayerCamera : MonoBehaviour
         m_Camera.rect = viewport;
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+            AddScreenshake(1);
+
+        UpdateScreenshake();
+    }
 
     private void FixedUpdate()
     {
@@ -74,6 +89,10 @@ public class PlayerCamera : MonoBehaviour
 
         if(m_GameManager.Players[m_PlayerIndex].Player != null)
             transform.LookAt(m_GameManager.Players[m_PlayerIndex].Player.transform);
+
+        // Apply screenshake effects
+        transform.position += m_ScreenshakePosition;
+        transform.rotation = Quaternion.Euler(transform.eulerAngles + m_ScreenshakeRotation);
     }
 
     private void UpdateVariables()
@@ -92,6 +111,24 @@ public class PlayerCamera : MonoBehaviour
         m_AimOffset = new Vector2(
             m_GameManager.Players[m_PlayerIndex].Player.Weapon.RawAim.x * 45.0f,
             m_GameManager.Players[m_PlayerIndex].Player.Weapon.RawAim.y * 20); // 15.0f
+    }
+
+    public void AddScreenshake(float amount)
+    {
+        m_ScreenshakeAmount += amount;
+    }
+
+    private void UpdateScreenshake()
+    {
+        m_ScreenshakePosition.x = (Mathf.PerlinNoise(Time.time * 4.5f, 3) * m_ScreenshakeMaxPosition) * m_ScreenshakeAmount;
+        m_ScreenshakePosition.y = (Mathf.PerlinNoise(Time.time * 4.5f, 4) * m_ScreenshakeMaxPosition) * m_ScreenshakeAmount;
+        m_ScreenshakePosition.z = (Mathf.PerlinNoise(Time.time * 4.5f, 5) * m_ScreenshakeMaxPosition) * m_ScreenshakeAmount;
+
+        m_ScreenshakeRotation.x = (Mathf.PerlinNoise(Time.time * 3.5f, 6) * m_ScreenshakeMaxRotation) * m_ScreenshakeAmount;
+        m_ScreenshakeRotation.y = (Mathf.PerlinNoise(Time.time * 3.5f, 7) * m_ScreenshakeMaxRotation) * m_ScreenshakeAmount;
+        m_ScreenshakeRotation.z = (Mathf.PerlinNoise(Time.time * 3.5f, 8) * m_ScreenshakeMaxRotation) * m_ScreenshakeAmount;
+
+        m_ScreenshakeAmount = Mathf.Lerp(m_ScreenshakeAmount, 0, 3 * Time.deltaTime);
     }
 
     private float LerpInterpolation

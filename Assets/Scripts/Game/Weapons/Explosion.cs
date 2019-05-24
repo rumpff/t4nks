@@ -15,36 +15,34 @@ public class Explosion : MonoBehaviour
         m_Owner = owner;
         m_Properties = properties;
 
-        DamageNearbyPlayers();
+        ExplosionBehaviour();
 
         m_IsInitialized = true;
     }
 
-    private void DamageNearbyPlayers()
+    private void ExplosionBehaviour()
     {
         Collider[] explosionCollisions = Physics.OverlapSphere(transform.position, m_Properties.ExplosionRadius);
         List<Player> collidedPlayers = new List<Player>();
+        List<Explodable> collidedExplodables = new List<Explodable>();
         
         // Obtain all the players within the explosion radius
         for (int i = 0; i < explosionCollisions.Length; i++)
         {
+            // Check for players
             Player p = explosionCollisions[i].transform.root.GetComponent<Player>();
 
             // Check if the root has a player component
-            if (p == null)
-                continue;
+            // and check if we've already added this player to the list
+            if (p != null && !collidedPlayers.Contains(p))
+                collidedPlayers.Add(p);
 
-            // Check if we've already added this player to the list
-            if (collidedPlayers.Contains(p))
-                continue;
+            // Check for explodables
+            Explodable e = explosionCollisions[i].transform.root.GetComponent<Explodable>();
 
-            // Add the player to the list
-            collidedPlayers.Add(p);
+            if (e != null && !collidedExplodables.Contains(e))
+                collidedExplodables.Add(e);
         }
-
-        // Check if we've collided with any player
-        if (collidedPlayers.Count == 0)
-            return;
 
         // Calculate and apply all the effects to the players
         for (int i = 0; i < collidedPlayers.Count; i++)
@@ -53,7 +51,7 @@ public class Explosion : MonoBehaviour
 
             // Subtract health
             float playerDistance = Vector3.Distance(transform.position, p.transform.position);
-            float damageDropoff = (playerDistance / m_Properties.ExplosionRadius);
+            float damageDropoff = ((float)playerDistance / (float)m_Properties.ExplosionRadius);
             float damage = m_Properties.BaseDamage - (m_Properties.BaseDamage * damageDropoff);
 
             // Lower the damage if it is self-inflicted
@@ -61,10 +59,19 @@ public class Explosion : MonoBehaviour
                 damage /= 3;
 
             p.Health.DamagePlayer(damage);
-
-            // Add explosion force
-            p.Rigidbody.AddExplosionForce(m_Properties.ExplosionForce, transform.position, m_Properties.ExplosionRadius);
+            p.Camera.AddScreenshake(damageDropoff * 3.0f);
         }
+
+        for (int i = 0; i < collidedExplodables.Count; i++)
+        {
+            // Add explosion force
+            collidedExplodables[i].Rigidbody.AddExplosionForce(m_Properties.ExplosionForce, transform.position, m_Properties.ExplosionRadius);
+        }
+    }
+    
+    private void BlastObjects()
+    {
+
     }
 
     void Update()

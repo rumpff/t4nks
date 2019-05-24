@@ -6,7 +6,6 @@ using TMPro;
 
 public class PlayerUI : MonoBehaviour
 {
-    private Player m_Player;
     private int m_PlayerIndex;
     private GameManager m_GameManager;
     private Canvas m_Canvas;
@@ -23,8 +22,6 @@ public class PlayerUI : MonoBehaviour
     {
         m_GameManager = gameManger;
         m_PlayerIndex = playerIndex;
-
-        m_Player = m_GameManager.Players[playerIndex].Player;
 
         m_RectTransform = GetComponent<RectTransform>();
         m_Canvas = GetComponent<Canvas>();
@@ -68,7 +65,7 @@ public class PlayerUI : MonoBehaviour
 
     private void UpdateHealthbar()
     {
-        float f = m_Player.Health.Health / m_Player.Health.MaxHealth;
+        float f = m_GameManager.Players[m_PlayerIndex].Player.Health.Health / m_GameManager.Players[m_PlayerIndex].Player.Health.MaxHealth;
         float a = m_Healthbar.fillAmount;
 
         a = Mathf.Lerp(a, f, 12 * Time.deltaTime);
@@ -81,7 +78,7 @@ public class PlayerUI : MonoBehaviour
         float p = damageAmount / (maxHealth / 2);
 
         Color c = m_DamageOverlay.color;
-        c.a = p;
+        c.a += p;
 
         m_DamageOverlay.color = c;
     }

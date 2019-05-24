@@ -673,6 +673,7 @@ GameObject:
   - component: {fileID: 6182709735206841215}
   - component: {fileID: 6350327769385851268}
   - component: {fileID: 6350327769385851271}
+  - component: {fileID: -694682642238925460}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -715,7 +716,6 @@ MonoBehaviour:
   m_WheelFrontRight: {fileID: 6350327769519087493}
   m_WheelBackLeft: {fileID: 6350327768951854872}
   m_WheelBackRight: {fileID: 6350327767742564330}
-  m_TankProperties: {fileID: 11400000, guid: 40375e96c74cebc4daf353a6cd6a2054, type: 2}
 --- !u!114 &6182709735206841215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -762,6 +762,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 1
+--- !u!114 &-694682642238925460
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6350327769385851270}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ec0825c034c02745bd9d56204bf8279, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6350327769499092321
 GameObject:
   m_ObjectHideFlags: 0

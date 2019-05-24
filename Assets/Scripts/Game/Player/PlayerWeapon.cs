@@ -68,7 +68,7 @@ public class PlayerWeapon : MonoBehaviour
         {
             Quaternion projectileRotation = Quaternion.Euler(m_TankBarrel.eulerAngles.x, m_TankHead.eulerAngles.y, m_Player.transform.eulerAngles.z);
 
-            Projectile p = Instantiate(m_ProjectilePrefab, BarrelEnd, projectileRotation).GetComponent<Projectile>();
+            Projectile p = Instantiate(m_ProjectilePrefab, BarrelEnd.position, projectileRotation).GetComponent<Projectile>();
 
             p.Initalize(m_Player, m_EquippedWeapon, m_TankBarrel.forward);
 
@@ -97,7 +97,7 @@ public class PlayerWeapon : MonoBehaviour
     
     public Vector3 AimPosition()
     {
-        Ray ray = new Ray(BarrelEnd, m_TankBarrel.forward);
+        Ray ray = new Ray(BarrelEnd.position, m_TankBarrel.forward);
         bool hasHit = Physics.Raycast(ray, out RaycastHit hit, 256.0f);
 
         if (hasHit)
@@ -107,9 +107,9 @@ public class PlayerWeapon : MonoBehaviour
             return (m_TankBarrel.position + (m_TankBarrel.forward * 256.0f));
     }
 
-    public Vector3 BarrelEnd
+    public Transform BarrelEnd
     {
-        get { return m_BarrelEnd.position; }
+        get { return m_BarrelEnd; }
     }
 
     public Vector3 BarrelBegin

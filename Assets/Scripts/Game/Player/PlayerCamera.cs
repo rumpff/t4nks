@@ -1,10 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using SimpleEasing;
 
 public class PlayerCamera : MonoBehaviour
 {
+    public Vector3 floot;
+
     public enum CameraStates { following, zoomed }
+    private Dictionary<CameraStates, CameraValues> m_CameraValues;
+    private float m_CameraState = 0;
 
     private Camera m_Camera;
     private CameraProperties m_CameraProperties;
@@ -35,9 +40,6 @@ public class PlayerCamera : MonoBehaviour
 
     private Vector3 m_BumpOffset;
 
-    // The position of the camera
-    private Vector3 m_Position;
-
     // The player's thingz
     private Vector3 m_PlayerPos, m_PlayerHeadPos;
 
@@ -49,11 +51,6 @@ public class PlayerCamera : MonoBehaviour
     private Vector3 m_ScreenshakePosition;
     private Vector3 m_ScreenshakeRotation;
 
-    private void Awake()
-    {
-        CameraState = CameraStates.following;
-    }
-
     public void Initalize(int playerIndex, CameraProperties cameraProperties, Rect viewport, GameManager gameManager)
     {
         m_PlayerIndex = playerIndex;
@@ -62,10 +59,16 @@ public class PlayerCamera : MonoBehaviour
 
         m_Camera = GetComponent<Camera>();
         m_Camera.rect = viewport;
+
+        m_CameraValues = new Dictionary<CameraStates, CameraValues>();
+        m_CameraValues.Add(CameraStates.following, new CameraValues());
+        m_CameraValues.Add(CameraStates.zoomed, new CameraValues());
     }
 
     private void Update()
-    {   
+    {
+        m_CameraState = XboxCtrlrInput.XCI.GetAxis(XboxCtrlrInput.XboxAxis.LeftTrigger, XboxCtrlrInput.XboxController.First);
+
         UpdateScreenshake();
     }
 
@@ -76,25 +79,21 @@ public class PlayerCamera : MonoBehaviour
 
         m_BumpOffset = Vector3.Lerp(m_BumpOffset, Vector3.zero, LerpInterpolation);
 
-        /*
-        switch(CameraState)
-        {
-            case CameraStates.following:
-                UpdateFollowState();
-                break;
 
-            case CameraStates.zoomed:
-                UpdateZoomedState();
-                break;
-        }
-        */
+        UpdateFollowState();
+        UpdateZoomedState();
 
-        if (!Input.GetKey(KeyCode.Space))
-            UpdateFollowState();
-        else
-            UpdateZoomedState();
+        // Apply values
+        float t = Easing.easeInOutExpo(m_CameraState, 0, 1, 1);
 
-        // Apply effects
+        transform.position = CameraValues.Lerp(m_CameraValues[CameraStates.following], m_CameraValues[CameraStates.zoomed], t).Position;
+        transform.rotation = CameraValues.Lerp(m_CameraValues[CameraStates.following], m_CameraValues[CameraStates.zoomed], t).Rotation;
+        m_Camera.fieldOfView = CameraValues.Lerp(m_CameraValues[CameraStates.following], m_CameraValues[CameraStates.zoomed], t).FOV;
+
+        //transform.position = m_GameManager.Players[m_PlayerIndex].Player.transform.position;//m_CameraValues[CameraStates.zoomed].Position;
+        //transform.rotation = m_CameraValues[CameraStates.zoomed].Rotation;
+
+        // Apply post effects
         transform.position += m_BumpOffset;
 
         transform.position += m_ScreenshakePosition;
@@ -103,40 +102,41 @@ public class PlayerCamera : MonoBehaviour
 
     private void UpdateFollowState()
     {
+        CameraValues v = m_CameraValues[CameraStates.following];
+
         // Lerp the rotation
         m_ViewAngle = Mathf.LerpAngle(m_ViewAngle, m_angleDest + m_AimOffset.x, LerpInterpolation);
         m_HeightAngle = Mathf.LerpAngle(m_HeightAngle, m_BaseHeight + m_AimOffset.y, LerpInterpolation);
         m_Distance = Mathf.Lerp(m_Distance, m_BaseDistance, LerpInterpolation);
 
         // Calculate the final position
-        m_Position.x = m_PlayerPos.x + Mathf.Sin((m_ViewAngle - 180) * Mathf.Deg2Rad) * (Mathf.Cos(m_HeightAngle * Mathf.Deg2Rad) * m_Distance);
-        m_Position.y = m_PlayerPos.y + Mathf.Sin(m_HeightAngle * Mathf.Deg2Rad) * m_Distance;
-        m_Position.z = m_PlayerPos.z + Mathf.Cos((m_ViewAngle - 180) * Mathf.Deg2Rad) * (Mathf.Cos(m_HeightAngle * Mathf.Deg2Rad) * m_Distance);
-
-        // Apply the new values
-        transform.position = m_Position;
+        v.Position.x = m_PlayerPos.x + Mathf.Sin((m_ViewAngle - 180) * Mathf.Deg2Rad) * (Mathf.Cos(m_HeightAngle * Mathf.Deg2Rad) * m_Distance);
+        v.Position.y = m_PlayerPos.y + Mathf.Sin(m_HeightAngle * Mathf.Deg2Rad) * m_Distance;
+        v.Position.z = m_PlayerPos.z + Mathf.Cos((m_ViewAngle - 180) * Mathf.Deg2Rad) * (Mathf.Cos(m_HeightAngle * Mathf.Deg2Rad) * m_Distance);
 
         if (m_GameManager.Players[m_PlayerIndex].Player != null)
-            transform.LookAt(m_GameManager.Players[m_PlayerIndex].Player.transform);
+            v.Rotation = Quaternion.LookRotation(m_GameManager.Players[m_PlayerIndex].Player.transform.position - transform.position);
+
+        // Hardcode fov
+        v.FOV = 90;
+
+        m_CameraValues[CameraStates.following] = v;
     }
 
     private void UpdateZoomedState()
     {
-        // Lerp the rotation
-        m_ViewAngle = Mathf.LerpAngle(m_ViewAngle, -(m_angleDest + m_AimOffset.x), LerpInterpolation);
-        m_HeightAngle = Mathf.LerpAngle(m_HeightAngle, 0.0f, LerpInterpolation);
-        m_Distance = Mathf.Lerp(m_Distance, 0.0f, LerpInterpolation);
+        CameraValues v = m_CameraValues[CameraStates.zoomed];
 
         // Calculate the final position
-        m_Position.x = m_PlayerHeadPos.x + Mathf.Sin((m_ViewAngle - 180) * Mathf.Deg2Rad) * (Mathf.Cos(m_HeightAngle * Mathf.Deg2Rad) * m_Distance);
-        m_Position.y = m_PlayerHeadPos.y + Mathf.Sin(m_HeightAngle * Mathf.Deg2Rad) * m_Distance;
-        m_Position.z = m_PlayerHeadPos.z + Mathf.Cos((m_ViewAngle - 180) * Mathf.Deg2Rad) * (Mathf.Cos(m_HeightAngle * Mathf.Deg2Rad) * m_Distance);
-
-        // Apply the new values
-        transform.position = m_Position;
+        v.Position = m_PlayerHeadPos;
 
         if (m_GameManager.Players[m_PlayerIndex].Player != null)
-            transform.LookAt(m_GameManager.Players[m_PlayerIndex].Player.Weapon.BarrelEnd);
+            v.Rotation = Quaternion.LookRotation(m_GameManager.Players[m_PlayerIndex].Player.Weapon.BarrelEnd.forward);
+
+        // Hardcode fov
+        v.FOV = 60;
+
+        m_CameraValues[CameraStates.zoomed] = v;
     }
 
     private void UpdateVariables()
@@ -144,12 +144,9 @@ public class PlayerCamera : MonoBehaviour
         if (m_GameManager.Players[m_PlayerIndex].Player == null)
             return;
 
-        m_Position = transform.position;
-
         m_PlayerPos = m_GameManager.Players[m_PlayerIndex].Player.transform.position;
 
         m_PlayerHeadPos = m_GameManager.Players[m_PlayerIndex].Player.Weapon.BarrelBegin;
-        m_PlayerHeadPos.y += 0.5f;
 
         // Only update the angle when the player is on the ground
         if (m_GameManager.Players[m_PlayerIndex].Player.IsOnGround())
@@ -194,6 +191,22 @@ public class PlayerCamera : MonoBehaviour
     {
         get { return m_Camera; }
     }
+}
 
-    public CameraStates CameraState { get; set; }
+public struct CameraValues
+{
+    public Vector3 Position;
+    public Quaternion Rotation;
+    public float FOV;
+
+    public static CameraValues Lerp(CameraValues a, CameraValues b, float t)
+    {
+        CameraValues o = new CameraValues();
+
+        o.Position = Vector3.Lerp(a.Position, b.Position, t);
+        o.Rotation = Quaternion.Lerp(a.Rotation, b.Rotation, t);
+        o.FOV = Mathf.Lerp(a.FOV, b.FOV, t);
+
+        return o;
+    }
 }

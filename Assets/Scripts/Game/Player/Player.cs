@@ -180,7 +180,7 @@ public class Player : MonoBehaviour
 
     private void CameraThing()
     {
-        Camera.CameraState = XCI.GetButton(XboxButton.X, Controller) ? PlayerCamera.CameraStates.zoomed : PlayerCamera.CameraStates.following;
+        //Camera.CameraState = XCI.GetButton(XboxButton.X, Controller) ? PlayerCamera.CameraStates.zoomed : PlayerCamera.CameraStates.following;
     }
 
     private void TimerThing()

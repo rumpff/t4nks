@@ -89,7 +89,7 @@ public class Player : MonoBehaviour
         TimerThing();
 
         if (XCI.GetButton(XboxButton.Y, m_Controller))
-            Health.DamagePlayer(1);
+            Health.DamagePlayer(5);
     }
 
     private void FixedUpdate()
@@ -176,6 +176,11 @@ public class Player : MonoBehaviour
 
             m_JumpsLeft--;
         }
+    }
+
+    private void CameraThing()
+    {
+        Camera.CameraState = XCI.GetButton(XboxButton.X, Controller) ? PlayerCamera.CameraStates.zoomed : PlayerCamera.CameraStates.following;
     }
 
     private void TimerThing()

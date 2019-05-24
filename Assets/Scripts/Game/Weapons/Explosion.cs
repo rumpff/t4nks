@@ -59,7 +59,7 @@ public class Explosion : MonoBehaviour
                 damage /= 3;
 
             p.Health.DamagePlayer(damage);
-            p.Camera.AddScreenshake(damageDropoff * 3.0f);
+            p.Camera.AddScreenshake(3.0f - (3.0f * damageDropoff));
         }
 
         for (int i = 0; i < collidedExplodables.Count; i++)

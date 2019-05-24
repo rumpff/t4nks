@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerCamera : MonoBehaviour
 {
+    public enum CameraStates { following, zoomed }
 
     private Camera m_Camera;
     private CameraProperties m_CameraProperties;
@@ -38,7 +39,7 @@ public class PlayerCamera : MonoBehaviour
     private Vector3 m_Position;
 
     // The player's thingz
-    private Vector3 m_PlayerPos;
+    private Vector3 m_PlayerPos, m_PlayerHeadPos;
 
     // Screenshake
     private readonly float m_ScreenshakeMaxPosition = 2;
@@ -47,6 +48,11 @@ public class PlayerCamera : MonoBehaviour
     private float m_ScreenshakeAmount;
     private Vector3 m_ScreenshakePosition;
     private Vector3 m_ScreenshakeRotation;
+
+    private void Awake()
+    {
+        CameraState = CameraStates.following;
+    }
 
     public void Initalize(int playerIndex, CameraProperties cameraProperties, Rect viewport, GameManager gameManager)
     {
@@ -59,10 +65,7 @@ public class PlayerCamera : MonoBehaviour
     }
 
     private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-            AddScreenshake(1);
-
+    {   
         UpdateScreenshake();
     }
 
@@ -70,29 +73,70 @@ public class PlayerCamera : MonoBehaviour
     {
         UpdateVariables();
 
+
+        m_BumpOffset = Vector3.Lerp(m_BumpOffset, Vector3.zero, LerpInterpolation);
+
+        /*
+        switch(CameraState)
+        {
+            case CameraStates.following:
+                UpdateFollowState();
+                break;
+
+            case CameraStates.zoomed:
+                UpdateZoomedState();
+                break;
+        }
+        */
+
+        if (!Input.GetKey(KeyCode.Space))
+            UpdateFollowState();
+        else
+            UpdateZoomedState();
+
+        // Apply effects
+        transform.position += m_BumpOffset;
+
+        transform.position += m_ScreenshakePosition;
+        transform.rotation = Quaternion.Euler(transform.eulerAngles + m_ScreenshakeRotation);
+    }
+
+    private void UpdateFollowState()
+    {
         // Lerp the rotation
         m_ViewAngle = Mathf.LerpAngle(m_ViewAngle, m_angleDest + m_AimOffset.x, LerpInterpolation);
         m_HeightAngle = Mathf.LerpAngle(m_HeightAngle, m_BaseHeight + m_AimOffset.y, LerpInterpolation);
-        m_Distance = m_BaseDistance;
-
-        m_BumpOffset = Vector3.Lerp(m_BumpOffset, Vector3.zero, LerpInterpolation);
+        m_Distance = Mathf.Lerp(m_Distance, m_BaseDistance, LerpInterpolation);
 
         // Calculate the final position
         m_Position.x = m_PlayerPos.x + Mathf.Sin((m_ViewAngle - 180) * Mathf.Deg2Rad) * (Mathf.Cos(m_HeightAngle * Mathf.Deg2Rad) * m_Distance);
         m_Position.y = m_PlayerPos.y + Mathf.Sin(m_HeightAngle * Mathf.Deg2Rad) * m_Distance;
         m_Position.z = m_PlayerPos.z + Mathf.Cos((m_ViewAngle - 180) * Mathf.Deg2Rad) * (Mathf.Cos(m_HeightAngle * Mathf.Deg2Rad) * m_Distance);
 
-        m_Position += m_BumpOffset;
+        // Apply the new values
+        transform.position = m_Position;
+
+        if (m_GameManager.Players[m_PlayerIndex].Player != null)
+            transform.LookAt(m_GameManager.Players[m_PlayerIndex].Player.transform);
+    }
+
+    private void UpdateZoomedState()
+    {
+        // Lerp the rotation
+        m_ViewAngle = Mathf.LerpAngle(m_ViewAngle, -(m_angleDest + m_AimOffset.x), LerpInterpolation);
+        m_HeightAngle = Mathf.LerpAngle(m_HeightAngle, 0.0f, LerpInterpolation);
+        m_Distance = Mathf.Lerp(m_Distance, 0.0f, LerpInterpolation);
+
+        // Calculate the final position
+        m_Position.x = m_PlayerHeadPos.x + Mathf.Sin((m_ViewAngle - 180) * Mathf.Deg2Rad) * (Mathf.Cos(m_HeightAngle * Mathf.Deg2Rad) * m_Distance);
+        m_Position.y = m_PlayerHeadPos.y + Mathf.Sin(m_HeightAngle * Mathf.Deg2Rad) * m_Distance;
+        m_Position.z = m_PlayerHeadPos.z + Mathf.Cos((m_ViewAngle - 180) * Mathf.Deg2Rad) * (Mathf.Cos(m_HeightAngle * Mathf.Deg2Rad) * m_Distance);
 
         // Apply the new values
         transform.position = m_Position;
 
-        if(m_GameManager.Players[m_PlayerIndex].Player != null)
-            transform.LookAt(m_GameManager.Players[m_PlayerIndex].Player.transform);
-
-        // Apply screenshake effects
-        transform.position += m_ScreenshakePosition;
-        transform.rotation = Quaternion.Euler(transform.eulerAngles + m_ScreenshakeRotation);
+        if (m_GameManager.Players[m_PlayerIndex].Player != null)
+            transform.LookAt(m_GameManager.Players[m_PlayerIndex].Player.Weapon.BarrelEnd);
     }
 
     private void UpdateVariables()
@@ -103,6 +147,9 @@ public class PlayerCamera : MonoBehaviour
         m_Position = transform.position;
 
         m_PlayerPos = m_GameManager.Players[m_PlayerIndex].Player.transform.position;
+
+        m_PlayerHeadPos = m_GameManager.Players[m_PlayerIndex].Player.Weapon.BarrelBegin;
+        m_PlayerHeadPos.y += 0.5f;
 
         // Only update the angle when the player is on the ground
         if (m_GameManager.Players[m_PlayerIndex].Player.IsOnGround())
@@ -115,6 +162,7 @@ public class PlayerCamera : MonoBehaviour
 
     public void AddScreenshake(float amount)
     {
+        Debug.Log("screenshake += " + amount);
         m_ScreenshakeAmount += amount;
     }
 
@@ -146,4 +194,6 @@ public class PlayerCamera : MonoBehaviour
     {
         get { return m_Camera; }
     }
+
+    public CameraStates CameraState { get; set; }
 }

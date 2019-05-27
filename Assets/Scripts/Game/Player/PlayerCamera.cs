@@ -88,7 +88,7 @@ public class PlayerCamera : MonoBehaviour
             UpdateZoomedState();
 
             // Apply values
-            float t = Easing.easeInExpo(m_CameraState, 0, 1, 1);
+            float t = Easing.easeInOutQuint(m_CameraState, 0, 1, 1);
 
             transform.position = CameraValues.Lerp(m_CameraValues[CameraStates.following], m_CameraValues[CameraStates.zoomed], t).Position;
             transform.rotation = CameraValues.Lerp(m_CameraValues[CameraStates.following], m_CameraValues[CameraStates.zoomed], t).Rotation;

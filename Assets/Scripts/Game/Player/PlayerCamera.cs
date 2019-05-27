@@ -178,7 +178,6 @@ public class PlayerCamera : MonoBehaviour
 
     public void AddScreenshake(float amount)
     {
-        Debug.Log("screenshake += " + amount);
         m_ScreenshakeAmount += amount;
     }
 

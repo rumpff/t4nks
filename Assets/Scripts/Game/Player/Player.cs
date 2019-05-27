@@ -216,7 +216,6 @@ public class Player : MonoBehaviour
 
     private void ExplodeTank()
     {
-        Debug.Log("boem");
         MeshFilter[] meshes = GetComponentsInChildren<MeshFilter>();
         List<GameObject> debris = new List<GameObject>();
 

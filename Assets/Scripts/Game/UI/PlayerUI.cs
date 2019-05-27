@@ -29,6 +29,8 @@ public class PlayerUI : MonoBehaviour
         m_Canvas.renderMode = RenderMode.ScreenSpaceCamera;
         m_Canvas.worldCamera = m_GameManager.Players[m_PlayerIndex].Camera.Camera;
         m_Canvas.planeDistance = 0.15f;
+
+        SetDamageOverlay(0.0f);
     }
 
     private void Update()
@@ -54,6 +56,14 @@ public class PlayerUI : MonoBehaviour
          ((viewportPosition.y * m_RectTransform.sizeDelta.y) - (m_RectTransform.sizeDelta.y * 0.5f)));
 
         m_Rectile.anchoredPosition = canvasPosition;
+    }
+
+    private void SetDamageOverlay(float alpha)
+    {
+        Color c = m_DamageOverlay.color;
+        c.a = alpha;
+
+        m_DamageOverlay.color = c;
     }
 
     private void UpdateDamageOverlay()

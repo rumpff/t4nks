@@ -28,4 +28,42 @@ public class SpawnLocations : MonoBehaviour
 
         return Locations[index];
     }
+
+    /// <summary>
+    /// Returns the location that's the furthest away from players
+    /// </summary>
+    /// <returns></returns>
+    public Vector3 FurthestLocation(List<Vector3> playerLocations)
+    {
+        if (playerLocations == null || playerLocations.Count == 0)
+            return RandomLocation();
+
+        Vector3 location = Vector3.zero;
+        float furthestDistance = 0.0f;
+
+        for (int l = 0; l < Locations.Count; l++)
+        {
+            float closestDistance = Mathf.Infinity;
+
+            for (int p = 0; p < playerLocations.Count; p++)
+            {
+                float distance = Vector3.Distance(Locations[l], playerLocations[p]);
+
+                if (distance < closestDistance)
+                    closestDistance = distance;
+            }
+
+            if(closestDistance > furthestDistance)
+            {
+                furthestDistance = closestDistance;
+                location = Locations[l];
+            }
+        }
+
+        // Check if nothing has changed
+        if (location == Vector3.zero)
+            return RandomLocation();
+
+        return location;
+    }
 }

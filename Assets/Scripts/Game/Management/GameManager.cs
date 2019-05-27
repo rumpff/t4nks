@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using XboxCtrlrInput;
 
@@ -82,7 +83,17 @@ public class GameManager : MonoBehaviour
         Vector3 pos = new Vector3();
         Vector3 rot = new Vector3();
 
-        pos = m_SpawnLocations.RandomLocation();
+        List<Vector3> playerPositions = new List<Vector3>();
+
+        for (int i = 0; i < Players.Length; i++)
+        {
+            if (Players[i].Player == null)
+                continue;
+
+            playerPositions.Add(Players[i].Player.transform.position);
+        }
+
+        pos = m_SpawnLocations.FurthestLocation(playerPositions);
         rot.y = Random.Range(0.0f, 360.0f);
 
         GameObject pObject = Instantiate(m_PlayerPrefab, pos, Quaternion.Euler(rot));

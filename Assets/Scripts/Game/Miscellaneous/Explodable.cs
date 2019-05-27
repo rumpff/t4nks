@@ -5,7 +5,7 @@ using UnityEngine;
 public class Explodable : MonoBehaviour
 {
     public Rigidbody Rigidbody { get; private set; }
-    private void Start()
+    private void Awake()
     {
         Rigidbody = GetComponent<Rigidbody>();
     }

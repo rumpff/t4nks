@@ -12,8 +12,15 @@ public class Explosion : MonoBehaviour
 
     public void Initalize(Player owner, ExplosionProperties properties)
     {
+        if (properties == null)
+        {
+            Debug.LogError("Null reference explosion properties");
+            Destroy(gameObject);
+        }           
+
         m_Owner = owner;
         m_Properties = properties;
+
 
         ExplosionBehaviour();
 
@@ -25,8 +32,8 @@ public class Explosion : MonoBehaviour
         Collider[] explosionCollisions = Physics.OverlapSphere(transform.position, m_Properties.ExplosionRadius);
         List<Player> collidedPlayers = new List<Player>();
         List<Explodable> collidedExplodables = new List<Explodable>();
-        
-        // Obtain all the players within the explosion radius
+
+        // Obtain all the explodables within the explosion radius
         for (int i = 0; i < explosionCollisions.Length; i++)
         {
             // Check for players

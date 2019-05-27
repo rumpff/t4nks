@@ -23,3 +23,5 @@ MonoBehaviour:
   AirControl: 60000
   ExplosionPrefab: {fileID: 311277447111648344, guid: 1b5def60f5ac74a429640f7002ee573e,
     type: 3}
+  DestroyExplosionProperties: {fileID: 11400000, guid: a99dd22dd5aceed4e9b9eee3fa9aef98,
+    type: 2}

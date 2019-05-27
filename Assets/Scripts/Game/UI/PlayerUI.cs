@@ -28,6 +28,7 @@ public class PlayerUI : MonoBehaviour
 
         m_Canvas.renderMode = RenderMode.ScreenSpaceCamera;
         m_Canvas.worldCamera = m_GameManager.Players[m_PlayerIndex].Camera.Camera;
+        m_Canvas.planeDistance = 0.15f;
     }
 
     private void Update()

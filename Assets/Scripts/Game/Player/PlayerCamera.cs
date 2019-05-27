@@ -63,41 +63,43 @@ public class PlayerCamera : MonoBehaviour
         m_CameraValues = new Dictionary<CameraStates, CameraValues>();
         m_CameraValues.Add(CameraStates.following, new CameraValues());
         m_CameraValues.Add(CameraStates.zoomed, new CameraValues());
+
+        StartCoroutine(CameraUpdate());
     }
 
     private void Update()
     {
-        m_CameraState = XboxCtrlrInput.XCI.GetAxis(XboxCtrlrInput.XboxAxis.LeftTrigger, XboxCtrlrInput.XboxController.First);
+        int state = XboxCtrlrInput.XCI.GetAxis(XboxCtrlrInput.XboxAxis.LeftTrigger, XboxCtrlrInput.XboxController.First) > 0.4f ? 1 : -1;
+        m_CameraState += state * Time.deltaTime * 1.5f;
+        m_CameraState = Mathf.Clamp01(m_CameraState);
 
-        UpdateScreenshake();
+        UpdatePostEffects();
     }
 
-    private void FixedUpdate()
+    private IEnumerator CameraUpdate()
     {
-        UpdateVariables();
+        while(true)
+        {
+            yield return new WaitForFixedUpdate();
 
+            UpdateVariables();
 
-        m_BumpOffset = Vector3.Lerp(m_BumpOffset, Vector3.zero, LerpInterpolation);
+            UpdateFollowState();
+            UpdateZoomedState();
 
+            // Apply values
+            float t = Easing.easeInOutQuint(m_CameraState, 0, 1, 1);
 
-        UpdateFollowState();
-        UpdateZoomedState();
+            transform.position = CameraValues.Lerp(m_CameraValues[CameraStates.following], m_CameraValues[CameraStates.zoomed], t).Position;
+            transform.rotation = CameraValues.Lerp(m_CameraValues[CameraStates.following], m_CameraValues[CameraStates.zoomed], t).Rotation;
+            m_Camera.fieldOfView = CameraValues.Lerp(m_CameraValues[CameraStates.following], m_CameraValues[CameraStates.zoomed], t).FOV;
 
-        // Apply values
-        float t = Easing.easeInOutExpo(m_CameraState, 0, 1, 1);
+            // Apply post effects
+            transform.position += m_BumpOffset;
 
-        transform.position = CameraValues.Lerp(m_CameraValues[CameraStates.following], m_CameraValues[CameraStates.zoomed], t).Position;
-        transform.rotation = CameraValues.Lerp(m_CameraValues[CameraStates.following], m_CameraValues[CameraStates.zoomed], t).Rotation;
-        m_Camera.fieldOfView = CameraValues.Lerp(m_CameraValues[CameraStates.following], m_CameraValues[CameraStates.zoomed], t).FOV;
-
-        //transform.position = m_GameManager.Players[m_PlayerIndex].Player.transform.position;//m_CameraValues[CameraStates.zoomed].Position;
-        //transform.rotation = m_CameraValues[CameraStates.zoomed].Rotation;
-
-        // Apply post effects
-        transform.position += m_BumpOffset;
-
-        transform.position += m_ScreenshakePosition;
-        transform.rotation = Quaternion.Euler(transform.eulerAngles + m_ScreenshakeRotation);
+            transform.position += m_ScreenshakePosition;
+            transform.rotation = Quaternion.Euler(transform.eulerAngles + m_ScreenshakeRotation);           
+        }
     }
 
     private void UpdateFollowState()
@@ -134,9 +136,26 @@ public class PlayerCamera : MonoBehaviour
             v.Rotation = Quaternion.LookRotation(m_GameManager.Players[m_PlayerIndex].Player.Weapon.BarrelEnd.forward);
 
         // Hardcode fov
-        v.FOV = 60;
+        v.FOV = 55;
 
         m_CameraValues[CameraStates.zoomed] = v;
+    }
+
+    private void UpdatePostEffects()
+    {
+        // Shoot bump
+        m_BumpOffset = Vector3.Lerp(m_BumpOffset, Vector3.zero, LerpInterpolation);
+
+        // Screenshake
+        m_ScreenshakePosition.x = (Mathf.PerlinNoise(Time.time * 4.5f, 3) * m_ScreenshakeMaxPosition) * m_ScreenshakeAmount;
+        m_ScreenshakePosition.y = (Mathf.PerlinNoise(Time.time * 4.5f, 4) * m_ScreenshakeMaxPosition) * m_ScreenshakeAmount;
+        m_ScreenshakePosition.z = (Mathf.PerlinNoise(Time.time * 4.5f, 5) * m_ScreenshakeMaxPosition) * m_ScreenshakeAmount;
+
+        m_ScreenshakeRotation.x = (Mathf.PerlinNoise(Time.time * 3.5f, 6) * m_ScreenshakeMaxRotation) * m_ScreenshakeAmount;
+        m_ScreenshakeRotation.y = (Mathf.PerlinNoise(Time.time * 3.5f, 7) * m_ScreenshakeMaxRotation) * m_ScreenshakeAmount;
+        m_ScreenshakeRotation.z = (Mathf.PerlinNoise(Time.time * 3.5f, 8) * m_ScreenshakeMaxRotation) * m_ScreenshakeAmount;
+
+        m_ScreenshakeAmount = Mathf.Lerp(m_ScreenshakeAmount, 0, 3 * Time.deltaTime);
     }
 
     private void UpdateVariables()
@@ -161,19 +180,6 @@ public class PlayerCamera : MonoBehaviour
     {
         Debug.Log("screenshake += " + amount);
         m_ScreenshakeAmount += amount;
-    }
-
-    private void UpdateScreenshake()
-    {
-        m_ScreenshakePosition.x = (Mathf.PerlinNoise(Time.time * 4.5f, 3) * m_ScreenshakeMaxPosition) * m_ScreenshakeAmount;
-        m_ScreenshakePosition.y = (Mathf.PerlinNoise(Time.time * 4.5f, 4) * m_ScreenshakeMaxPosition) * m_ScreenshakeAmount;
-        m_ScreenshakePosition.z = (Mathf.PerlinNoise(Time.time * 4.5f, 5) * m_ScreenshakeMaxPosition) * m_ScreenshakeAmount;
-
-        m_ScreenshakeRotation.x = (Mathf.PerlinNoise(Time.time * 3.5f, 6) * m_ScreenshakeMaxRotation) * m_ScreenshakeAmount;
-        m_ScreenshakeRotation.y = (Mathf.PerlinNoise(Time.time * 3.5f, 7) * m_ScreenshakeMaxRotation) * m_ScreenshakeAmount;
-        m_ScreenshakeRotation.z = (Mathf.PerlinNoise(Time.time * 3.5f, 8) * m_ScreenshakeMaxRotation) * m_ScreenshakeAmount;
-
-        m_ScreenshakeAmount = Mathf.Lerp(m_ScreenshakeAmount, 0, 3 * Time.deltaTime);
     }
 
     private float LerpInterpolation

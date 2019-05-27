@@ -28,6 +28,10 @@ public class PlayerHealth : MonoBehaviour
         if (damageAmount <= 0)
             return;
 
+        // The player get's damage of its own explosion wich results in an endless loop
+        if (Health <= 0)
+            return;
+
         // Do special things only when damaged
         AddHealth(-damageAmount);
 

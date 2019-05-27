@@ -4751,7 +4751,7 @@ ParticleSystem:
 --- !u!199 &473313571313429516
 ParticleSystemRenderer:
   serializedVersion: 6
-  m_ObjectHideFlags: 2
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -4819,6 +4819,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 307388938912937656}
+  - component: {fileID: 3992998324779127718}
   - component: {fileID: 474886763267771670}
   - component: {fileID: 473147502712062356}
   m_Layer: 0
@@ -4845,6 +4846,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+--- !u!114 &3992998324779127718
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 311277447111648344}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef3e375307dad344b87f14a5dab725cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!198 &474886763267771670
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -9591,7 +9604,7 @@ ParticleSystem:
 --- !u!199 &473147502712062356
 ParticleSystemRenderer:
   serializedVersion: 6
-  m_ObjectHideFlags: 2
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -14401,7 +14414,7 @@ ParticleSystem:
 --- !u!199 &472926235827488646
 ParticleSystemRenderer:
   serializedVersion: 6
-  m_ObjectHideFlags: 2
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -19121,7 +19134,7 @@ ParticleSystem:
 --- !u!199 &472921252496384342
 ParticleSystemRenderer:
   serializedVersion: 6
-  m_ObjectHideFlags: 2
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}

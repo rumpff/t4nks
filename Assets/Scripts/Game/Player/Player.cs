@@ -220,12 +220,9 @@ public class Player : MonoBehaviour
         MeshFilter[] meshes = GetComponentsInChildren<MeshFilter>();
         List<GameObject> debris = new List<GameObject>();
 
-        Vector3 tankVelocity = Rigidbody.velocity;
-
         // Copy the tank in loose parts
         for (int i = 0; i < meshes.Length; i++)
         {
-            Debug.Log("maak nieuw blokke");
             GameObject o = new GameObject(("Player" + m_PlayerIndex + "debris part"));
 
             o.transform.position = meshes[i].transform.position;
@@ -239,16 +236,18 @@ public class Player : MonoBehaviour
             Rigidbody rb = o.AddComponent<Rigidbody>();
             o.AddComponent<Explodable>();
 
-            rb.mass = 3000;
-            rb.velocity = tankVelocity;
-            rb.AddExplosionForce(4000000, transform.position, 10);
+            rb.mass = 1200;
+            rb.velocity = Rigidbody.velocity;
+            rb.angularVelocity = Rigidbody.angularVelocity;
+            //rb.AddExplosionForce(1000000, transform.position, 10);
 
             debris.Add(o);
         }
 
         // Create the explosion
-        GameObject e = Instantiate(m_TankProperties.ExplosionPrefab);
+        Explosion e = Instantiate(m_TankProperties.ExplosionPrefab).GetComponent<Explosion>();
         e.transform.position = transform.position;
+        e.Initalize(this, m_TankProperties.DestroyExplosionProperties);
     }
 
     private void OnDeath()

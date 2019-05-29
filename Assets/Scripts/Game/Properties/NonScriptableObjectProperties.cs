@@ -4,9 +4,19 @@ using UnityEngine;
 
 public struct HitProperties
 {
+    public bool Valid;
+
     public int AttackerPlayerIndex;
     public int HitPlayerIndex;
     public float TravelDistance;
+
+    public HitProperties(bool valid)
+    {
+        Valid = valid;
+        AttackerPlayerIndex = -1;
+        HitPlayerIndex = -1;
+        TravelDistance = -1;
+    }
 }
 
 public struct GamePlayer
@@ -38,4 +48,15 @@ public struct GamePlayer
 public enum PlayerState
 {
     Alive, Destroyed
+};
+public enum StatTypes
+{
+    Jump,
+    Death,
+    Kill,
+    SelfKill,
+    DamageDealt,
+    DamageRecieved,
+    SelfDamage,
+    LongHit,
 };

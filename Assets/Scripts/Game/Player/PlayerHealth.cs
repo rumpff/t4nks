@@ -7,9 +7,12 @@ public class PlayerHealth : MonoBehaviour
     private float m_MaxHealth;
 
     public delegate void Damage(float damage);
+    public delegate void Death(Player killer);
 
     public event Damage DamageEvent;
-    public event Action DeathEvent;
+    public event Death DeathEvent;
+
+    private Player RecentDamager;
 
     public void InitalizeHealth(float maxHealth)
     {
@@ -23,7 +26,7 @@ public class PlayerHealth : MonoBehaviour
         CheckHealth();
     }
 
-    public void DamagePlayer(float damageAmount)
+    public void DamagePlayer(float damageAmount, Player damager)
     {
         if (damageAmount <= 0)
             return;
@@ -32,8 +35,8 @@ public class PlayerHealth : MonoBehaviour
         if (Health <= 0)
             return;
 
-        // Do special things only when damaged
         AddHealth(-damageAmount);
+        RecentDamager = damager;
 
         if (DamageEvent != null)
             DamageEvent.Invoke(damageAmount);
@@ -56,7 +59,9 @@ public class PlayerHealth : MonoBehaviour
     protected virtual void OnDeath()
     {
         if (DeathEvent != null)
-            DeathEvent.Invoke();
+            DeathEvent.Invoke(RecentDamager);
+
+        // Add the kill stat
 
         // Since we destroy this instance we remove all subscribers
         DeathEvent = null;

@@ -6,21 +6,22 @@ public class Explosion : MonoBehaviour
 {
     private Player m_Owner;
     private ExplosionProperties m_Properties;
+    private HitProperties m_HitProperties;
     private bool m_IsInitialized = false;
 
     private float m_LifeTime = 0;
 
-    public void Initalize(Player owner, ExplosionProperties properties)
+    public void Initalize(Player owner, ExplosionProperties eProperties, HitProperties hProperties)
     {
-        if (properties == null)
+        if (eProperties == null)
         {
             Debug.LogError("Null reference explosion properties");
             Destroy(gameObject);
         }           
 
         m_Owner = owner;
-        m_Properties = properties;
-
+        m_Properties = eProperties;
+        m_HitProperties = hProperties;
 
         ExplosionBehaviour();
 
@@ -62,10 +63,24 @@ public class Explosion : MonoBehaviour
             float damage = m_Properties.BaseDamage - (m_Properties.BaseDamage * damageDropoff);
 
             // Lower the damage if it is self-inflicted
-            if (p == m_Owner)
-                damage /= 3;
+            if(damage > 0)
+            {
+                if (p == m_Owner)
+                {
+                    damage /= 3;
+                    GameManager.I.AddToStat(m_Owner.Index, StatTypes.SelfDamage, damage);
+                }
+                else
+                {
+                    // Add damage to stats
+                    GameManager.I.AddToStat(m_Owner.Index, StatTypes.DamageDealt, damage);
+                    GameManager.I.AddToStat(p.Index, StatTypes.DamageRecieved, damage);
+                    GameManager.I.AddScore(m_Owner.Index, damage * GameManager.I.Rules.ScorePerDamageMultiplier, "damage");
+                }
 
-            p.Health.DamagePlayer(damage);
+                p.Health.DamagePlayer(damage, m_Owner);
+            }               
+
             p.Camera.AddScreenshake(3.0f - (3.0f * damageDropoff));
         }
 
@@ -74,11 +89,15 @@ public class Explosion : MonoBehaviour
             // Add explosion force
             collidedExplodables[i].Rigidbody.AddExplosionForce(m_Properties.ExplosionForce, transform.position, m_Properties.ExplosionRadius);
         }
-    }
-    
-    private void BlastObjects()
-    {
 
+        // Stats
+        if(collidedPlayers.Count > 0)
+        {
+            if(m_HitProperties.TravelDistance >= GameManager.I.Rules.LonghitThreshold)
+            {
+                GameManager.I.AddScore(m_Owner.Index, StatTypes.LongHit);
+            }
+        }
     }
 
     void Update()

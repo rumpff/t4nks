@@ -12,7 +12,7 @@ public class Player : MonoBehaviour
 
     private GameManager m_GameManager;
 
-    public delegate void Destroyed(int playerId);
+    public delegate void Destroyed(int playerId, Player Destroyer);
     public event Destroyed DestroyedEvent;
 
     private int m_PlayerIndex;
@@ -89,7 +89,7 @@ public class Player : MonoBehaviour
         TimerThing();
 
         if (XCI.GetButton(XboxButton.Y, m_Controller))
-            Health.DamagePlayer(5);
+            Health.DamagePlayer(5, this);
     }
 
     private void FixedUpdate()
@@ -178,11 +178,6 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void CameraThing()
-    {
-        //Camera.CameraState = XCI.GetButton(XboxButton.X, Controller) ? PlayerCamera.CameraStates.zoomed : PlayerCamera.CameraStates.following;
-    }
-
     private void TimerThing()
     {
         // Jumping
@@ -238,7 +233,6 @@ public class Player : MonoBehaviour
             rb.mass = 1200;
             rb.velocity = Rigidbody.velocity;
             rb.angularVelocity = Rigidbody.angularVelocity;
-            //rb.AddExplosionForce(1000000, transform.position, 10);
 
             debris.Add(o);
         }
@@ -246,13 +240,13 @@ public class Player : MonoBehaviour
         // Create the explosion
         Explosion e = Instantiate(m_TankProperties.ExplosionPrefab).GetComponent<Explosion>();
         e.transform.position = transform.position;
-        e.Initalize(this, m_TankProperties.DestroyExplosionProperties);
+        e.Initalize(this, m_TankProperties.DestroyExplosionProperties, new HitProperties(false));
     }
 
-    private void OnDeath()
+    private void OnDeath(Player damager)
     {
         if (DestroyedEvent != null)
-            DestroyedEvent.Invoke(m_PlayerIndex);
+            DestroyedEvent.Invoke(m_PlayerIndex, damager);
 
         DestroyedEvent = null;
 

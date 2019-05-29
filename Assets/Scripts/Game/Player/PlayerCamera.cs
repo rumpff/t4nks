@@ -61,8 +61,8 @@ public class PlayerCamera : MonoBehaviour
         m_Camera.rect = viewport;
 
         m_CameraValues = new Dictionary<CameraStates, CameraValues>();
-        m_CameraValues.Add(CameraStates.following, new CameraValues());
-        m_CameraValues.Add(CameraStates.zoomed, new CameraValues());
+        m_CameraValues.Add(CameraStates.following, new CameraValues(90.0f));
+        m_CameraValues.Add(CameraStates.zoomed, new CameraValues(55.0f));
 
         StartCoroutine(CameraUpdate());
     }
@@ -119,9 +119,6 @@ public class PlayerCamera : MonoBehaviour
         if (m_GameManager.Players[m_PlayerIndex].Player != null)
             v.Rotation = Quaternion.LookRotation(m_GameManager.Players[m_PlayerIndex].Player.transform.position - transform.position);
 
-        // Hardcode fov
-        v.FOV = 90;
-
         m_CameraValues[CameraStates.following] = v;
     }
 
@@ -134,9 +131,6 @@ public class PlayerCamera : MonoBehaviour
 
         if (m_GameManager.Players[m_PlayerIndex].Player != null)
             v.Rotation = Quaternion.LookRotation(m_GameManager.Players[m_PlayerIndex].Player.Weapon.BarrelEnd.forward);
-
-        // Hardcode fov
-        v.FOV = 55;
 
         m_CameraValues[CameraStates.zoomed] = v;
     }
@@ -203,6 +197,13 @@ public struct CameraValues
     public Vector3 Position;
     public Quaternion Rotation;
     public float FOV;
+
+    public CameraValues(float fov)
+    {
+        Position = new Vector3();
+        Rotation = new Quaternion();
+        FOV = fov;
+    }
 
     public static CameraValues Lerp(CameraValues a, CameraValues b, float t)
     {

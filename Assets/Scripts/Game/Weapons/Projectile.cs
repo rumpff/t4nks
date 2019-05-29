@@ -40,11 +40,9 @@ public class Projectile : MonoBehaviour
         if (m_HasExploded)
             return;
 
-        GenerateHitProperties(p);
-
         // Create explosion
         Explosion e = Instantiate(m_WeaponProperties.Explosion, transform.position, Quaternion.Euler(0, 0, 0));
-        e.Initalize(m_Owner, m_WeaponProperties.ExplosionProperties);
+        e.Initalize(m_Owner, m_WeaponProperties.ExplosionProperties, GenerateHitProperties(p));
         
         StartCoroutine(ProjectileBurnout());
         m_HasExploded = true;
@@ -100,7 +98,7 @@ public class Projectile : MonoBehaviour
         m_DistancePoints.Add(transform.position);
     }
 
-    private void GenerateHitProperties(Player collider)
+    private HitProperties GenerateHitProperties(Player collider)
     {
         AddDistancePoint();
 
@@ -115,12 +113,14 @@ public class Projectile : MonoBehaviour
         }
 
         h.TravelDistance = distance;
+        Debug.Log("travel distance: " + distance);
 
         h.AttackerPlayerIndex = m_Owner.Index;
         if (collider != null)
             h.HitPlayerIndex = collider.Index;
         else
             h.HitPlayerIndex = -1;
-        
+
+        return h;
     }
 }

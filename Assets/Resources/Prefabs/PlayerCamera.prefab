@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3546110910679882136}
   - component: {fileID: 3546110910679882143}
   m_Layer: 0
-  m_Name: PlayerCamera (one)
+  m_Name: PlayerCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -89,7 +89,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81641de306b4df948bc47a619c81447a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Player: {fileID: 0}
+  floot: {x: 0, y: 0, z: 0}
   m_BaseDistance: 7.5
   m_BaseHeight: 28
   m_LerpInterpolation: 9
@@ -108,7 +108,7 @@ MonoBehaviour:
   volumeTrigger: {fileID: 3546110910679882141}
   volumeLayer:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 1815
   stopNaNPropagation: 1
   finalBlitToCameraTarget: 1
   antialiasingMode: 1

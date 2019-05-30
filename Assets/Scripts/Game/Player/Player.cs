@@ -289,7 +289,7 @@ public class Player : MonoBehaviour
     /// <returns></returns>
     public bool IsOnGround()
     {
-        return (m_WheelHits.Count != 0);
+        return (m_WheelHits.Count > 2);
     }
 
     /// <summary>

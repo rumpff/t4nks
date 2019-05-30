@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour
         {
             new GamePlayer(new PlayerProperties() { Controller = XboxController.First, Name = "jaap", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 0),
             new GamePlayer(new PlayerProperties() { Controller = XboxController.Second, Name = "bob", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 1),
-            //new GamePlayer(new PlayerProperties() { Controller = XboxController.Third, Name = "henk", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 2),
+            new GamePlayer(new PlayerProperties() { Controller = XboxController.Third, Name = "henk", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 2),
             //new GamePlayer(new PlayerProperties() { Controller = XboxController.Fourth, Name = "nogeenkeertje", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 3)
         };
 
@@ -195,7 +195,8 @@ public class GameManager : MonoBehaviour
                 switch (index + 1)
                 {
                     case 1:
-                        return new Rect(0.25f, 0.5f, 0.5f, 0.5f);
+                        //return new Rect(0.25f, 0.5f, 0.5f, 0.5f);
+                        return new Rect(0f, 0.5f, 1f, 0.5f);
 
                     case 2:
                         return new Rect(0.0f, 0.0f, 0.5f, 0.5f);

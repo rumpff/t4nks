@@ -76,6 +76,18 @@ public class Player : MonoBehaviour
         Health.DamageEvent += OnDamage;
 
         StartCoroutine(ReadWheelHits());
+
+        // Set the layer masks
+        MeshRenderer[] meshObjects = transform.GetComponentsInChildren<MeshRenderer>();
+
+        for (int i = 0; i < meshObjects.Length; i++)
+        {
+            if(meshObjects[i].transform.name.EndsWith("[TPOnly]"))
+            {
+                // Set the Third person only layer masks
+                meshObjects[i].gameObject.layer = 11 + playerIndex;
+            }
+        }
     }
 
     private void Update()

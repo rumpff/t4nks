@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using XboxCtrlrInput;
 using SimpleEasing;
 
 public class PlayerCamera : MonoBehaviour
@@ -69,10 +70,7 @@ public class PlayerCamera : MonoBehaviour
 
     private void Update()
     {
-        int state = XboxCtrlrInput.XCI.GetAxis(XboxCtrlrInput.XboxAxis.LeftTrigger, XboxCtrlrInput.XboxController.First) > 0.4f ? 1 : -1;
-        m_CameraState += state * Time.deltaTime * 1.5f;
-        m_CameraState = Mathf.Clamp01(m_CameraState);
-
+        UpdateZoomThing();
         UpdatePostEffects();
     }
 
@@ -133,6 +131,20 @@ public class PlayerCamera : MonoBehaviour
             v.Rotation = Quaternion.LookRotation(m_GameManager.Players[m_PlayerIndex].Player.Weapon.BarrelEnd.forward);
 
         m_CameraValues[CameraStates.zoomed] = v;
+    }
+    
+    private void UpdateZoomThing()
+    {
+        int state = XCI.GetAxis(XboxAxis.LeftTrigger, m_GameManager.Players[m_PlayerIndex].Properties.Controller) > 0.4f ? 1 : -1;
+
+        m_CameraState += state * Time.deltaTime * 1.5f;
+        m_CameraState = Mathf.Clamp01(m_CameraState);
+
+        // Set the layer masks
+        if (m_CameraState > 0.75f)
+            CameraExtensions.LayerCullingHide(m_Camera, "P1FPHidden");
+        else
+            CameraExtensions.LayerCullingShow(m_Camera, "P1FPHidden");
     }
 
     private void UpdatePostEffects()

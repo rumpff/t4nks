@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviour
             new GamePlayer(new PlayerProperties() { Controller = XboxController.First, Name = "jaap", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 0),
             new GamePlayer(new PlayerProperties() { Controller = XboxController.Second, Name = "bob", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 1),
             new GamePlayer(new PlayerProperties() { Controller = XboxController.Third, Name = "henk", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 2),
-            //new GamePlayer(new PlayerProperties() { Controller = XboxController.Fourth, Name = "nogeenkeertje", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 3)
+            //new GamePlayer(new PlayerProperties() { Controller = XboxController.Fourth, Name = "jop", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 3)
         };
 
         // Create cameras

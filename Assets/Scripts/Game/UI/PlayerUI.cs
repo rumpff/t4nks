@@ -25,7 +25,7 @@ public class PlayerUI : MonoBehaviour
     [SerializeField] private Image m_DamageOverlay;
     [SerializeField] private Image  m_Healthbar;
     [Space(5)]
-    [SerializeField] private TextMeshProUGUI m_ScoreText;
+    [SerializeField] private TextMeshProUGUI m_HealthText;
 
     public void Initalize(int playerIndex, GameManager gameManger)
     {
@@ -46,7 +46,7 @@ public class PlayerUI : MonoBehaviour
         m_TextOutlineColor.a = 0.5f;
 
         // Personalize the font styles
-        m_ScoreText.fontMaterial.SetColor("_OutlineColor", m_TextOutlineColor);
+        m_HealthText.fontMaterial.SetColor("_OutlineColor", m_TextOutlineColor);
 
         SetDamageOverlay(0.0f);
     }
@@ -56,7 +56,6 @@ public class PlayerUI : MonoBehaviour
         CalculateRectilePosition();
         UpdateDamageOverlay();
         UpdateHealthbar();
-        UpdateScoreText();
     }
 
     private void CalculateRectilePosition()
@@ -95,12 +94,15 @@ public class PlayerUI : MonoBehaviour
 
     private void UpdateHealthbar()
     {
-        float f = m_GameManager.Players[m_PlayerIndex].Player.Health.Health / m_GameManager.Players[m_PlayerIndex].Player.Health.MaxHealth;
+        float health = m_GameManager.Players[m_PlayerIndex].Player.Health.Health;
+        float maxHealth = m_GameManager.Players[m_PlayerIndex].Player.Health.MaxHealth;
+        float f = health / maxHealth;
         float a = m_Healthbar.fillAmount;
 
         a = Mathf.Lerp(a, f, 12 * Time.deltaTime);
 
         m_Healthbar.fillAmount = a;
+        m_HealthText.text = (a * maxHealth).ToString("000");
     }
 
     public void NewScore(string title, float amount)
@@ -110,11 +112,6 @@ public class PlayerUI : MonoBehaviour
             return;
      
         StartCoroutine(QueuePopups(title, amount));
-    }
-
-    private void UpdateScoreText()
-    {
-        m_ScoreText.text = m_DisplayScore.ToString("0");
     }
 
     private IEnumerator QueuePopups(string title, float amount)

@@ -34,6 +34,8 @@ public class PlayerWeapon : MonoBehaviour
     private void Update()
     {
         GetInput();
+        OverrideInputWithKeyboard();
+
         ShootThing();
 
         TimerThing();
@@ -50,6 +52,18 @@ public class PlayerWeapon : MonoBehaviour
         m_AimInput = new Vector2(
             XCI.GetAxis(XboxAxis.RightStickX, m_Player.Controller),
             -XCI.GetAxis(XboxAxis.RightStickY, m_Player.Controller));
+    }
+
+    private void OverrideInputWithKeyboard()
+    {
+        m_ShootInput = Input.GetKey(KeyCode.E);
+
+        m_AimInput = Vector2.zero;
+        m_AimInput.x += Input.GetKey(KeyCode.D) ? 1 : 0;
+        m_AimInput.x -= Input.GetKey(KeyCode.A) ? 1 : 0;
+
+        m_AimInput.y += Input.GetKey(KeyCode.S) ? 1 : 0;
+        m_AimInput.y -= Input.GetKey(KeyCode.W) ? 1 : 0;
     }
 
     private void AimThing()

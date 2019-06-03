@@ -45,7 +45,6 @@ public class Player : MonoBehaviour
     private float m_StreerInput;
     private bool m_BrakeInput;
     private bool m_JumpInput;
-    private Vector2 m_AimInput;
     private Vector2 m_AirControlInput;
 
     private int m_JumpsLeft = 0;
@@ -94,6 +93,7 @@ public class Player : MonoBehaviour
     {
         ReadWheelHits();
         GetInput();
+        OverrideInputWithKeyboard();
 
         CarThing();
         //AimThing();
@@ -119,13 +119,30 @@ public class Player : MonoBehaviour
         m_BrakeInput = XCI.GetButton(XboxButton.LeftBumper, m_Controller);
         m_JumpInput = XCI.GetButtonDown(XboxButton.A, m_Controller);
 
-        m_AimInput = new Vector2(
-            XCI.GetAxis(XboxAxis.RightStickX, m_Controller),
-            -XCI.GetAxis(XboxAxis.RightStickY, m_Controller));
-
         m_AirControlInput = new Vector2(
             XCI.GetAxis(XboxAxis.LeftStickX, m_Controller),
             -XCI.GetAxis(XboxAxis.LeftStickY, m_Controller));
+    }
+
+    private void OverrideInputWithKeyboard()
+    {
+        m_TorqueInput = 0;
+        m_TorqueInput += Input.GetKey(KeyCode.UpArrow) ? 1 : 0;
+        m_TorqueInput -= Input.GetKey(KeyCode.DownArrow) ? 1 : 0;
+
+        m_StreerInput = 0;
+        m_StreerInput += Input.GetKey(KeyCode.RightArrow) ? 1 : 0;
+        m_StreerInput -= Input.GetKey(KeyCode.LeftArrow) ? 1 : 0;
+
+        m_AirControlInput = Vector2.zero;
+        m_AirControlInput.x += Input.GetKey(KeyCode.RightArrow) ? 1 : 0;
+        m_AirControlInput.x -= Input.GetKey(KeyCode.LeftArrow) ? 1 : 0;
+
+        m_AirControlInput.y += Input.GetKey(KeyCode.DownArrow) ? 1 : 0;
+        m_AirControlInput.y -= Input.GetKey(KeyCode.UpArrow) ? 1 : 0;
+
+        m_BrakeInput = Input.GetKey(KeyCode.LeftControl);
+        m_JumpInput = Input.GetKeyDown(KeyCode.Space);
     }
 
     private void CarThing()
@@ -154,16 +171,6 @@ public class Player : MonoBehaviour
 
         // Handle brake
         m_BrakeTorque = (m_BrakeInput) ? m_TankProperties.BrakeTorque : 0;
-    }
-
-    private void AimThing()
-    {
-        m_AimRotation = Vector2.Lerp(m_AimRotation, new Vector2(
-            m_AimInput.x * m_MaxAim.x, m_AimInput.y * m_MaxAim.y), 14.0f * Time.deltaTime);
-
-        // Apply Rotation
-        m_TankHead.localEulerAngles = new Vector3(0.0f, m_AimRotation.x, 0.0f);
-        m_TankBarrel.localEulerAngles = new Vector3(m_AimRotation.y, 0.0f, 0.0f);
     }
 
     private void AircontrolThing()

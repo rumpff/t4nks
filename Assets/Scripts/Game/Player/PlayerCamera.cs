@@ -128,7 +128,7 @@ public class PlayerCamera : MonoBehaviour
         v.Position = m_PlayerHeadPos;
 
         if (m_GameManager.Players[m_PlayerIndex].Player != null)
-            v.Rotation = Quaternion.LookRotation(m_GameManager.Players[m_PlayerIndex].Player.Weapon.BarrelEnd.forward);
+            v.Rotation = m_GameManager.Players[m_PlayerIndex].Player.Weapon.BarrelEnd.rotation;
 
         m_CameraValues[CameraStates.zoomed] = v;
     }
@@ -141,10 +141,11 @@ public class PlayerCamera : MonoBehaviour
         m_CameraState = Mathf.Clamp01(m_CameraState);
 
         // Set the layer masks
-        if (m_CameraState > 0.75f)
-            CameraExtensions.LayerCullingHide(m_Camera, "P1FPHidden");
+        string mask = "P" + (m_PlayerIndex + 1).ToString() + "FPHidden";
+        if (m_CameraState > 0.6f)
+            CameraExtensions.LayerCullingHide(m_Camera, mask);
         else
-            CameraExtensions.LayerCullingShow(m_Camera, "P1FPHidden");
+            CameraExtensions.LayerCullingShow(m_Camera, mask);
     }
 
     private void UpdatePostEffects()

@@ -24,6 +24,7 @@ public class PlayerUI : MonoBehaviour
     [Space(5)]
     [SerializeField] private Image m_DamageOverlay;
     [SerializeField] private Image  m_Healthbar;
+    [SerializeField] private Image m_BlurPanel;
     [Space(5)]
     [SerializeField] private TextMeshProUGUI m_HealthText;
 

@@ -192,7 +192,9 @@ MonoBehaviour:
   m_Rectile: {fileID: 697484205874078198}
   m_DamageOverlay: {fileID: 1888087811681322629}
   m_Healthbar: {fileID: 4858570459981823184}
+  m_BlurPanel: {fileID: 0}
   m_HealthText: {fileID: 9156391714496092602}
+  m_BlurMat: {fileID: 2100000, guid: 20c913667bacc3648b7d9bbb9fcc11eb, type: 2}
 --- !u!1 &1498454335111416601
 GameObject:
   m_ObjectHideFlags: 0

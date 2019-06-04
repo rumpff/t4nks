@@ -89,10 +89,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81641de306b4df948bc47a619c81447a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  floot: {x: 0, y: 0, z: 0}
-  m_BaseDistance: 7.5
+  m_BaseDistance: 7
   m_BaseHeight: 28
-  m_LerpInterpolation: 9
+  m_LerpInterpolation: 16
 --- !u!114 &3546110910679882136
 MonoBehaviour:
   m_ObjectHideFlags: 0

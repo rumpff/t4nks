@@ -84,7 +84,7 @@ public class PlayerCamera : MonoBehaviour
             UpdateZoomedState();
 
             // Apply values
-            float t = Easing.easeInOutQuint(m_CameraState, 0, 1, 1);
+            float t = Easing.easeInOutQuart(m_CameraState, 0, 1, 1);
 
             transform.position = CameraValues.Lerp(m_CameraValues[CameraStates.following], m_CameraValues[CameraStates.zoomed], t).Position;
             transform.rotation = CameraValues.Lerp(m_CameraValues[CameraStates.following], m_CameraValues[CameraStates.zoomed], t).Rotation;
@@ -113,7 +113,7 @@ public class PlayerCamera : MonoBehaviour
         v.Position.z = m_PlayerPos.z + Mathf.Cos((m_ViewAngle - 180) * Mathf.Deg2Rad) * (Mathf.Cos(m_HeightAngle * Mathf.Deg2Rad) * m_Distance);
 
         if (m_GameManager.Players[m_PlayerIndex].Player != null)
-            v.Rotation = Quaternion.LookRotation(m_GameManager.Players[m_PlayerIndex].Player.transform.position - transform.position);
+            v.Rotation = Quaternion.LookRotation(m_GameManager.Players[m_PlayerIndex].Player.transform.position - v.Position);
 
         m_CameraValues[CameraStates.following] = v;
     }
@@ -139,7 +139,7 @@ public class PlayerCamera : MonoBehaviour
             state = m_GameManager.Players[m_PlayerIndex].Player.PInput.Zoom ? 1 : -1;
 
 
-        m_CameraState += state * Time.deltaTime * 1.5f;
+        m_CameraState += state * Time.deltaTime * 4.0f;
         m_CameraState = Mathf.Clamp01(m_CameraState);
 
         // Set the layer masks
@@ -174,7 +174,7 @@ public class PlayerCamera : MonoBehaviour
 
         m_PlayerPos = m_GameManager.Players[m_PlayerIndex].Player.transform.position;
 
-        m_PlayerHeadPos = m_GameManager.Players[m_PlayerIndex].Player.Weapon.BarrelBegin;
+        m_PlayerHeadPos = m_GameManager.Players[m_PlayerIndex].Player.Weapon.BarrelEnd.position;
 
         // Only update the angle when the player is on the ground
         if (m_GameManager.Players[m_PlayerIndex].Player.IsOnGround())

@@ -18,9 +18,6 @@ public class PlayerWeapon : MonoBehaviour
 
     private Player m_Player;
 
-    private bool m_ShootInput;
-    private Vector2 m_AimInput;
-
     private float m_ShootCooldown;
 
     private Vector2 m_AimDirection;
@@ -33,11 +30,7 @@ public class PlayerWeapon : MonoBehaviour
 
     private void Update()
     {
-        GetInput();
-        OverrideInputWithKeyboard();
-
         ShootThing();
-
         TimerThing();
     }
 
@@ -46,30 +39,10 @@ public class PlayerWeapon : MonoBehaviour
         AimThing();
     }
 
-    private void GetInput()
-    {
-        m_ShootInput = (XCI.GetAxis(XboxAxis.RightTrigger, m_Player.Controller) >= m_ShootThreshold) ? true : false;
-        m_AimInput = new Vector2(
-            XCI.GetAxis(XboxAxis.RightStickX, m_Player.Controller),
-            -XCI.GetAxis(XboxAxis.RightStickY, m_Player.Controller));
-    }
-
-    private void OverrideInputWithKeyboard()
-    {
-        m_ShootInput = Input.GetKey(KeyCode.E);
-
-        m_AimInput = Vector2.zero;
-        m_AimInput.x += Input.GetKey(KeyCode.D) ? 1 : 0;
-        m_AimInput.x -= Input.GetKey(KeyCode.A) ? 1 : 0;
-
-        m_AimInput.y += Input.GetKey(KeyCode.S) ? 1 : 0;
-        m_AimInput.y -= Input.GetKey(KeyCode.W) ? 1 : 0;
-    }
-
     private void AimThing()
     {
         m_AimDirection = Vector2.Lerp(m_AimDirection, new Vector2(
-            m_AimInput.x * m_MaxAim.x, m_AimInput.y * m_MaxAim.y), 14.0f * Time.deltaTime);
+            m_Player.PInput.Aim.x * m_MaxAim.x, m_Player.PInput.Aim.y * m_MaxAim.y), 14.0f * Time.deltaTime);
 
         // Apply Rotation
         m_TankHead.localEulerAngles = new Vector3(0.0f, m_AimDirection.x, 0.0f);
@@ -78,7 +51,7 @@ public class PlayerWeapon : MonoBehaviour
 
     private void ShootThing()
     {
-        if(m_ShootInput && m_ShootCooldown == 0)
+        if(m_Player.PInput.Shoot && m_ShootCooldown == 0)
         {
             Quaternion projectileRotation = Quaternion.Euler(m_TankBarrel.eulerAngles.x, m_TankHead.eulerAngles.y, m_Player.transform.eulerAngles.z);
 

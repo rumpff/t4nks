@@ -6,9 +6,10 @@ using XboxCtrlrInput;
 
 public class Player : MonoBehaviour
 {
-    private readonly string m_DriveableTag = "Driveable";
-    private readonly string m_TireTag = "TankTire";
-    private readonly Vector2 m_MaxAim = new Vector2(67.5f, 22.5f);
+    private const string DriveableTag = "Driveable";
+    private const string TireTag = "TankTire";
+    private const float JumpCooldown = 0.2f;
+    private readonly Vector2 MaxAim = new Vector2(67.5f, 22.5f);
 
     private GameManager m_GameManager;
 
@@ -33,27 +34,21 @@ public class Player : MonoBehaviour
     private WheelCollider m_WheelFrontLeft, m_WheelFrontRight, m_WheelBackLeft, m_WheelBackRight;
     private List<WheelHit> m_WheelHits;
 
-    private Rigidbody m_RigidBody;
-
     private Vector2 m_AimRotation;
 
     private float m_Torque = 0;
     private float m_BrakeTorque = 0;
     private float m_StreerAngle = 0;
 
-    private float m_TorqueInput;
-    private float m_StreerInput;
-    private bool m_BrakeInput;
-    private bool m_JumpInput;
-    private Vector2 m_AirControlInput;
-
+    private float m_JumpTimer = 0;
     private int m_JumpsLeft = 0;
 
     private void Awake()
     {
         Weapon = GetComponent<PlayerWeapon>();
         Health = GetComponent<PlayerHealth>();
-        m_RigidBody = GetComponent<Rigidbody>();
+        Rigidbody = GetComponent<Rigidbody>();
+        PInput = GetComponent<PlayerInput>();
 
         m_WheelHits = new List<WheelHit>();
     }
@@ -68,6 +63,9 @@ public class Player : MonoBehaviour
         // Assign properties
         m_Controller = m_PlayerProperties.Controller;
         m_TankProperties = m_PlayerProperties.Tank;
+
+        // Initalize input
+        PInput.Initalize(m_PlayerProperties.Controller, playerProperties.InputType);
 
         // Initalize health
         Health.InitalizeHealth(m_TankProperties.MaxHealth);
@@ -92,16 +90,9 @@ public class Player : MonoBehaviour
     private void Update()
     {
         ReadWheelHits();
-        GetInput();
-        OverrideInputWithKeyboard();
 
         CarThing();
-        //AimThing();
-
         TimerThing();
-
-        if (XCI.GetButton(XboxButton.Y, m_Controller))
-            Health.DamagePlayer(5, this);
     }
 
     private void FixedUpdate()
@@ -111,47 +102,13 @@ public class Player : MonoBehaviour
         JumpThing();
     }
 
-    private void GetInput()
-    {
-        m_TorqueInput = XCI.GetAxis(XboxAxis.LeftStickY, m_Controller);
-        m_StreerInput = XCI.GetAxis(XboxAxis.LeftStickX, m_Controller);
-
-        m_BrakeInput = XCI.GetButton(XboxButton.LeftBumper, m_Controller);
-        m_JumpInput = XCI.GetButtonDown(XboxButton.A, m_Controller);
-
-        m_AirControlInput = new Vector2(
-            XCI.GetAxis(XboxAxis.LeftStickX, m_Controller),
-            -XCI.GetAxis(XboxAxis.LeftStickY, m_Controller));
-    }
-
-    private void OverrideInputWithKeyboard()
-    {
-        m_TorqueInput = 0;
-        m_TorqueInput += Input.GetKey(KeyCode.UpArrow) ? 1 : 0;
-        m_TorqueInput -= Input.GetKey(KeyCode.DownArrow) ? 1 : 0;
-
-        m_StreerInput = 0;
-        m_StreerInput += Input.GetKey(KeyCode.RightArrow) ? 1 : 0;
-        m_StreerInput -= Input.GetKey(KeyCode.LeftArrow) ? 1 : 0;
-
-        m_AirControlInput = Vector2.zero;
-        m_AirControlInput.x += Input.GetKey(KeyCode.RightArrow) ? 1 : 0;
-        m_AirControlInput.x -= Input.GetKey(KeyCode.LeftArrow) ? 1 : 0;
-
-        m_AirControlInput.y += Input.GetKey(KeyCode.DownArrow) ? 1 : 0;
-        m_AirControlInput.y -= Input.GetKey(KeyCode.UpArrow) ? 1 : 0;
-
-        m_BrakeInput = Input.GetKey(KeyCode.LeftControl);
-        m_JumpInput = Input.GetKeyDown(KeyCode.Space);
-    }
-
     private void CarThing()
     {
         // Handle torque
         float torqueDest = 0;
 
         if(IsOnGround())
-            torqueDest = m_TorqueInput * m_TankProperties.MaxTorque;
+            torqueDest = PInput.Torque * m_TankProperties.MaxTorque;
 
         if (m_Torque != torqueDest)
         {
@@ -167,10 +124,10 @@ public class Player : MonoBehaviour
         }
 
         // Handle steer
-        m_StreerAngle = Mathf.Lerp(m_StreerAngle, m_StreerInput * m_TankProperties.MaxSteer, 12 * Time.deltaTime);
-
+        m_StreerAngle = Mathf.Lerp(m_StreerAngle, PInput.Steer * m_TankProperties.MaxSteer, 12 * Time.deltaTime);
+        
         // Handle brake
-        m_BrakeTorque = (m_BrakeInput) ? m_TankProperties.BrakeTorque : 0;
+        m_BrakeTorque = (PInput.Brake) ? m_TankProperties.BrakeTorque : 0;
     }
 
     private void AircontrolThing()
@@ -178,22 +135,23 @@ public class Player : MonoBehaviour
         if (IsOnGround())
             return; // Not in the air
 
-        m_RigidBody.AddTorque(transform.up * (m_AirControlInput.x * m_TankProperties.AirControl));
-        m_RigidBody.AddTorque(-transform.right * (m_AirControlInput.y * m_TankProperties.AirControl));
+        Rigidbody.AddTorque(transform.up * (PInput.AirControl.x * m_TankProperties.AirControl));
+        Rigidbody.AddTorque(-transform.right * (PInput.AirControl.y * m_TankProperties.AirControl));
     }
 
     private void JumpThing()
     {
-        if (m_JumpInput)
+        if (PInput.Jump && m_JumpTimer <= 0)
         {
             if (m_JumpsLeft <= 0)
                 return;
 
             Vector3 jumpDirection = GetGroundNormal(transform.up);
 
-            m_RigidBody.AddForce(jumpDirection * m_TankProperties.JumpForce);
+            Rigidbody.AddForce(jumpDirection * m_TankProperties.JumpForce);
 
             m_JumpsLeft--;
+            m_JumpTimer = JumpCooldown;
         }
     }
 
@@ -202,6 +160,7 @@ public class Player : MonoBehaviour
         // Jumping
         if (IsOnGround())
             m_JumpsLeft = m_TankProperties.AirJumpAmount;
+        m_JumpTimer -= Time.deltaTime;
     }
 
     private void ApplyCarMotion()
@@ -252,6 +211,10 @@ public class Player : MonoBehaviour
             rb.mass = 1200;
             rb.velocity = Rigidbody.velocity;
             rb.angularVelocity = Rigidbody.angularVelocity;
+
+            // Randomize velocity abit
+            rb.velocity += V3RandomRange(-7, 7);
+            rb.angularVelocity += V3RandomRange(-500, 500);
 
             debris.Add(o);
         }
@@ -339,6 +302,20 @@ public class Player : MonoBehaviour
         return normal;
     }
 
+    public Vector3 V3RandomRange(float min, float max)
+    {
+        System.Random rand = new System.Random(Guid.NewGuid().GetHashCode());
+
+        Vector3 output = new Vector3
+        {
+            x = (float)rand.Next((int)min * 10000, (int)max * 10000) / 10000.0f,
+            y = (float)rand.Next((int)min * 10000, (int)max * 10000) / 10000.0f,
+            z = (float)rand.Next((int)min * 10000, (int)max * 10000) / 10000.0f,
+        };
+
+        return output;
+    }
+
     public void SetCamera(PlayerCamera c)
     {
         Camera = c;
@@ -346,7 +323,7 @@ public class Player : MonoBehaviour
 
     public void AddForce(Vector3 force)
     {
-        m_RigidBody.AddForce(force);
+        Rigidbody.AddForce(force);
     }
 
     /// <summary>
@@ -354,7 +331,7 @@ public class Player : MonoBehaviour
     /// </summary>
     public Vector2 RawAim
     {
-        get { return new Vector2(m_AimRotation.x / m_MaxAim.x, m_AimRotation.y / m_MaxAim.y); }
+        get { return new Vector2(m_AimRotation.x / MaxAim.x, m_AimRotation.y / MaxAim.y); }
     }
 
     public XboxController Controller
@@ -362,10 +339,9 @@ public class Player : MonoBehaviour
         get { return m_Controller; }
     }
 
-    public Rigidbody Rigidbody
-    {
-        get { return m_RigidBody; }
-    }
+    public Rigidbody Rigidbody { get; private set; }
+
+    public PlayerInput PInput { get; private set; }
 
     public int Index
     {

@@ -6,8 +6,6 @@ using SimpleEasing;
 
 public class PlayerCamera : MonoBehaviour
 {
-    public Vector3 floot;
-
     public enum CameraStates { following, zoomed }
     private Dictionary<CameraStates, CameraValues> m_CameraValues;
     private float m_CameraState = 0;
@@ -135,7 +133,11 @@ public class PlayerCamera : MonoBehaviour
     
     private void UpdateZoomThing()
     {
-        int state = XCI.GetAxis(XboxAxis.LeftTrigger, m_GameManager.Players[m_PlayerIndex].Properties.Controller) > 0.4f ? 1 : -1;
+        int state = 0;
+
+        if (m_GameManager.Players[m_PlayerIndex].Player != null)
+            state = m_GameManager.Players[m_PlayerIndex].Player.PInput.Zoom ? 1 : -1;
+
 
         m_CameraState += state * Time.deltaTime * 1.5f;
         m_CameraState = Mathf.Clamp01(m_CameraState);

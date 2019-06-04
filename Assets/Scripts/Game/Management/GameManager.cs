@@ -41,10 +41,10 @@ public class GameManager : MonoBehaviour
         // Debug - create players
         Players = new GamePlayer[]
         {
-            new GamePlayer(new PlayerProperties() { Controller = XboxController.First, Name = "jaap", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 0),
-            new GamePlayer(new PlayerProperties() { Controller = XboxController.Second, Name = "bob", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 1),
-            new GamePlayer(new PlayerProperties() { Controller = XboxController.Third, Name = "henk", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 2),
-            //new GamePlayer(new PlayerProperties() { Controller = XboxController.Fourth, Name = "jop", Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 3)
+            new GamePlayer(new PlayerProperties() { Controller = XboxController.Any, Name = "jaap", InputType = InputType.Keyboard, Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 0),
+            new GamePlayer(new PlayerProperties() { Controller = XboxController.First, Name = "bob", InputType = InputType.Controller, Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 1),
+            new GamePlayer(new PlayerProperties() { Controller = XboxController.Second, Name = "henk", InputType = InputType.Controller, Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 2),
+            //new GamePlayer(new PlayerProperties() { Controller = XboxController.Fourth, Name = "jop", InputType = InputType.Controller, Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 3)
         };
 
         // Create cameras
@@ -121,8 +121,20 @@ public class GameManager : MonoBehaviour
         Players[playerId].AllowedToRespawn = true;
 
         // Wait for the player until they want to respawn
-        while(!XCI.GetButton(XboxButton.A, Players[playerId].Player.Controller))
+        bool pressedRespawnButton = false;
+        while(!pressedRespawnButton)
         {
+            switch (Players[playerId].Properties.InputType)
+            {
+                case InputType.Controller:
+                    pressedRespawnButton = XCI.GetButton(XboxButton.A, Players[playerId].Player.Controller);
+                    break;
+
+                case InputType.Keyboard:
+                    pressedRespawnButton = Input.GetKey(KeyCode.Space);
+                    break;
+            }
+
             yield return new WaitForEndOfFrame();
         }
 

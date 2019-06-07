@@ -41,9 +41,9 @@ public class GameManager : MonoBehaviour
         // Debug - create players
         Players = new GamePlayer[]
         {
-            new GamePlayer(new PlayerProperties() { Controller = XboxController.Any, Name = "jaap", InputType = InputType.Keyboard, Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 0),
-            new GamePlayer(new PlayerProperties() { Controller = XboxController.First, Name = "bob", InputType = InputType.Controller, Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 1),
-            new GamePlayer(new PlayerProperties() { Controller = XboxController.Second, Name = "henk", InputType = InputType.Controller, Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 2),
+            new GamePlayer(new PlayerProperties() { Controller = XboxController.First, Name = "jaap", InputType = InputType.Controller, Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 0),
+            new GamePlayer(new PlayerProperties() { Controller = XboxController.Second, Name = "bob", InputType = InputType.Controller, Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 1),
+            //new GamePlayer(new PlayerProperties() { Controller = XboxController.Second, Name = "henk", InputType = InputType.Controller, Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 2),
             //new GamePlayer(new PlayerProperties() { Controller = XboxController.Fourth, Name = "jop", InputType = InputType.Controller, Tank = Resources.Load("Properties/Tanks/TestTank") as TankProperties}, 3)
         };
 

@@ -59,9 +59,18 @@ public class PlayerCamera : MonoBehaviour
         m_Camera = GetComponent<Camera>();
         m_Camera.rect = viewport;
 
+        Camera[] childCameras = GetComponentsInChildren<Camera>();
+
+        for (int i = 0; i < childCameras.Length; i++)
+        {
+            childCameras[i].rect = viewport;
+        }
+
         m_CameraValues = new Dictionary<CameraStates, CameraValues>();
         m_CameraValues.Add(CameraStates.following, new CameraValues(90.0f));
         m_CameraValues.Add(CameraStates.zoomed, new CameraValues(55.0f));
+
+        GetComponentInChildren<AttitudeIndicator>().Initalize(playerIndex, gameManager);
 
         StartCoroutine(CameraUpdate());
     }

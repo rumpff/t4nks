@@ -87,8 +87,6 @@ public class PlayerInput : MonoBehaviour
             Torque = TorqueDir;// MoveTowardsLiniar(Torque, TorqueDir, -1, 1, 1.0f);
             Steer = SteerDir;// MoveTowardsLiniar(Steer, SteerDir, -1, 1, 1.0f);
 
-            Debug.Log("t: " + Torque);
-
             Brake = Input.GetKey(KeyCode.LeftShift);
             Jump = Input.GetKey(KeyCode.Space);
             Shoot = Input.GetMouseButton(0);

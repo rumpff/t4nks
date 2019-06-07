@@ -9,7 +9,7 @@ public class Player : MonoBehaviour
     private const string DriveableTag = "Driveable";
     private const string TireTag = "TankTire";
     private const float JumpCooldown = 0.2f;
-    private readonly Vector2 MaxAim = new Vector2(67.5f, 22.5f);
+    public readonly Vector2 MaxAim = new Vector2(67.5f, 22.5f);
 
     private GameManager m_GameManager;
 

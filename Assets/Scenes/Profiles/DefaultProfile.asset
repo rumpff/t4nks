@@ -1417,7 +1417,7 @@ MonoBehaviour:
     value: 1
   focusDistance:
     overrideState: 1
-    value: 10.55
+    value: 0.1
   aperture:
     overrideState: 1
     value: 8.7
@@ -1426,7 +1426,7 @@ MonoBehaviour:
     value: 112
   kernelSize:
     overrideState: 1
-    value: 2
+    value: 3
 --- !u!114 &114872307754879106
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -1493,7 +1493,7 @@ MonoBehaviour:
     overrideState: 1
     value: 1
   spectralLut:
-    overrideState: 0
+    overrideState: 1
     value: {fileID: 0}
     defaultState: 1
   intensity:

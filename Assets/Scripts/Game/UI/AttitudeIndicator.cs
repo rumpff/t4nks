@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using SimpleEasing;
 
 public class AttitudeIndicator : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class AttitudeIndicator : MonoBehaviour
     private GameManager m_GameManager;
     private Camera m_Camera;
     private Camera m_PlayerCamera;
+    private float m_PlayerHeight;
 
     private List<Line> m_Lines;
 
@@ -20,6 +22,10 @@ public class AttitudeIndicator : MonoBehaviour
     [SerializeField]
     private Material m_LineMaterial;
     private Vector3 m_LineOrigin;
+
+    private bool m_IsActive;
+    private float m_Interpolation;
+    private float m_InterpolationTimer;
 
     public void Initalize(int playerIndex, GameManager gameManager)
     {
@@ -41,11 +47,19 @@ public class AttitudeIndicator : MonoBehaviour
     {
         // Prevent the camrea from rotating
         transform.rotation = Quaternion.identity;
+
+        UpdatePlayerValues();
+        UpdateInterpolation();
+
+        // Generate all elements
+        GenerateAimCompass();
+        GenerateHeightCompass();
+        GenerateWorldCompass();
+        GenerateDegreesPitch();
     }
 
     private void OnPostRender()
     {
-        UpdatePlayerValues();
         GenerateLines();
     }
 
@@ -57,7 +71,21 @@ public class AttitudeIndicator : MonoBehaviour
             m_PlayerRawAim = p.Player.Weapon.RawAim;
             m_PlayerEulerAngles = p.Player.transform.eulerAngles;
             m_PlayerCamera = p.Camera.Camera;
+            m_PlayerHeight = p.Player.GetHeightFromGround();
         }
+    }
+
+    private void UpdateInterpolation()
+    {
+        int state = 0;
+
+        if (m_GameManager.Players[m_PlayerIndex].Player != null)
+            state = m_GameManager.Players[m_PlayerIndex].Player.PInput.Zoom ? 1 : -1;
+
+        m_InterpolationTimer += state * Time.deltaTime * 2.5f;
+        m_InterpolationTimer = Mathf.Clamp01(m_InterpolationTimer);
+
+        m_Interpolation = Easing.easeInQuint(m_InterpolationTimer, 0, 1, 1);
     }
 
     #region line generation
@@ -69,11 +97,6 @@ public class AttitudeIndicator : MonoBehaviour
 
     private void GenerateLines()
     {
-        // Generate all elements
-        GenerateAimCompass();
-        GenerateWorldCompass();
-        GenerateDegreesPitch();
-
         // Render the lines
         RenderLines(m_Lines);
 
@@ -83,20 +106,27 @@ public class AttitudeIndicator : MonoBehaviour
 
     private void GenerateDegreesPitch()
     {
-        float baseAngle = -m_PlayerEulerAngles.z;
-        Vector2 center = Vector2.one * 0.5f;
+        float baseAngle = -m_PlayerCamera.transform.eulerAngles.z;
+        Vector2 center = Vector2.zero;
         float triangleLength = 0.2f;
 
         #region calculate triangle center
         {
             // Create a point so far in the distance that it is technicly a point on the horizon
-            Vector3 horizon = transform.position + (transform.forward * 250.0f);
+            Vector3 horizon = m_PlayerCamera.transform.position + (m_PlayerCamera.transform.forward * 2500.0f);
             horizon.y = 0.0f;
 
-            if (m_PlayerIndex == 0)
-                horizon = yerr.position;
+            center = m_PlayerCamera.WorldToViewportPoint(horizon);
 
-            center = m_PlayerCamera.WorldToScreenPoint(horizon);
+            float aspect = (float)m_PlayerCamera.pixelHeight / (float)m_PlayerCamera.pixelWidth;
+
+            center.x = 0;
+
+            //center.x /= 0.5f;
+            //center.x -= 1.0f;
+
+            center.y /= 0.5f;
+            center.y -= 1.0f;
 
             if (m_PlayerIndex == 0)
                 Debug.Log(center);
@@ -123,8 +153,8 @@ public class AttitudeIndicator : MonoBehaviour
                 y = Mathf.Sin(baseAngle * Mathf.Deg2Rad) * triangleLength
             };
 
-            AddLine(new Line(center + left, center + top));
-            AddLine(new Line(center + right, center + top));
+            AddLine(new Line(center + left, center + top, m_Interpolation));
+            AddLine(new Line(center + right, center + top, m_Interpolation));
         }
         #endregion
         #region outer lines
@@ -141,33 +171,35 @@ public class AttitudeIndicator : MonoBehaviour
                 y = Mathf.Sin(baseAngle * Mathf.Deg2Rad) * triangleLength
             };
 
-            AddLine(new Line(center + left, center + left * 4));
-            AddLine(new Line(center + right, center + right * 4));
+            AddLine(new Line(center + left, center + left * 4, m_Interpolation));
+            AddLine(new Line(center + right, center + right * 4, m_Interpolation));
         }
         #endregion
 
     }
     private void GenerateAimCompass()
     {
+        float y = 1.8f - m_Interpolation;
+
         #region indicator arrow
         {
-            float length = 0.05f;
+            float length = 0.05f * m_Interpolation;
 
             // Left side
             AddLine(new Line(
-                new Vector2(0, 0.8f),
-                new Vector2(Mathf.Cos(135 * Mathf.Deg2Rad) * length, Mathf.Sin(135 * Mathf.Deg2Rad) * length + 0.8f)));
+                new Vector2(0, (y + 0.02f)),
+                new Vector2(Mathf.Cos(135 * Mathf.Deg2Rad) * length, Mathf.Sin(135 * Mathf.Deg2Rad) * length + (y + 0.02f))));
 
             // Right side
             AddLine(new Line(
-                new Vector2(0, 0.8f),
-                new Vector2(Mathf.Cos(45 * Mathf.Deg2Rad) * length, Mathf.Sin(45 * Mathf.Deg2Rad) * length + 0.8f)));
+                new Vector2(0, (y + 0.02f)),
+                new Vector2(Mathf.Cos(45 * Mathf.Deg2Rad) * length, Mathf.Sin(45 * Mathf.Deg2Rad) * length + (y + 0.02f))));
         }
         #endregion
         #region ruler lines
         {
             int rulerAmount = 24;
-            float lineSpacing = 1.25f;
+            float lineSpacing = 1.25f * m_Interpolation;
 
             for (int i = 0; i <= rulerAmount; i++)
             {
@@ -176,10 +208,35 @@ public class AttitudeIndicator : MonoBehaviour
 
                 if(i == 0 || i == rulerAmount || i == rulerAmount / 2.0f)
                 {
-                    yLength = 0.05f;
+                    yLength += 0.02f;
                 }
 
-                Line line = new Line(x, 0.78f, x, 0.78f - yLength);
+                Line line = new Line(x, y, x, y - yLength);
+                AddLine(line);
+            }
+        }
+        #endregion
+    }
+    private void GenerateHeightCompass()
+    {
+        #region ruler lines
+        {
+            int rulerAmount = 24;
+            float lineSpacing = 0.1f;
+
+            for (int i = 0; i <= rulerAmount; i++)
+            {
+                float x = 0.25f;
+                //float y = (m_PlayerHeight + (i - (rulerAmount / 2.0f)) / (rulerAmount / 2.0f)) * lineSpacing;
+                float y = (m_PlayerHeight + (i - (rulerAmount / 2.0f))) * lineSpacing;
+                float xLength = 0.03f;
+
+                if (i == rulerAmount / 2.0f)
+                {
+                    xLength += 0.02f;
+                }
+
+                Line line = new Line(x, y, x + xLength, y);
                 AddLine(line);
             }
         }
@@ -188,7 +245,7 @@ public class AttitudeIndicator : MonoBehaviour
     private void GenerateWorldCompass()
     {
         Vector2 compassCenter = new Vector2(0, -1.25f);
-        float innerRadius = 0.5f;
+        float innerRadius = 0.5f * m_Interpolation;
 
         #region indicator arrow
         {
@@ -241,6 +298,8 @@ public class AttitudeIndicator : MonoBehaviour
                 line.start += compassCenter;
                 line.end += compassCenter;
 
+                line.interpolation = m_Interpolation;
+
                 AddLine(line);
             }
         }
@@ -259,10 +318,12 @@ public class AttitudeIndicator : MonoBehaviour
 
         for (int i = 0; i < lines.Count; i++)
         {
-            GL.Color(lines[i].color);
+            Line l = lines[i].Lerp();
 
-            Vector3 start = lines[i].start;
-            Vector3 end = lines[i].end;
+            GL.Color(l.color);
+
+            Vector3 start = l.start;
+            Vector3 end = l.end;
 
             // Correct for the position of the camera
             start += m_LineOrigin;
@@ -278,17 +339,27 @@ public class AttitudeIndicator : MonoBehaviour
     #endregion
 }
 
-public struct Line
+public class Line
 {
     public Vector2 start;
     public Vector2 end;
     public Color color;
+    public float interpolation;
+
+    public Line()
+    {
+        start = Vector2.zero;
+        end = Vector2.zero;
+        color = Color.white;
+        interpolation = 1;
+    }
 
     public Line(Vector2 a, Vector2 b, Color c)
     {
         start = a;
         end = b;
         color = c;
+        interpolation = 1;
     }
 
     public Line(Vector2 a, Vector2 b)
@@ -296,6 +367,7 @@ public struct Line
         start = a;
         end = b;
         color = Color.white;
+        interpolation = 1;
     }
 
     public Line(float x1, float y1, float x2, float y2)
@@ -303,6 +375,7 @@ public struct Line
         start = new Vector2(x1, y1);
         end = new Vector2(x2, y2);
         color = Color.white;
+        interpolation = 1;
     }
 
     public Line(float x1, float y1, float x2, float y2, Color c)
@@ -310,5 +383,47 @@ public struct Line
         start = new Vector2(x1, y1);
         end = new Vector2(x2, y2);
         color = c;
+        interpolation = 1;
+    }
+
+    public Line(Vector2 a, Vector2 b, Color c, float i)
+    {
+        start = a;
+        end = b;
+        color = c;
+        interpolation = i;
+    }
+
+    public Line(Vector2 a, Vector2 b, float i)
+    {
+        start = a;
+        end = b;
+        color = Color.white;
+        interpolation = i;
+    }
+
+    public Line(float x1, float y1, float x2, float y2, float i)
+    {
+        start = new Vector2(x1, y1);
+        end = new Vector2(x2, y2);
+        color = Color.white;
+        interpolation = i;
+    }
+
+    public Line(float x1, float y1, float x2, float y2, Color c, float i)
+    {
+        start = new Vector2(x1, y1);
+        end = new Vector2(x2, y2);
+        color = c;
+        interpolation = i;
+    }
+
+    public Line Lerp()
+    {
+        Line l = this;
+
+        l.end = Vector2.Lerp(l.start, l.end, this.interpolation);
+
+        return l;
     }
 }

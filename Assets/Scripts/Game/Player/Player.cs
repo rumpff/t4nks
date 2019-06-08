@@ -43,6 +43,8 @@ public class Player : MonoBehaviour
     private float m_JumpTimer = 0;
     private int m_JumpsLeft = 0;
 
+    private float m_PlayerHeightOffset;
+
     private void Awake()
     {
         Weapon = GetComponent<PlayerWeapon>();
@@ -89,8 +91,6 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        ReadWheelHits();
-
         CarThing();
         TimerThing();
     }
@@ -300,6 +300,22 @@ public class Player : MonoBehaviour
         }
 
         return normal;
+    }
+
+    public float GetHeightFromGround()
+    {
+        float height = 0;
+        RaycastHit hit;
+
+        Physics.Raycast(transform.position, Vector3.down, out hit);
+        height = hit.distance;
+
+        if(IsOnGround)
+        {
+
+        }
+
+        return height;
     }
 
     public Vector3 V3RandomRange(float min, float max)

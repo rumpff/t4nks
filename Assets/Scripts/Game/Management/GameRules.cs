@@ -13,6 +13,9 @@ public class GameRules
     public float LonghitThreshold;
     public float ScorePerDamageMultiplier;
 
+    public float HealthPickupHealthAmount;
+    public float HealthPickupRespawnTime;
+
     public GameRules()
     {
         Default();
@@ -26,6 +29,9 @@ public class GameRules
         RespawnDelay = 3.0f;
         LonghitThreshold = 150.0f;
         ScorePerDamageMultiplier = 1.5f;
+
+        HealthPickupHealthAmount = 100;
+        HealthPickupRespawnTime = 3.0f;
 
         ScoreValues = new Dictionary<StatTypes, float>();
         foreach (StatTypes sType in Enum.GetValues(typeof(StatTypes)))

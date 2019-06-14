@@ -34,6 +34,11 @@ public class Player : MonoBehaviour
     private WheelCollider m_WheelFrontLeft, m_WheelFrontRight, m_WheelBackLeft, m_WheelBackRight;
     private List<WheelHit> m_WheelHits;
 
+    [SerializeField]
+    private Transform m_GroundSensor;
+    [SerializeField]
+    private LayerMask m_GroundSensorIgnore;
+
     private Vector2 m_AimRotation;
 
     private float m_Torque = 0;
@@ -307,13 +312,8 @@ public class Player : MonoBehaviour
         float height = 0;
         RaycastHit hit;
 
-        Physics.Raycast(transform.position, Vector3.down, out hit);
+        Physics.Raycast(m_GroundSensor.position, Vector3.down, out hit, float.PositiveInfinity, m_GroundSensorIgnore);
         height = hit.distance;
-
-        if(IsOnGround)
-        {
-
-        }
 
         return height;
     }

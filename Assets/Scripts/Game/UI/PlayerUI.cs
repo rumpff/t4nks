@@ -26,6 +26,7 @@ public class PlayerUI : MonoBehaviour
     [SerializeField] private Image  m_Healthbar;
     [SerializeField] private Image m_BlurPanel;
     [Space(5)]
+    [SerializeField] private TextMeshProUGUI m_DebugText;
     [SerializeField] private TextMeshProUGUI m_HealthText;
 
     public void Initalize(int playerIndex, GameManager gameManger)
@@ -236,6 +237,12 @@ public class PlayerUI : MonoBehaviour
             return (value < comparer);
         else
             return (value > comparer);
+    }
+
+    public string DebugText
+    {
+        get { return m_DebugText.text; }
+        set { m_DebugText.text = value; }
     }
 }
 

@@ -95,6 +95,21 @@ public class AttitudeIndicator : MonoBehaviour
         m_Lines.Add(line);
     }
 
+    private void AddArrow(Vector2 position, float angle, float length)
+    {
+        // Left side
+        AddLine(new Line(
+            position,
+            position + new Vector2(Mathf.Cos((45 + angle + 180) * Mathf.Deg2Rad) * length, 
+                                    Mathf.Sin((45 + angle + 180) * Mathf.Deg2Rad) * length)));
+
+        // Right side
+        AddLine(new Line(
+            position,
+            position + new Vector2(Mathf.Cos((-45 + angle + 180) * Mathf.Deg2Rad) * length,
+                                    Mathf.Sin((-45 + angle + 180) * Mathf.Deg2Rad) * length)));
+    }
+
     private void GenerateLines()
     {
         // Render the lines
@@ -127,9 +142,6 @@ public class AttitudeIndicator : MonoBehaviour
 
             center.y /= 0.5f;
             center.y -= 1.0f;
-
-            if (m_PlayerIndex == 0)
-                Debug.Log(center);
         }
         #endregion
 
@@ -179,66 +191,119 @@ public class AttitudeIndicator : MonoBehaviour
     }
     private void GenerateAimCompass()
     {
-        float y = 1.8f - m_Interpolation;
-
-        #region indicator arrow
+        #region horizontal aim
         {
-            float length = 0.05f * m_Interpolation;
+            float y = 1.8f - m_Interpolation;
 
-            // Left side
-            AddLine(new Line(
-                new Vector2(0, (y + 0.02f)),
-                new Vector2(Mathf.Cos(135 * Mathf.Deg2Rad) * length, Mathf.Sin(135 * Mathf.Deg2Rad) * length + (y + 0.02f))));
+            #region indicator arrow
+            {
+                float length = 0.05f * m_Interpolation;
+                Vector2 position = new Vector2(0, y + 0.02f);
 
-            // Right side
-            AddLine(new Line(
-                new Vector2(0, (y + 0.02f)),
-                new Vector2(Mathf.Cos(45 * Mathf.Deg2Rad) * length, Mathf.Sin(45 * Mathf.Deg2Rad) * length + (y + 0.02f))));
+                AddArrow(position, -90, length);
+            }
+            #endregion
+            #region ruler lines
+            {
+                int rulerAmount = 24;
+                float lineSpacing = 1.25f * m_Interpolation;
+
+                for (int i = 0; i <= rulerAmount; i++)
+                {
+                    float x = -(m_PlayerRawAim.x + (i - (rulerAmount / 2.0f)) / (rulerAmount / 2.0f)) * lineSpacing;
+                    float yLength = 0.03f;
+
+                    if (i == 0 || i == rulerAmount || i == rulerAmount / 2.0f)
+                    {
+                        yLength += 0.02f;
+                    }
+
+                    Line line = new Line(x, y, x, y - yLength);
+                    AddLine(line);
+                }
+            }
+            #endregion
         }
         #endregion
-        #region ruler lines
+
+        #region vertical aim
         {
-            int rulerAmount = 24;
-            float lineSpacing = 1.25f * m_Interpolation;
+            float y = 1.6f - m_Interpolation;
 
-            for (int i = 0; i <= rulerAmount; i++)
+            #region indicator arrow
             {
-                float x = -(m_PlayerRawAim.x + (i - (rulerAmount / 2.0f)) / (rulerAmount / 2.0f)) * lineSpacing;
-                float yLength = 0.03f;
+                float length = 0.05f * m_Interpolation;
+                Vector2 position = new Vector2(0, y - 0.02f);
 
-                if(i == 0 || i == rulerAmount || i == rulerAmount / 2.0f)
-                {
-                    yLength += 0.02f;
-                }
-
-                Line line = new Line(x, y, x, y - yLength);
-                AddLine(line);
+                AddArrow(position, 90, length);
             }
+            #endregion
+            #region ruler lines
+            {
+                int rulerAmount = 24;
+                float lineSpacing = 1.25f * m_Interpolation;
+
+                for (int i = 0; i <= rulerAmount; i++)
+                {
+                    float x = (m_PlayerRawAim.y + (i - (rulerAmount / 2.0f)) / (rulerAmount / 2.0f)) * lineSpacing;
+                    float yLength = 0.03f;
+
+                    if (i == 0 || i == rulerAmount || i == rulerAmount / 2.0f)
+                    {
+                        yLength += 0.02f;
+                    }
+
+                    Line line = new Line(x, y + yLength, x, y);
+                    AddLine(line);
+                }
+            }
+            #endregion
         }
         #endregion
     }
     private void GenerateHeightCompass()
     {
+        float x = 1.0f;
         #region ruler lines
         {
-            int rulerAmount = 24;
-            float lineSpacing = 0.1f;
+            int rulerAmount = 100;
+            float lineSpacing = 0.2f;
 
-            for (int i = 0; i <= rulerAmount; i++)
+
+            for (int i = 0; i < rulerAmount; i++)
             {
-                float x = 0.25f;
+;
                 //float y = (m_PlayerHeight + (i - (rulerAmount / 2.0f)) / (rulerAmount / 2.0f)) * lineSpacing;
-                float y = (m_PlayerHeight + (i - (rulerAmount / 2.0f))) * lineSpacing;
+                float y = (-(m_PlayerHeight / 10.0f) + (i * lineSpacing));
                 float xLength = 0.03f;
 
-                if (i == rulerAmount / 2.0f)
+                if (i == 0)
                 {
-                    xLength += 0.02f;
+                    xLength += 0.03f;
                 }
+
+                xLength *= m_Interpolation;
 
                 Line line = new Line(x, y, x + xLength, y);
                 AddLine(line);
+
+                if(i == 0)
+                    m_GameManager.Players[m_PlayerIndex].UI.DebugText = y.ToString("00.000");
             }
+        }
+        #endregion
+
+        #region indicator arrow
+        {
+            Vector2 position = new Vector2()
+            {
+                x = x + 0.08f,
+                y = 0f
+            };
+
+            float arrowLength = 0.05f * m_Interpolation;
+
+            AddArrow(position, -180 * m_Interpolation, arrowLength);
         }
         #endregion
     }
@@ -254,15 +319,7 @@ public class AttitudeIndicator : MonoBehaviour
 
             float arrowLength = 0.05f;
 
-            // Left side
-            AddLine(new Line(
-                arrowPoint,
-                new Vector2(Mathf.Cos(-135 * Mathf.Deg2Rad) * arrowLength, Mathf.Sin(-135 * Mathf.Deg2Rad) * arrowLength + arrowPoint.y)));
-
-            // Right side
-            AddLine(new Line(
-                arrowPoint,
-                new Vector2(Mathf.Cos(-45 * Mathf.Deg2Rad) * arrowLength, Mathf.Sin(-45 * Mathf.Deg2Rad) * arrowLength + arrowPoint.y)));
+            AddArrow(arrowPoint, 90, arrowLength);
         }
         #endregion
 

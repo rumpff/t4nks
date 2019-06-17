@@ -44,7 +44,7 @@ public class PlayerHealth : MonoBehaviour
 
     public void AddHealth(float addAmount)
     {
-        m_Health += addAmount;
+        m_Health = Mathf.Clamp(m_Health + addAmount, 0.0f, m_MaxHealth);
         CheckHealth();
     }
 

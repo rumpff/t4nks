@@ -98,6 +98,9 @@ public class Player : MonoBehaviour
     {
         CarThing();
         TimerThing();
+
+        if (m_PlayerIndex == 0 && Input.GetKeyDown(KeyCode.T))
+            Health.DamagePlayer(10, this);
     }
 
     private void FixedUpdate()

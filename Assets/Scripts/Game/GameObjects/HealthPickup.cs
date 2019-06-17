@@ -20,6 +20,7 @@ public class HealthPickup : MonoBehaviour
     private void Start()
     {
         m_HeightMultiplier = 0;
+        m_PickupActive = true;
     }
 
     void Update()
@@ -54,6 +55,11 @@ public class HealthPickup : MonoBehaviour
     {
         if(!m_PickupActive)
             yield break;
+
+        // Add health to the player
+        p.Health.AddHealth(GameManager.I.Rules.HealthPickupHealthAmount);
+
+        // Handle the pickup
 
         m_PickupActive = false;
 

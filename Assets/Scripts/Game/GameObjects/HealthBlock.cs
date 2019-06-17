@@ -10,7 +10,7 @@ public class HealthBlock : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         Debug.Log("trigga!");
-        Player p = other.gameObject.GetComponent<Player>();
+        Player p = other.GetComponentInParent<Player>();
 
         if (p != null)
             m_HealthPickup.HealthPickedUp(p);

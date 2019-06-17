@@ -5,8 +5,6 @@ using SimpleEasing;
 
 public class AttitudeIndicator : MonoBehaviour
 {
-    public Transform yerr;
-
     private int m_PlayerIndex;
     private GameManager m_GameManager;
     private Camera m_Camera;
@@ -85,8 +83,26 @@ public class AttitudeIndicator : MonoBehaviour
         m_InterpolationTimer += state * Time.deltaTime * 2.5f;
         m_InterpolationTimer = Mathf.Clamp01(m_InterpolationTimer);
 
-        m_Interpolation = Easing.easeInQuint(m_InterpolationTimer, 0, 1, 1);
+        m_Interpolation = Easing.easeInOutQuart(m_InterpolationTimer, 0, 1, 1);
     }
+
+    private Vector2 CalculateRectilePosition()
+    {
+        Vector2 output = Vector2.zero;
+
+        output = m_PlayerCamera.WorldToViewportPoint(m_GameManager.Players[m_PlayerIndex].Player.Weapon.AimPosition());
+
+        float aspect = (float)m_PlayerCamera.pixelWidth / (float)m_PlayerCamera.pixelHeight;
+
+        output.x /= ((float)aspect / 2.0f);
+        output.x -= (aspect);
+
+        output.y /= 0.5f;
+        output.y -= 1.0f;
+
+        return output;
+    }
+
 
     #region line generation
 
@@ -112,6 +128,8 @@ public class AttitudeIndicator : MonoBehaviour
 
     private void GenerateLines()
     {
+        AddArrow(CalculateRectilePosition(), 90, 40);
+
         // Render the lines
         RenderLines(m_Lines);
 
@@ -193,7 +211,7 @@ public class AttitudeIndicator : MonoBehaviour
     {
         #region horizontal aim
         {
-            float y = 1.8f - m_Interpolation;
+            float y = 0.8f;
 
             #region indicator arrow
             {
@@ -218,6 +236,8 @@ public class AttitudeIndicator : MonoBehaviour
                         yLength += 0.02f;
                     }
 
+                    yLength *= (m_Interpolation > 0.001f ? 1 : 0);
+
                     Line line = new Line(x, y, x, y - yLength);
                     AddLine(line);
                 }
@@ -228,7 +248,7 @@ public class AttitudeIndicator : MonoBehaviour
 
         #region vertical aim
         {
-            float y = 1.6f - m_Interpolation;
+            float y = 0.6f;
 
             #region indicator arrow
             {
@@ -252,6 +272,8 @@ public class AttitudeIndicator : MonoBehaviour
                     {
                         yLength += 0.02f;
                     }
+
+                    yLength *= (m_Interpolation > 0.001f ? 1 : 0);
 
                     Line line = new Line(x, y + yLength, x, y);
                     AddLine(line);

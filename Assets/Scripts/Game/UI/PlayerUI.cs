@@ -68,6 +68,8 @@ public class PlayerUI : MonoBehaviour
         Vector3 physicalPosition = m_GameManager.Players[m_PlayerIndex].Player.Weapon.AimPosition();
         Vector3 viewportPosition = m_GameManager.Players[m_PlayerIndex].Camera.Camera.WorldToViewportPoint(physicalPosition);
 
+        Debug.Log(viewportPosition);
+
         // Prevent the rectile from coming back when the position is behind the camera
         viewportPosition *= Mathf.Sign(viewportPosition.z);     
 

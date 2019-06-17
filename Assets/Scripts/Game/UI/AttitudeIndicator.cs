@@ -88,19 +88,24 @@ public class AttitudeIndicator : MonoBehaviour
 
     private Vector2 CalculateRectilePosition()
     {
-        Vector2 output = Vector2.zero;
+        Vector3 physicalPosition = m_GameManager.Players[m_PlayerIndex].Player.Weapon.AimPosition();
+        Vector3 viewportPosition = m_GameManager.Players[m_PlayerIndex].Camera.Camera.WorldToViewportPoint(physicalPosition);
 
-        output = m_PlayerCamera.WorldToViewportPoint(m_GameManager.Players[m_PlayerIndex].Player.Weapon.AimPosition());
+        Debug.Log(viewportPosition);
+
+        // Prevent the rectile from coming back when the position is behind the camera
+        viewportPosition *= Mathf.Sign(viewportPosition.z);
 
         float aspect = (float)m_PlayerCamera.pixelWidth / (float)m_PlayerCamera.pixelHeight;
 
-        output.x /= ((float)aspect / 2.0f);
-        output.x -= (aspect);
+        viewportPosition.x *= (aspect * 2);
+        viewportPosition.x -= aspect;
 
-        output.y /= 0.5f;
-        output.y -= 1.0f;
+        viewportPosition.y *= 2;
+        viewportPosition.y -= 1;
 
-        return output;
+
+        return viewportPosition;
     }
 
 
@@ -150,8 +155,6 @@ public class AttitudeIndicator : MonoBehaviour
             horizon.y = 0.0f;
 
             center = m_PlayerCamera.WorldToViewportPoint(horizon);
-
-            float aspect = (float)m_PlayerCamera.pixelHeight / (float)m_PlayerCamera.pixelWidth;
 
             center.x = 0;
 

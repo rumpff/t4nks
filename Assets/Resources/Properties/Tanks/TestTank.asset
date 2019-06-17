@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: TestTank
   m_EditorClassIdentifier: 
   Name: Default boi
-  MaxHealth: 100
+  MaxHealth: 150
   MaxTorque: 6000
   AccelerateRate: 6000
   MaxSteer: 40

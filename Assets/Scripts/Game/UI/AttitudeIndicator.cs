@@ -23,6 +23,7 @@ public class AttitudeIndicator : MonoBehaviour
 
     private bool m_IsActive;
     private float m_Interpolation;
+    private float m_InterpolationReversed;
     private float m_InterpolationTimer;
 
     public void Initalize(int playerIndex, GameManager gameManager)
@@ -50,6 +51,7 @@ public class AttitudeIndicator : MonoBehaviour
         UpdateInterpolation();
 
         // Generate all elements
+        GenerateRectile();
         GenerateAimCompass();
         GenerateHeightCompass();
         GenerateWorldCompass();
@@ -84,6 +86,7 @@ public class AttitudeIndicator : MonoBehaviour
         m_InterpolationTimer = Mathf.Clamp01(m_InterpolationTimer);
 
         m_Interpolation = Easing.easeInOutQuart(m_InterpolationTimer, 0, 1, 1);
+        m_InterpolationReversed = Easing.easeInOutQuart(m_InterpolationTimer, 1, -1, 1);
     }
 
     private Vector2 CalculateRectilePosition()
@@ -133,7 +136,7 @@ public class AttitudeIndicator : MonoBehaviour
 
     private void GenerateLines()
     {
-        AddArrow(CalculateRectilePosition(), 90, 40);
+
 
         // Render the lines
         RenderLines(m_Lines);
@@ -142,6 +145,28 @@ public class AttitudeIndicator : MonoBehaviour
         m_Lines = new List<Line>();
     }
 
+    
+    private void GenerateRectile()
+    {
+        float length = 0.06f;
+        float baseDistance = Mathf.Sqrt(length * length * 2.0f);
+        float distance = baseDistance + (m_InterpolationReversed * 0.1f);
+        float baseAngle = 45 + (m_Interpolation * 45);
+
+        for (int i = 0; i < 4; i++)
+        {
+            float angle = (i * 90) + baseAngle;
+
+
+            Vector2 offset = new Vector2()
+            {
+                x = Mathf.Cos(angle * Mathf.Deg2Rad) * distance,
+                y = Mathf.Sin(angle * Mathf.Deg2Rad) * distance,
+            };
+            AddArrow(CalculateRectilePosition() + offset, angle, length);
+        }
+        
+    }
     private void GenerateDegreesPitch()
     {
         float baseAngle = -m_PlayerCamera.transform.eulerAngles.z;

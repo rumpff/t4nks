@@ -183,7 +183,7 @@ public class PlayerCamera : MonoBehaviour
 
         m_PlayerPos = m_GameManager.Players[m_PlayerIndex].Player.transform.position;
 
-        m_PlayerHeadPos = m_GameManager.Players[m_PlayerIndex].Player.Weapon.BarrelEnd.position;
+        m_PlayerHeadPos = m_GameManager.Players[m_PlayerIndex].Player.Weapon.TankHead;
 
         // Only update the angle when the player is on the ground
         if (m_GameManager.Players[m_PlayerIndex].Player.IsOnGround())

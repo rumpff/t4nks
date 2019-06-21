@@ -10,16 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0babae761f81e2648848d0651b1e32be, type: 3}
-  m_Name: newWeaponInfo
+  m_Name: DefaultCannon
   m_EditorClassIdentifier: 
   Name: Default Cannon
-  Mesh: {fileID: 0}
+  Prefab: {fileID: 4915445817152070343, guid: c99cc595de50a4c4b895fe7eda1d3c7b, type: 3}
+  StartingAmmo: 0
   InitialForce: 10000
   TankForce: 1000000
   AccuracyPercentage: 0
   Mass: 1
   Cooldown: 1
   CameraImpact: 0.5
+  MaxLifeTime: 3.5
   BurnoutTime: 5
   Explosion: {fileID: 1429774812742334492, guid: a190bdf81d9c3d4468a966b7f998602b,
     type: 3}

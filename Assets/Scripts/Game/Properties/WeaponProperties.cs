@@ -6,13 +6,15 @@ using UnityEngine;
 public class WeaponProperties : ScriptableObject
 {
     public string Name;
-    public Mesh Mesh;
+    public GameObject Prefab;
+    public int StartingAmmo;
     public float InitialForce;
     public float TankForce;
     public float AccuracyPercentage;
     public float Mass;
     public float Cooldown;
     public float CameraImpact;
+    public float MaxLifeTime;
     public float BurnoutTime;
 	public Explosion Explosion;
     public ExplosionProperties ExplosionProperties;

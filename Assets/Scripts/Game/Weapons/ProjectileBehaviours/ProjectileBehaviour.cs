@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Projectile : MonoBehaviour
+public class ProjectileBehaviour : MonoBehaviour
 {
     private Player m_Owner;
     private bool m_HasExploded = false;
@@ -35,7 +35,7 @@ public class Projectile : MonoBehaviour
         Explode(collision.transform.GetComponent<Player>());
     }
 
-    private void Explode(Player p)
+    protected virtual void Explode(Player p)
     {
         if (m_HasExploded)
             return;
@@ -86,7 +86,7 @@ public class Projectile : MonoBehaviour
 
     private IEnumerator AutoDestroy()
     {
-        yield return new WaitForSeconds(3.5f);
+        yield return new WaitForSeconds(m_WeaponProperties.MaxLifeTime);
         Explode(null);
     }
 

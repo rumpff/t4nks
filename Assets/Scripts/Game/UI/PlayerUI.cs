@@ -24,10 +24,11 @@ public class PlayerUI : MonoBehaviour
     [Space(5)]
     [SerializeField] private Image m_DamageOverlay;
     [SerializeField] private Image  m_Healthbar;
-    [SerializeField] private Image m_BlurPanel;
+    [SerializeField] private Image m_CurrentWeapon;
     [Space(5)]
     [SerializeField] private TextMeshProUGUI m_DebugText;
     [SerializeField] private TextMeshProUGUI m_HealthText;
+    [SerializeField] private TextMeshProUGUI m_AmmoText;
 
     public void Initalize(int playerIndex, GameManager gameManger)
     {
@@ -58,6 +59,7 @@ public class PlayerUI : MonoBehaviour
         CalculateRectilePosition();
         UpdateDamageOverlay();
         UpdateHealthbar();
+        UpdateWeaponbar();
     }
 
     private void CalculateRectilePosition()
@@ -107,6 +109,17 @@ public class PlayerUI : MonoBehaviour
 
         m_Healthbar.fillAmount = a;
         m_HealthText.text = (a * maxHealth).ToString("000");
+    }
+
+    private void UpdateWeaponbar()
+    {
+        float ammo = m_GameManager.Players[m_PlayerIndex].Player.Weapon.Ammo;
+        string ammoString = ammo.ToString("000");
+
+        if (ammo == 0)
+            ammoString = "inf";
+
+        m_AmmoText.text = ammoString;
     }
 
     public void NewScore(string title, float amount)

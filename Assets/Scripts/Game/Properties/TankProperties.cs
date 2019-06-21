@@ -15,6 +15,7 @@ public class TankProperties : ScriptableObject
     public int AirJumpAmount;
     public float AirControl;
 
+    public WeaponProperties DefaultWeapon;
     public GameObject ExplosionPrefab;
     public ExplosionProperties DestroyExplosionProperties;
 }

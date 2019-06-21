@@ -8,16 +8,14 @@ public class PlayerWeapon : MonoBehaviour
     private readonly float m_ShootThreshold = 0.35f;
     private readonly Vector2 m_MaxAim = new Vector2(67.5f, 22.5f);
 
-    [SerializeField]
     private WeaponProperties m_EquippedWeapon;
 
     [SerializeField]
     private Transform m_TankHead, m_TankBarrel, m_BarrelEnd;
-    [SerializeField]
-    private GameObject m_ProjectilePrefab;
 
     private Player m_Player;
 
+    private int m_CurrentAmmo;
     private float m_ShootCooldown;
 
     private Vector2 m_AimDirection;
@@ -55,14 +53,38 @@ public class PlayerWeapon : MonoBehaviour
         {
             Quaternion projectileRotation = Quaternion.Euler(m_TankBarrel.eulerAngles.x, m_TankHead.eulerAngles.y, m_Player.transform.eulerAngles.z);
 
-            Projectile p = Instantiate(m_ProjectilePrefab, BarrelEnd.position, projectileRotation).GetComponent<Projectile>();
+            ProjectileBehaviour p = Instantiate(m_EquippedWeapon.Prefab, BarrelEnd.position, projectileRotation).GetComponent<ProjectileBehaviour>();
 
             p.Initalize(m_Player, m_EquippedWeapon, m_TankBarrel.forward);
 
             m_ShootCooldown = m_EquippedWeapon.Cooldown;
             m_Player.Camera.Bump = (-m_TankBarrel.forward * m_EquippedWeapon.CameraImpact);
             m_Player.AddForce(-m_TankBarrel.forward * m_EquippedWeapon.TankForce);
+
+            // Check if the weapon does not have infinite ammo
+            if (m_EquippedWeapon.StartingAmmo > 0)
+            {
+                m_CurrentAmmo--;
+
+                if (m_CurrentAmmo <= 0)
+                    ResetWeapon();
+            }
         }
+    }
+
+    public void SwitchWeapon(WeaponProperties weapon)
+    {
+        m_EquippedWeapon = weapon;
+        m_CurrentAmmo = weapon.StartingAmmo;
+    }
+
+    /// <summary>
+    /// Assigns the default weapon
+    /// </summary>
+    public void ResetWeapon()
+    {
+        m_EquippedWeapon = m_Player.Properties.Tank.DefaultWeapon;
+        m_CurrentAmmo = m_Player.Properties.Tank.DefaultWeapon.StartingAmmo;
     }
 
     private void TimerThing()
@@ -79,6 +101,11 @@ public class PlayerWeapon : MonoBehaviour
     public Vector2 RawAim
     {
         get { return new Vector2(m_AimDirection.x / m_MaxAim.x, m_AimDirection.y / m_MaxAim.y); }
+    }
+
+    public int Ammo
+    {
+        get { return m_CurrentAmmo; }
     }
 
     
@@ -102,5 +129,10 @@ public class PlayerWeapon : MonoBehaviour
     public Vector3 BarrelBegin
     {
         get { return m_TankBarrel.position; }
+    }
+
+    public Vector3 TankHead
+    {
+        get { return m_TankHead.position; }
     }
 }

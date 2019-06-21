@@ -91,6 +91,9 @@ public class AttitudeIndicator : MonoBehaviour
 
     private Vector2 CalculateRectilePosition()
     {
+        if (m_GameManager.Players[m_PlayerIndex].State != PlayerState.Alive)
+            return Vector2.one * 5;
+
         Vector3 physicalPosition = m_GameManager.Players[m_PlayerIndex].Player.Weapon.AimPosition();
         Vector3 viewportPosition = m_GameManager.Players[m_PlayerIndex].Camera.Camera.WorldToViewportPoint(physicalPosition);
 

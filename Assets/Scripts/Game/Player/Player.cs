@@ -79,6 +79,9 @@ public class Player : MonoBehaviour
         Health.DeathEvent += OnDeath;
         Health.DamageEvent += OnDamage;
 
+        // Initalize weapon
+        Weapon.SwitchWeapon(playerProperties.Tank.DefaultWeapon);
+
         StartCoroutine(ReadWheelHits());
 
         // Set the layer masks
@@ -361,6 +364,11 @@ public class Player : MonoBehaviour
     public Rigidbody Rigidbody { get; private set; }
 
     public PlayerInput PInput { get; private set; }
+
+    public PlayerProperties Properties
+    {
+        get { return m_PlayerProperties; }
+    }
 
     public int Index
     {

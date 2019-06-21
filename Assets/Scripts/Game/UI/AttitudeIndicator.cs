@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 using SimpleEasing;
 
 public class AttitudeIndicator : MonoBehaviour
@@ -11,11 +12,16 @@ public class AttitudeIndicator : MonoBehaviour
     private Camera m_PlayerCamera;
     private float m_PlayerHeight;
 
+    [SerializeField]
+    private Canvas m_AttitudeCanvas;
+
     private List<Line> m_Lines;
 
     // Player values
     private Vector2 m_PlayerRawAim;
     private Vector3 m_PlayerEulerAngles;
+    private float m_PlayerVelocity;
+    private float m_AimDistance;
 
     [SerializeField]
     private Material m_LineMaterial;
@@ -26,10 +32,33 @@ public class AttitudeIndicator : MonoBehaviour
     private float m_InterpolationReversed;
     private float m_InterpolationTimer;
 
+    // Texts
+    private TextMeshProUGUI m_AimDistanceText;
+    private TextMeshProUGUI m_AimXText;
+    private TextMeshProUGUI m_AimYText;
+    private TextMeshProUGUI m_WorldCompassText;
+    private TextMeshProUGUI m_HeightText;
+    private TextMeshProUGUI m_VelocityText;
+
     public void Initalize(int playerIndex, GameManager gameManager)
     {
         m_PlayerIndex = playerIndex;
         m_GameManager = gameManager;
+
+        InitText(ref m_AimDistanceText);
+        InitText(ref m_AimXText);
+        InitText(ref m_AimYText);
+        InitText(ref m_WorldCompassText);
+        InitText(ref m_HeightText);
+        InitText(ref m_VelocityText);
+    }
+
+    private void InitText(ref TextMeshProUGUI text)
+    {
+        GameObject prefab = Resources.Load("Prefabs/UI/AttiduteText") as GameObject;
+
+        GameObject t = Instantiate(prefab, m_AttitudeCanvas.transform);
+        text = t.GetComponent<TextMeshProUGUI>();
     }
 
     private void Start()
@@ -54,6 +83,7 @@ public class AttitudeIndicator : MonoBehaviour
         GenerateRectile();
         GenerateAimCompass();
         GenerateHeightCompass();
+        GenerateVelocityCompass();
         GenerateWorldCompass();
         GenerateDegreesPitch();
     }
@@ -72,6 +102,8 @@ public class AttitudeIndicator : MonoBehaviour
             m_PlayerEulerAngles = p.Player.transform.eulerAngles;
             m_PlayerCamera = p.Camera.Camera;
             m_PlayerHeight = p.Player.GetHeightFromGround();
+            m_PlayerVelocity = p.Player.transform.InverseTransformDirection(p.Player.Rigidbody.velocity).z;
+            m_AimDistance = p.Player.Weapon.AimDistance();
         }
     }
 
@@ -151,10 +183,12 @@ public class AttitudeIndicator : MonoBehaviour
     
     private void GenerateRectile()
     {
-        float length = 0.06f;
+        float length = 0.08f;
         float baseDistance = Mathf.Sqrt(length * length * 2.0f);
         float distance = baseDistance + (m_InterpolationReversed * 0.1f);
         float baseAngle = 45 + (m_Interpolation * 45);
+
+        Vector2 rectilePos = CalculateRectilePosition();
 
         for (int i = 0; i < 4; i++)
         {
@@ -166,9 +200,25 @@ public class AttitudeIndicator : MonoBehaviour
                 x = Mathf.Cos(angle * Mathf.Deg2Rad) * distance,
                 y = Mathf.Sin(angle * Mathf.Deg2Rad) * distance,
             };
-            AddArrow(CalculateRectilePosition() + offset, angle, length);
+            AddArrow(rectilePos + offset, angle, length);
         }
-        
+
+        #region text
+        {
+            // Set the alignment
+            m_AimDistanceText.alignment = TextAlignmentOptions.Center;
+
+            // Position
+            m_AimDistanceText.rectTransform.anchoredPosition = rectilePos;
+
+            // Scale
+            m_AimDistanceText.rectTransform.localScale = new Vector3(m_Interpolation, m_Interpolation, 1.0f);
+
+            // Text
+            m_AimDistanceText.text = (m_AimDistance).ToString("00");
+        }
+        #endregion
+
     }
     private void GenerateDegreesPitch()
     {
@@ -274,6 +324,25 @@ public class AttitudeIndicator : MonoBehaviour
                 }
             }
             #endregion
+            #region text
+            {
+                // Set the alignment
+                m_AimXText.alignment = TextAlignmentOptions.Center;
+
+                // Position
+                m_AimXText.rectTransform.anchoredPosition = new Vector2()
+                {
+                    x = 0,
+                    y = y + 0.10f
+                };
+
+                // Scale
+                m_AimXText.rectTransform.localScale = new Vector3(m_Interpolation, m_Interpolation, 1.0f);
+
+                // Text
+                m_AimXText.text = (m_PlayerRawAim.x).ToString("0.000");
+            }
+            #endregion
         }
         #endregion
 
@@ -311,12 +380,31 @@ public class AttitudeIndicator : MonoBehaviour
                 }
             }
             #endregion
+            #region text
+            {
+                // Set the alignment
+                m_AimXText.alignment = TextAlignmentOptions.Center;
+
+                // Position
+                m_AimYText.rectTransform.anchoredPosition = new Vector2()
+                {
+                    x = 0,
+                    y = y - 0.10f
+                };
+
+                // Scale
+                m_AimYText.rectTransform.localScale = new Vector3(m_Interpolation, m_Interpolation, 1.0f);
+
+                // Text
+                m_AimYText.text = (m_PlayerRawAim.y * -1.0f).ToString("0.000");
+            }
+            #endregion
         }
         #endregion
     }
     private void GenerateHeightCompass()
     {
-        float x = 1.0f;
+        float x = 1.4f;
         #region ruler lines
         {
             int rulerAmount = 100;
@@ -339,13 +427,9 @@ public class AttitudeIndicator : MonoBehaviour
 
                 Line line = new Line(x, y, x + xLength, y);
                 AddLine(line);
-
-                if(i == 0)
-                    m_GameManager.Players[m_PlayerIndex].UI.DebugText = y.ToString("00.000");
             }
         }
         #endregion
-
         #region indicator arrow
         {
             Vector2 position = new Vector2()
@@ -356,7 +440,88 @@ public class AttitudeIndicator : MonoBehaviour
 
             float arrowLength = 0.05f * m_Interpolation;
 
-            AddArrow(position, -180 * m_Interpolation, arrowLength);
+            AddArrow(position, -180, arrowLength);
+        }
+        #endregion
+        #region text
+        {
+            // Set the alignment
+            m_HeightText.alignment = TextAlignmentOptions.Left;
+
+            // Position
+            m_HeightText.rectTransform.anchoredPosition = new Vector2()
+            {
+                x = x + 0.12f,
+                y = 0f
+            };
+
+            // Scale
+            m_HeightText.rectTransform.localScale = new Vector3(m_Interpolation, m_Interpolation, 1.0f);
+
+            // Text
+            m_HeightText.text = (m_PlayerHeight * 10).ToString("0.000");
+        }
+        #endregion
+
+    }
+    private void GenerateVelocityCompass()
+    {
+        float x = -1.4f;
+        #region ruler lines
+        {
+            int rulerAmount = 50;
+            float lineSpacing = 0.2f;
+
+
+            for (int i = -rulerAmount; i < rulerAmount; i++)
+            {
+                //float y = (m_PlayerHeight + (i - (rulerAmount / 2.0f)) / (rulerAmount / 2.0f)) * lineSpacing;
+                float y = (-(m_PlayerVelocity / 10.0f) + (i * lineSpacing));
+                float xLength = 0.03f;
+
+                if (i == 0)
+                {
+                    xLength += 0.03f;
+                }
+
+                xLength *= m_Interpolation;
+
+                Line line = new Line(x, y, x + xLength, y);
+                AddLine(line);
+            }
+        }
+        #endregion
+
+        #region indicator arrow
+        {
+            Vector2 position = new Vector2()
+            {
+                x = x - 0.08f,
+                y = 0f
+            };
+
+            float arrowLength = 0.05f * m_Interpolation;
+
+            AddArrow(position, 0, arrowLength);
+        }
+        #endregion
+        #region text
+        {
+            // Set the alignment
+            m_VelocityText.alignment = TextAlignmentOptions.Right;
+
+            // Position
+            m_VelocityText.rectTransform.anchoredPosition = new Vector2()
+            {
+                x = x - 0.12f,
+                y = 0f
+            };
+
+            // Scale
+            m_VelocityText.rectTransform.localScale = new Vector3(m_Interpolation, m_Interpolation, 1.0f);
+
+            // Text
+            m_VelocityText.text = (m_PlayerVelocity * 1).ToString("0.000");
         }
         #endregion
     }
@@ -412,6 +577,23 @@ public class AttitudeIndicator : MonoBehaviour
 
                 AddLine(line);
             }
+        }
+        #endregion
+
+        #region text
+        {
+            // Set the alignment
+            m_WorldCompassText.alignment = TextAlignmentOptions.Center;
+
+            // Position
+            m_WorldCompassText.rectTransform.anchoredPosition = new Vector2()
+            {
+                x = 0f,
+                y = compassCenter.y + (innerRadius - 0.12f)
+            };
+
+            // Text
+            m_WorldCompassText.text = (m_PlayerEulerAngles.y * 1).ToString("000.000");
         }
         #endregion
     }

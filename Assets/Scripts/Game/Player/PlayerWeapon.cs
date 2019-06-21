@@ -112,13 +112,23 @@ public class PlayerWeapon : MonoBehaviour
     public Vector3 AimPosition()
     {
         Ray ray = new Ray(BarrelEnd.position, m_TankBarrel.forward);
-        bool hasHit = Physics.Raycast(ray, out RaycastHit hit, 256.0f);
+        bool hasHit = Physics.Raycast(ray, out RaycastHit hit, 4040.0f);
 
         if (hasHit)
             return hit.point;
 
         else // Defaults to x meters in front of tank if noting is hit
-            return (m_TankBarrel.position + (m_TankBarrel.forward * 256.0f));
+            return (m_TankBarrel.position + (m_TankBarrel.forward * 4040.0f));
+    }
+
+    public float AimDistance()
+    {
+        float distance = Vector3.Distance(BarrelEnd.position, AimPosition());
+
+        if (distance > 4000)
+            distance = 0;
+
+        return distance;
     }
 
     public Transform BarrelEnd

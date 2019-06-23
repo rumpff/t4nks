@@ -22,8 +22,19 @@ public class ProjectileBehaviour : MonoBehaviour
         m_Owner = ownerIndex;
         m_WeaponProperties = weaponInfo;
 
+
+        float zAngle = Random.Range(-weaponInfo.AccuracyAngle, weaponInfo.AccuracyAngle) * Mathf.Deg2Rad;
+        float heightAngle = Random.Range(-weaponInfo.AccuracyAngle, weaponInfo.AccuracyAngle) * Mathf.Deg2Rad;
+
+        Vector3 randomAngle = new Vector3()
+        {
+            x = Mathf.Cos(zAngle) * Mathf.Sin(heightAngle),
+            y = Mathf.Sin(zAngle) * Mathf.Sin(heightAngle),
+            z = Mathf.Cos(heightAngle),
+        };
+
         m_Rigidbody.mass = weaponInfo.Mass;
-        m_Rigidbody.AddForce(aimDirection * weaponInfo.InitialForce);
+        m_Rigidbody.AddForce((Vector3.Normalize(aimDirection + randomAngle)) * weaponInfo.InitialForce);
 
         AddDistancePoint();
         StartCoroutine(TrackDistance());

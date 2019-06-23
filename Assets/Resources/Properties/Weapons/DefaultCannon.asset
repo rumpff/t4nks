@@ -17,7 +17,7 @@ MonoBehaviour:
   StartingAmmo: 0
   InitialForce: 10000
   TankForce: 1000000
-  AccuracyPercentage: 0
+  AccuracyAngle: 50
   Mass: 1
   Cooldown: 1
   CameraImpact: 0.5

@@ -30,6 +30,7 @@ public struct GamePlayer
     public int Index;
 
     public bool AllowedToRespawn;
+    public float RespawnTimer;
 
     public GamePlayer(PlayerProperties properties, int index)
     {
@@ -37,6 +38,7 @@ public struct GamePlayer
         State = PlayerState.Alive;
         Index = index;
         AllowedToRespawn = false;
+        RespawnTimer = 0;
 
         // These values will be assigned once they're created
         Player = null;

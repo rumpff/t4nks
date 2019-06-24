@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Default Cannon
   Prefab: {fileID: 4915445817152070343, guid: c99cc595de50a4c4b895fe7eda1d3c7b, type: 3}
-  StartingAmmo: 0
+  StartingAmmo: 30
   InitialForce: 10000
   TankForce: 50000
-  AccuracyAngle: 0
+  SpreadAngle: 4
   Mass: 1
   Cooldown: 0.1
   CameraImpact: 0.2

@@ -427,7 +427,7 @@ public class AttitudeIndicator : MonoBehaviour
 
                 xLength *= m_Interpolation;
 
-                Line line = new Line(x, y, x + xLength, y);
+                Line line = new Line(x, y, x - xLength, y);
                 AddLine(line);
             }
         }
@@ -436,7 +436,7 @@ public class AttitudeIndicator : MonoBehaviour
         {
             Vector2 position = new Vector2()
             {
-                x = x + 0.08f,
+                x = x + 0.04f,
                 y = 0f
             };
 
@@ -461,7 +461,7 @@ public class AttitudeIndicator : MonoBehaviour
             m_HeightText.rectTransform.localScale = new Vector3(m_Interpolation, m_Interpolation, 1.0f);
 
             // Text
-            m_HeightText.text = (m_PlayerHeight * 10).ToString("0.000");
+            m_HeightText.text = m_PlayerHeight.ToString("0.00 m");
         }
         #endregion
 
@@ -498,7 +498,7 @@ public class AttitudeIndicator : MonoBehaviour
         {
             Vector2 position = new Vector2()
             {
-                x = x - 0.08f,
+                x = x - 0.04f,
                 y = 0f
             };
 
@@ -523,7 +523,7 @@ public class AttitudeIndicator : MonoBehaviour
             m_VelocityText.rectTransform.localScale = new Vector3(m_Interpolation, m_Interpolation, 1.0f);
 
             // Text
-            m_VelocityText.text = (m_PlayerVelocity * 1).ToString("0.000");
+            m_VelocityText.text = (m_PlayerVelocity * 3.6f).ToString("0.00 km/h");
         }
         #endregion
     }
@@ -595,7 +595,7 @@ public class AttitudeIndicator : MonoBehaviour
             };
 
             // Text
-            m_WorldCompassText.text = (m_PlayerEulerAngles.y * 1).ToString("000.000");
+            m_WorldCompassText.text = m_PlayerEulerAngles.y.ToString("000°");
         }
         #endregion
     }

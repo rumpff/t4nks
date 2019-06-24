@@ -115,10 +115,16 @@ public class GameManager : MonoBehaviour
     private IEnumerator RespawnPlayer(int playerId)
     {
         Players[playerId].AllowedToRespawn = false;
+        Players[playerId].RespawnTimer = m_GameRules.RespawnDelay;
 
-        yield return new WaitForSeconds(m_GameRules.RespawnDelay);
+        while(Players[playerId].RespawnTimer > 0)
+        {
+            Players[playerId].RespawnTimer -= Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
 
         Players[playerId].AllowedToRespawn = true;
+        Players[playerId].RespawnTimer = 0;
 
         // Wait for the player until they want to respawn
         bool pressedRespawnButton = false;

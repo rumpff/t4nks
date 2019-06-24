@@ -20,7 +20,7 @@ public class PlayerUI : MonoBehaviour
     private float m_DisplayScore = 0;
     private int m_PopupsActive = 0;
 
-    [SerializeField] private RectTransform m_Rectile;
+    [SerializeField] private RectTransform m_GameUI;
     [Space(5)]
     [SerializeField] private Image m_DamageOverlay;
     [SerializeField] private Image  m_Healthbar;
@@ -36,6 +36,7 @@ public class PlayerUI : MonoBehaviour
 
         m_RectTransform = GetComponent<RectTransform>();
         m_Canvas = GetComponent<Canvas>();
+        GetComponentInChildren<RespawnUI>().Initalize(playerIndex, gameManger);
 
         m_Canvas.renderMode = RenderMode.ScreenSpaceCamera;
         m_Canvas.worldCamera = m_GameManager.Players[m_PlayerIndex].Camera.Camera;
@@ -55,28 +56,16 @@ public class PlayerUI : MonoBehaviour
 
     private void Update()
     {
-        CalculateRectilePosition();
+        GameUIUpdate();
+
         UpdateDamageOverlay();
         UpdateHealthbar();
         UpdateWeaponbar();
     }
 
-    private void CalculateRectilePosition()
+    private void GameUIUpdate()
     {
-        if (m_GameManager.Players[m_PlayerIndex].Player == null)
-            return;
-
-        Vector3 physicalPosition = m_GameManager.Players[m_PlayerIndex].Player.Weapon.AimPosition();
-        Vector3 viewportPosition = m_GameManager.Players[m_PlayerIndex].Camera.Camera.WorldToViewportPoint(physicalPosition);
-
-        // Prevent the rectile from coming back when the position is behind the camera
-        viewportPosition *= Mathf.Sign(viewportPosition.z);     
-
-        Vector2 canvasPosition = new Vector2(
-         ((viewportPosition.x * m_RectTransform.sizeDelta.x) - (m_RectTransform.sizeDelta.x * 0.5f)),
-         ((viewportPosition.y * m_RectTransform.sizeDelta.y) - (m_RectTransform.sizeDelta.y * 0.5f)));
-
-        m_Rectile.anchoredPosition = canvasPosition;
+        m_GameUI.gameObject.SetActive(m_GameManager.Players[m_PlayerIndex].State == PlayerState.Alive);
     }
 
     private void SetDamageOverlay(float alpha)

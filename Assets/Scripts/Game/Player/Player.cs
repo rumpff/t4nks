@@ -348,14 +348,6 @@ public class Player : MonoBehaviour
         Rigidbody.AddForce(force);
     }
 
-    /// <summary>
-    /// Absolute aim rotation
-    /// </summary>
-    public Vector2 RawAim
-    {
-        get { return new Vector2(m_AimRotation.x / MaxAim.x, m_AimRotation.y / MaxAim.y); }
-    }
-
     public XboxController Controller
     {
         get { return m_Controller; }

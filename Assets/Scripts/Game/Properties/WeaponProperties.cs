@@ -10,7 +10,7 @@ public class WeaponProperties : ScriptableObject
     public int StartingAmmo;
     public float InitialForce;
     public float TankForce;
-    public float AccuracyAngle;
+    public float SpreadAngle;
     public float Mass;
     public float Cooldown;
     public float CameraImpact;

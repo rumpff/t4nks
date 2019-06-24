@@ -11,6 +11,7 @@ public class AttitudeIndicator : MonoBehaviour
     private Camera m_Camera;
     private Camera m_PlayerCamera;
     private float m_PlayerHeight;
+    private Vector3 m_PlayerForward;
 
     [SerializeField]
     private Canvas m_AttitudeCanvas;
@@ -104,6 +105,7 @@ public class AttitudeIndicator : MonoBehaviour
             m_PlayerHeight = p.Player.GetHeightFromGround();
             m_PlayerVelocity = p.Player.transform.InverseTransformDirection(p.Player.Rigidbody.velocity).z;
             m_AimDistance = p.Player.Weapon.AimDistance();
+            m_PlayerForward = p.Player.transform.forward;
         }
     }
 
@@ -128,8 +130,6 @@ public class AttitudeIndicator : MonoBehaviour
 
         Vector3 physicalPosition = m_GameManager.Players[m_PlayerIndex].Player.Weapon.AimPosition();
         Vector3 viewportPosition = m_GameManager.Players[m_PlayerIndex].Camera.Camera.WorldToViewportPoint(physicalPosition);
-
-        Debug.Log(viewportPosition);
 
         // Prevent the rectile from coming back when the position is behind the camera
         viewportPosition *= Mathf.Sign(viewportPosition.z);
@@ -229,18 +229,20 @@ public class AttitudeIndicator : MonoBehaviour
         #region calculate triangle center
         {
             // Create a point so far in the distance that it is technicly a point on the horizon
-            Vector3 horizon = m_PlayerCamera.transform.position + (m_PlayerCamera.transform.forward * 2500.0f);
+            Vector3 forwardiWan = m_PlayerForward;
+            if (Input.GetKey(KeyCode.Q)) forwardiWan = m_PlayerCamera.transform.forward;
+
+            Vector3 horizon = m_PlayerCamera.transform.position + (forwardiWan * 2500.0f);
             horizon.y = 0.0f;
 
+            float aspect = (float)m_PlayerCamera.pixelWidth / (float)m_PlayerCamera.pixelHeight;
             center = m_PlayerCamera.WorldToViewportPoint(horizon);
 
-            center.x = 0;
+            center.x *= (aspect * 2);
+            center.x -= aspect;
 
-            //center.x /= 0.5f;
-            //center.x -= 1.0f;
-
-            center.y /= 0.5f;
-            center.y -= 1.0f;
+            center.y *= 2;
+            center.y -= 1;
         }
         #endregion
 

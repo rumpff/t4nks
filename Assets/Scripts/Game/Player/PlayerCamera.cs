@@ -190,8 +190,8 @@ public class PlayerCamera : MonoBehaviour
             m_angleDest = m_GameManager.Players[m_PlayerIndex].Player.transform.eulerAngles.y;
 
         m_AimOffset = new Vector2(
-            m_GameManager.Players[m_PlayerIndex].Player.Weapon.RawAim.x * 45.0f,
-            m_GameManager.Players[m_PlayerIndex].Player.Weapon.RawAim.y * 20); // 15.0f
+            m_GameManager.Players[m_PlayerIndex].Player.Weapon.AbsuluteAim.x * 45.0f,
+            m_GameManager.Players[m_PlayerIndex].Player.Weapon.AbsuluteAim.y * 20); // 15.0f
     }
 
     public void AddScreenshake(float amount)

@@ -19,10 +19,12 @@ public class PlayerWeapon : MonoBehaviour
     private float m_ShootCooldown;
 
     private Vector2 m_AimDirection;
+    private Vector2 m_SpreadDirection;
 
     private void Awake()
     {
         m_Player = GetComponent<Player>();
+        m_SpreadDirection = new Vector2();
     }
 
 
@@ -40,7 +42,7 @@ public class PlayerWeapon : MonoBehaviour
     private void AimThing()
     {
         m_AimDirection = Vector2.Lerp(m_AimDirection, new Vector2(
-            m_Player.PInput.Aim.x * m_MaxAim.x, m_Player.PInput.Aim.y * m_MaxAim.y), 14.0f * Time.deltaTime);
+            m_Player.PInput.Aim.x * m_MaxAim.x, m_Player.PInput.Aim.y * m_MaxAim.y), 14.0f * Time.deltaTime) + m_SpreadDirection;
 
         // Apply Rotation
         m_TankHead.localEulerAngles = new Vector3(0.0f, m_AimDirection.x, 0.0f);
@@ -51,15 +53,20 @@ public class PlayerWeapon : MonoBehaviour
     {
         if(m_Player.PInput.Shoot && m_ShootCooldown == 0)
         {
-            Quaternion projectileRotation = Quaternion.Euler(m_TankBarrel.eulerAngles.x, m_TankHead.eulerAngles.y, m_Player.transform.eulerAngles.z);
+            Vector3 angle = new Vector3(m_TankBarrel.eulerAngles.x, m_TankHead.eulerAngles.y, m_Player.transform.eulerAngles.z);
+            Quaternion projectileRotation = Quaternion.Euler(angle);
 
             ProjectileBehaviour p = Instantiate(m_EquippedWeapon.Prefab, BarrelEnd.position, projectileRotation).GetComponent<ProjectileBehaviour>();
+
+            //p.Initalize(m_Player, m_EquippedWeapon, m_TankBarrel.forward);
 
             p.Initalize(m_Player, m_EquippedWeapon, m_TankBarrel.forward);
 
             m_ShootCooldown = m_EquippedWeapon.Cooldown;
             m_Player.Camera.Bump = (-m_TankBarrel.forward * m_EquippedWeapon.CameraImpact);
             m_Player.AddForce(-m_TankBarrel.forward * m_EquippedWeapon.TankForce);
+
+            AddSpread(m_EquippedWeapon.SpreadAngle);
 
             // Check if the weapon does not have infinite ammo
             if (m_EquippedWeapon.StartingAmmo > 0)
@@ -93,6 +100,8 @@ public class PlayerWeapon : MonoBehaviour
             m_ShootCooldown -= Time.deltaTime;
         if (m_ShootCooldown < 0)
             m_ShootCooldown = 0;
+
+        m_SpreadDirection = Vector2.Lerp(m_SpreadDirection, Vector2.zero, 7 * Time.deltaTime);
     }
 
     /// <summary>
@@ -100,7 +109,15 @@ public class PlayerWeapon : MonoBehaviour
     /// </summary>
     public Vector2 RawAim
     {
-        get { return new Vector2(m_AimDirection.x / m_MaxAim.x, m_AimDirection.y / m_MaxAim.y); }
+        get { return m_AimDirection /  m_MaxAim.x; }
+    }
+
+    /// <summary>
+    /// Absolute aim rotation without spread
+    /// </summary>
+    public Vector2 AbsuluteAim
+    {
+        get { return (m_AimDirection - m_SpreadDirection) / m_MaxAim.x; }
     }
 
     public int Ammo
@@ -131,6 +148,14 @@ public class PlayerWeapon : MonoBehaviour
         return distance;
     }
 
+    public void AddSpread(float angle)
+    {
+        float yScale = m_MaxAim.y / (m_MaxAim.x / 2.0f);
+
+        m_SpreadDirection.x += Random.Range(-angle, angle);
+        m_SpreadDirection.y += Random.Range(-angle * yScale, -0);
+    }
+
     public Transform BarrelEnd
     {
         get { return m_BarrelEnd; }
@@ -144,5 +169,10 @@ public class PlayerWeapon : MonoBehaviour
     public Vector3 TankHead
     {
         get { return m_TankHead.position; }
+    }
+
+    public Vector2 Spread
+    {
+        get { return m_SpreadDirection; }
     }
 }

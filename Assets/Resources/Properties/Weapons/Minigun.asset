@@ -19,7 +19,7 @@ MonoBehaviour:
   TankForce: 50000
   AccuracyAngle: 0
   Mass: 1
-  Cooldown: 0.02
+  Cooldown: 0.1
   CameraImpact: 0.2
   MaxLifeTime: 1
   BurnoutTime: 5

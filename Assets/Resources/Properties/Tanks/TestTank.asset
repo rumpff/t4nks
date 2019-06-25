@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Default boi
   MaxHealth: 150
-  MaxTorque: 6000
+  MaxTorque: 1000
   AccelerateRate: 6000
-  MaxSteer: 40
+  MaxSteer: 30
   BrakeTorque: 1e+9
   JumpForce: 2000000
   AirJumpAmount: 1

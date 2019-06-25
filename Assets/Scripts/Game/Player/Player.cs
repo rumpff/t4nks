@@ -32,6 +32,7 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     private WheelCollider m_WheelFrontLeft, m_WheelFrontRight, m_WheelBackLeft, m_WheelBackRight;
+    private List<WheelCollider> m_WheelsLeft, m_WheelsRight;
     private List<WheelHit> m_WheelHits;
 
     [SerializeField]
@@ -83,6 +84,26 @@ public class Player : MonoBehaviour
         Weapon.SwitchWeapon(playerProperties.Tank.DefaultWeapon);
 
         StartCoroutine(ReadWheelHits());
+
+        // Wheels
+        WheelCollider[] wheels = transform.GetComponentsInChildren<WheelCollider>();
+        m_WheelsLeft = new List<WheelCollider>();
+        m_WheelsRight = new List<WheelCollider>();
+
+        foreach (WheelCollider wheel in wheels)
+        {
+            string parent = wheel.transform.parent.name.ToLower();
+
+            if(parent.Contains("left"))
+            {
+                m_WheelsLeft.Add(wheel);
+            }
+
+            if (parent.Contains("right"))
+            {
+                m_WheelsRight.Add(wheel);
+            }
+        }
 
         // Set the layer masks
         MeshRenderer[] meshObjects = transform.GetComponentsInChildren<MeshRenderer>();

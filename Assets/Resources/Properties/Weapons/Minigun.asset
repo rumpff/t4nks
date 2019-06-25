@@ -17,9 +17,9 @@ MonoBehaviour:
   StartingAmmo: 30
   InitialForce: 10000
   TankForce: 50000
-  SpreadAngle: 4
+  SpreadAngle: 2
   Mass: 1
-  Cooldown: 0.1
+  Cooldown: 0.2
   CameraImpact: 0.2
   MaxLifeTime: 1
   BurnoutTime: 5

@@ -422,7 +422,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6350327768451355046}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.5}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6350327769550048173}
@@ -518,7 +518,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6350327769035936933}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 4.88}
+  m_LocalPosition: {x: 0, y: 0, z: 5.5}
   m_LocalScale: {x: 0.4, y: 0.4, z: 1}
   m_Children: []
   m_Father: {fileID: 6350327768451355047}
@@ -684,7 +684,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6350327769316355740}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 5.4}
+  m_LocalPosition: {x: 0, y: 0, z: 6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6350327768451355047}
@@ -788,12 +788,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c529232b9051a5b438b5088f546440ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_EquippedWeapon: {fileID: 11400000, guid: 4d15d8a8828872f498cfdfc19f131dfe, type: 2}
   m_TankHead: {fileID: 6350327767451424619}
   m_TankBarrel: {fileID: 6350327768451355047}
   m_BarrelEnd: {fileID: 6350327769316355741}
-  m_ProjectilePrefab: {fileID: 4915445817152070343, guid: c99cc595de50a4c4b895fe7eda1d3c7b,
-    type: 3}
 --- !u!54 &6350327769385851271
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -977,8 +974,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6350327769550048172}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 2.5}
-  m_LocalScale: {x: 0.25, y: 0.25, z: 5}
+  m_LocalPosition: {x: 0, y: 0, z: 2.75}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 5.5}
   m_Children: []
   m_Father: {fileID: 6350327768451355047}
   m_RootOrder: 0

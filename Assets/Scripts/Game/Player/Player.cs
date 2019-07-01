@@ -3,9 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using XboxCtrlrInput;
+using TMPro;
 
 public class Player : MonoBehaviour
 {
+    public TextMeshPro KAK;
+
     private const string DriveableTag = "Driveable";
     private const string TireTag = "TankTire";
     private const float JumpCooldown = 0.2f;
@@ -42,7 +45,8 @@ public class Player : MonoBehaviour
 
     private Vector2 m_AimRotation;
 
-    private float m_Torque = 0;
+    private Vector2 m_Torque = Vector2.zero;
+    private float m_TorqueOld = 0;
     private float m_BrakeTorque = 0;
     private float m_StreerAngle = 0;
 
@@ -93,7 +97,6 @@ public class Player : MonoBehaviour
         foreach (WheelCollider wheel in wheels)
         {
             string parent = wheel.transform.parent.name.ToLower();
-
             if(parent.Contains("left"))
             {
                 m_WheelsLeft.Add(wheel);
@@ -137,23 +140,30 @@ public class Player : MonoBehaviour
     private void CarThing()
     {
         // Handle torque
+        #region old torque
         float torqueDest = 0;
 
         if(IsOnGround())
-            torqueDest = PInput.Torque * m_TankProperties.MaxTorque;
+            torqueDest = PInput.TorqueOld * m_TankProperties.MaxTorque;
 
-        if (m_Torque != torqueDest)
+        if (m_TorqueOld != torqueDest)
         {
-            float changeDir = Mathf.Sign(torqueDest - m_Torque);
-            m_Torque += changeDir * (m_TankProperties.AccelerateRate * Time.deltaTime);
+            float changeDir = Mathf.Sign(torqueDest - m_TorqueOld);
+            m_TorqueOld += changeDir * (m_TankProperties.AccelerateRate * Time.deltaTime);
 
             // Prevent overshooting
-            if(changeDir == 1 && (m_Torque > torqueDest) ||
-                changeDir == -1 && (m_Torque < torqueDest))
+            if(changeDir == 1 && (m_TorqueOld > torqueDest) ||
+                changeDir == -1 && (m_TorqueOld < torqueDest))
             {
-                m_Torque = torqueDest;
+                m_TorqueOld = torqueDest;
             }
         }
+        #endregion
+
+        float controlDirection = Mathf.Atan2(PInput.DriveInput.x, PInput.DriveInput.y) * Mathf.Rad2Deg;
+        float controlMagnitude = Vector2.Distance(Vector2.zero, PInput.DriveInput);
+
+        KAK.text = controlDirection.ToString();
 
         // Handle steer
         m_StreerAngle = Mathf.Lerp(m_StreerAngle, PInput.Steer * m_TankProperties.MaxSteer, 12 * Time.deltaTime);
@@ -198,11 +208,11 @@ public class Player : MonoBehaviour
     private void ApplyCarMotion()
     {
         // Driving
-        m_WheelFrontLeft.motorTorque = m_Torque;
-        m_WheelFrontRight.motorTorque = m_Torque;
+        m_WheelFrontLeft.motorTorque = m_TorqueOld;
+        m_WheelFrontRight.motorTorque = m_TorqueOld;
 
-        m_WheelBackLeft.motorTorque = m_Torque;
-        m_WheelBackRight.motorTorque = m_Torque;
+        m_WheelBackLeft.motorTorque = m_TorqueOld;
+        m_WheelBackRight.motorTorque = m_TorqueOld;
 
         // Steering
         m_WheelFrontLeft.steerAngle = m_StreerAngle;

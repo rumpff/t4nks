@@ -43,7 +43,8 @@ public class PlayerInput : MonoBehaviour
     {
         while(true)
         {
-            Torque = XCI.GetAxis(XboxAxis.LeftStickY, controller);
+            DriveInput = XYStick(XboxAxis.LeftStickX, controller);
+            TorqueOld = XCI.GetAxis(XboxAxis.LeftStickY, controller);
             Steer = XCI.GetAxis(XboxAxis.LeftStickX, controller);
 
             Brake = XCI.GetButton(XboxButton.LeftBumper, m_Controller);
@@ -68,6 +69,14 @@ public class PlayerInput : MonoBehaviour
             Aim += mouse * 0.05f;
             Aim = Vector2.ClampMagnitude(Aim, 1.0f);
 
+            Vector2 drivC = Vector2.zero;
+            drivC.x -= Input.GetKey(KeyCode.A) ? 1 : 0;
+            drivC.x += Input.GetKey(KeyCode.D) ? 1 : 0;
+            drivC.y += Input.GetKey(KeyCode.W) ? 1 : 0;
+            drivC.y -= Input.GetKey(KeyCode.S) ? 1 : 0;
+
+            DriveInput = drivC;
+
             Vector2 airC = Vector2.zero;
             airC.x -= Input.GetKey(KeyCode.A) ? 1 : 0;
             airC.x += Input.GetKey(KeyCode.D) ? 1 : 0;
@@ -84,7 +93,7 @@ public class PlayerInput : MonoBehaviour
             if (Input.GetKey(KeyCode.D)) { SteerDir++; }
             if (Input.GetKey(KeyCode.A)) { SteerDir--; }
 
-            Torque = TorqueDir;// MoveTowardsLiniar(Torque, TorqueDir, -1, 1, 1.0f);
+            TorqueOld = TorqueDir;// MoveTowardsLiniar(Torque, TorqueDir, -1, 1, 1.0f);
             Steer = SteerDir;// MoveTowardsLiniar(Steer, SteerDir, -1, 1, 1.0f);
 
             Brake = Input.GetKey(KeyCode.LeftShift);
@@ -126,7 +135,8 @@ public class PlayerInput : MonoBehaviour
         return output;
     }
 
-    public float Torque { get; private set; }
+    public Vector2 DriveInput { get; private set; }
+    public float TorqueOld { get; private set; }
     public float Steer { get; private set; }
 
     public Vector2 Aim { get; private set; }

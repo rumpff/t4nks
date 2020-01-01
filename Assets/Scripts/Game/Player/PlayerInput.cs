@@ -44,7 +44,7 @@ public class PlayerInput : MonoBehaviour
         while(true)
         {
             DriveInput = XYStick(XboxAxis.LeftStickX, controller);
-            TorqueOld = XCI.GetAxis(XboxAxis.LeftStickY, controller);
+            TorqueOld =  Vector2.Distance(Vector2.zero, XYStick(XboxAxis.LeftStickX, controller)) * Mathf.Sign(XCI.GetAxis(XboxAxis.LeftStickY, controller) + 0.1f);
             Steer = XCI.GetAxis(XboxAxis.LeftStickX, controller);
 
             Brake = XCI.GetButton(XboxButton.LeftBumper, m_Controller);

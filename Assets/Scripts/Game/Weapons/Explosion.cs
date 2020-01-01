@@ -75,7 +75,6 @@ public class Explosion : MonoBehaviour
                     // Add damage to stats
                     GameManager.I.AddToStat(m_Owner.Index, StatTypes.DamageDealt, damage);
                     GameManager.I.AddToStat(p.Index, StatTypes.DamageRecieved, damage);
-                    GameManager.I.AddScore(m_Owner.Index, damage * GameManager.I.Rules.ScorePerDamageMultiplier, "damage");
                 }
 
                 p.Health.DamagePlayer(damage, m_Owner);
@@ -95,7 +94,7 @@ public class Explosion : MonoBehaviour
         {
             if(m_HitProperties.TravelDistance >= GameManager.I.Rules.LonghitThreshold)
             {
-                GameManager.I.AddScore(m_Owner.Index, StatTypes.LongHit);
+                GameManager.I.AddToStat(m_Owner.Index, StatTypes.LongHit);
             }
         }
     }

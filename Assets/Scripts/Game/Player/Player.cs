@@ -7,8 +7,6 @@ using TMPro;
 
 public class Player : MonoBehaviour
 {
-    public TextMeshPro KAK;
-
     private const string DriveableTag = "Driveable";
     private const string TireTag = "TankTire";
     private const float JumpCooldown = 0.2f;
@@ -160,14 +158,18 @@ public class Player : MonoBehaviour
         }
         #endregion
 
+        #region new torque
+        /*
         float controlDirection = Mathf.Atan2(PInput.DriveInput.x, PInput.DriveInput.y) * Mathf.Rad2Deg;
         float controlMagnitude = Vector2.Distance(Vector2.zero, PInput.DriveInput);
 
         KAK.text = controlDirection.ToString();
+        */
+        #endregion
 
         // Handle steer
         m_StreerAngle = Mathf.Lerp(m_StreerAngle, PInput.Steer * m_TankProperties.MaxSteer, 12 * Time.deltaTime);
-        
+
         // Handle brake
         m_BrakeTorque = (PInput.Brake) ? m_TankProperties.BrakeTorque : 0;
     }

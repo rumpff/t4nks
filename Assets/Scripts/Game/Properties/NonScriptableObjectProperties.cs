@@ -60,5 +60,5 @@ public enum StatTypes
     DamageDealt,
     DamageRecieved,
     SelfDamage,
-    LongHit,
+    LongHit
 };

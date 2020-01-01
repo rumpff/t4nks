@@ -109,7 +109,7 @@ public class PlayerWeapon : MonoBehaviour
     /// </summary>
     public Vector2 RawAim
     {
-        get { return m_AimDirection /  m_MaxAim.x; }
+        get { return m_AimDirection / m_MaxAim; }
     }
 
     /// <summary>

@@ -6,15 +6,14 @@ using UnityEngine;
 public class GameRules
 {
     public float TimeLimit;
-    public float ScoreLimit;
+    public int ScoreLimit;
     public float RespawnDelay;
-    public Dictionary<StatTypes, float> ScoreValues;
-
-    public float LonghitThreshold;
-    public float ScorePerDamageMultiplier;
+    public Dictionary<StatTypes, int> ScoreValues;
 
     public float HealthPickupHealthAmount;
     public float HealthPickupRespawnTime;
+
+    public float LonghitThreshold;
 
     public GameRules()
     {
@@ -25,22 +24,21 @@ public class GameRules
     {
         // Hardcode default values
         TimeLimit = 600.0f;
-        ScoreLimit = 10000.0f;
+        ScoreLimit = 20;
         RespawnDelay = 3.0f;
-        LonghitThreshold = 150.0f;
-        ScorePerDamageMultiplier = 1.5f;
 
         HealthPickupHealthAmount = 100;
         HealthPickupRespawnTime = 3.0f;
 
-        ScoreValues = new Dictionary<StatTypes, float>();
+        LonghitThreshold = 350.0f;
+
+        ScoreValues = new Dictionary<StatTypes, int>();
         foreach (StatTypes sType in Enum.GetValues(typeof(StatTypes)))
         {
-            ScoreValues[sType] = 0.0f;
+            ScoreValues[sType] = 0;
         }
 
-        ScoreValues[StatTypes.Kill] = 3000.0f;
-        ScoreValues[StatTypes.LongHit] = 400.0f;
-        ScoreValues[StatTypes.SelfKill] = -500.0f;
+        ScoreValues[StatTypes.Kill] = 1;
+        ScoreValues[StatTypes.SelfKill] = -1;
     }
 }

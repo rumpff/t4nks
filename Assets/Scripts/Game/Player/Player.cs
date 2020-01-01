@@ -108,15 +108,7 @@ public class Player : MonoBehaviour
 
         // Set the layer masks
         MeshRenderer[] meshObjects = transform.GetComponentsInChildren<MeshRenderer>();
-
-        for (int i = 0; i < meshObjects.Length; i++)
-        {
-            if(meshObjects[i].transform.name.EndsWith("[TPOnly]"))
-            {
-                // Set the Third person only layer masks
-                meshObjects[i].gameObject.layer = 11 + playerIndex;
-            }
-        }
+        UpdatePlayerLayerMasks(meshObjects, playerIndex);
     }
 
     private void Update()
@@ -135,6 +127,19 @@ public class Player : MonoBehaviour
         JumpThing();
     }
 
+    public void UpdatePlayerLayerMasks(MeshRenderer[] meshObjects, int playerIndex)
+    {
+        for (int i = 0; i < meshObjects.Length; i++)
+        {
+            if (meshObjects[i].transform.name.Contains("[TPOnly]"))
+            {
+                // Set the Third person only layer masks
+                meshObjects[i].gameObject.layer = 11 + playerIndex;
+            }
+        }
+    }
+
+    /*  Tank  */
     private void CarThing()
     {
         // Handle torque
@@ -173,7 +178,6 @@ public class Player : MonoBehaviour
         // Handle brake
         m_BrakeTorque = (PInput.Brake) ? m_TankProperties.BrakeTorque : 0;
     }
-
     private void AircontrolThing()
     {
         if (IsOnGround())
@@ -182,7 +186,6 @@ public class Player : MonoBehaviour
         Rigidbody.AddTorque(transform.up * (PInput.AirControl.x * m_TankProperties.AirControl));
         Rigidbody.AddTorque(-transform.right * (PInput.AirControl.y * m_TankProperties.AirControl));
     }
-
     private void JumpThing()
     {
         if (PInput.Jump && m_JumpTimer <= 0)
@@ -198,7 +201,6 @@ public class Player : MonoBehaviour
             m_JumpTimer = JumpCooldown;
         }
     }
-
     private void TimerThing()
     {
         // Jumping
@@ -206,7 +208,6 @@ public class Player : MonoBehaviour
             m_JumpsLeft = m_TankProperties.AirJumpAmount;
         m_JumpTimer -= Time.deltaTime;
     }
-
     private void ApplyCarMotion()
     {
         // Driving
@@ -230,7 +231,6 @@ public class Player : MonoBehaviour
         m_WheelBackLeft.brakeTorque = m_BrakeTorque;
         m_WheelBackRight.brakeTorque = m_BrakeTorque;
     }
-
     private void ExplodeTank()
     {
         MeshFilter[] meshes = GetComponentsInChildren<MeshFilter>();
@@ -395,6 +395,9 @@ public class Player : MonoBehaviour
         get { return m_PlayerProperties; }
     }
 
+    /// <summary>
+    /// Player index
+    /// </summary>
     public int Index
     {
         get { return m_PlayerIndex; }

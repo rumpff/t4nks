@@ -49,7 +49,7 @@ public class RespawnUI : MonoBehaviour
     {
         // Position
         m_HideTimer += Time.deltaTime;
-        float y = Easing.easeOutElastic(Mathf.Clamp01(m_HideTimer), m_HideY, -m_HideY, 1);
+        float y = Easing.Ease(EaseType.EaseOutElastic, Mathf.Clamp01(m_HideTimer), m_HideY, -m_HideY, 1);
         m_Rect.anchoredPosition = new Vector2(0, y);
 
         // Timer

@@ -93,7 +93,7 @@ public class PlayerCamera : MonoBehaviour
             UpdateZoomedState();
 
             // Apply values
-            float t = Easing.easeInOutQuart(m_CameraState, 0, 1, 1);
+            float t = Easing.Ease(EaseType.EaseInOutQuart, m_CameraState);
 
             transform.position = CameraValues.Lerp(m_CameraValues[CameraStates.following], m_CameraValues[CameraStates.zoomed], t).Position;
             transform.rotation = CameraValues.Lerp(m_CameraValues[CameraStates.following], m_CameraValues[CameraStates.zoomed], t).Rotation;
@@ -135,7 +135,7 @@ public class PlayerCamera : MonoBehaviour
         v.Position = m_PlayerHeadPos;
 
         if (m_GameManager.Players[m_PlayerIndex].Player != null)
-            v.Rotation = m_GameManager.Players[m_PlayerIndex].Player.Weapon.BarrelEnd.rotation;
+            v.Rotation = m_GameManager.Players[m_PlayerIndex].Player.Weapon.TankBarrel.rotation;
 
         m_CameraValues[CameraStates.zoomed] = v;
     }

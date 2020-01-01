@@ -119,8 +119,8 @@ public class AttitudeIndicator : MonoBehaviour
         m_InterpolationTimer += state * Time.deltaTime * 2.5f;
         m_InterpolationTimer = Mathf.Clamp01(m_InterpolationTimer);
 
-        m_Interpolation = Easing.easeInOutQuart(m_InterpolationTimer, 0, 1, 1);
-        m_InterpolationReversed = Easing.easeInOutQuart(m_InterpolationTimer, 1, -1, 1);
+        m_Interpolation = Easing.Ease(EaseType.EaseInOutQuart, m_InterpolationTimer, 0, 1, 1);
+        m_InterpolationReversed = Easing.Ease(EaseType.EaseInOutQuart, m_InterpolationTimer, 1, -1, 1);
     }
 
     private Vector2 CalculateRectilePosition()

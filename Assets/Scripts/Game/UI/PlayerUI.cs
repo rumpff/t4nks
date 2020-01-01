@@ -168,7 +168,7 @@ public class PlayerUI : MonoBehaviour
             if (inTimer > inLength)
                 inTimer = inLength;
 
-            float scale = Easing.easeOutElastic(inTimer, 0, 1, inLength);
+            float scale = Easing.Ease(EaseType.EaseOutElastic, inTimer, inLength);
             sP.rectTransform.localScale = new Vector3(scale, scale, 1);
 
             yield return new WaitForEndOfFrame();
@@ -199,9 +199,9 @@ public class PlayerUI : MonoBehaviour
             if (outTimer > outLength)
                 outTimer = outLength;
 
-            float scale = Easing.easeInExpo(outTimer, 1, -1, outLength);
-            float alpha = Easing.easeInExpo(outTimer, 1, -1, outLength);
-            float angle = Easing.easeInExpo(outTimer, 0, -30, outLength);
+            float scale = Easing.Ease(EaseType.EaseInExpo, outTimer, 1, -1, outLength);
+            float alpha = Easing.Ease(EaseType.EaseInExpo, outTimer, 1, -1, outLength);
+            float angle = Easing.Ease(EaseType.EaseInExpo, outTimer, 0, -30, outLength);
 
             sP.rectTransform.localScale = new Vector3(scale, scale, 1);
             sP.rectTransform.localEulerAngles = new Vector3(0, 0, angle);

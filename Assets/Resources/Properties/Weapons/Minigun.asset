@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: Minigun
   m_EditorClassIdentifier: 
   Name: Default Cannon
-  BarrelPrefab: {fileID: 7521989849974292486, guid: 09915c1772565684aa81f2d31ed7a631,
+  BarrelPrefab: {fileID: 7521989849974292486, guid: ee8bd6c7b5cd79440a12088a17560629,
     type: 3}
   ProjectilePrefab: {fileID: 4915445817152070343, guid: c99cc595de50a4c4b895fe7eda1d3c7b,
     type: 3}
   StartingAmmo: 30
   TankForce: 50000
-  Cooldown: 0.2
+  Cooldown: 0.15
   CameraImpact: 0.2
   Mass: 1
   SpreadAngle: 2
@@ -30,3 +30,4 @@ MonoBehaviour:
     type: 3}
   ExplosionProperties: {fileID: 11400000, guid: a99dd22dd5aceed4e9b9eee3fa9aef98,
     type: 2}
+  ReloadAnimation: {fileID: 11400000, guid: 617e570fa7de91a479d78f650a50bc6a, type: 2}

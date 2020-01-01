@@ -93,7 +93,7 @@ public class PlayerCamera : MonoBehaviour
             UpdateZoomedState();
 
             // Apply values
-            float t = Easing.Ease(EaseType.EaseInOutQuart, m_CameraState);
+            float t = Easing.Ease(EaseType.EaseInOutCirc, m_CameraState);
 
             transform.position = CameraValues.Lerp(m_CameraValues[CameraStates.following], m_CameraValues[CameraStates.zoomed], t).Position;
             transform.rotation = CameraValues.Lerp(m_CameraValues[CameraStates.following], m_CameraValues[CameraStates.zoomed], t).Rotation;
@@ -148,7 +148,7 @@ public class PlayerCamera : MonoBehaviour
             state = m_GameManager.Players[m_PlayerIndex].Player.PInput.Zoom ? 1 : -1;
 
 
-        m_CameraState += state * Time.deltaTime * 4.0f;
+        m_CameraState += state * Time.deltaTime * 3.0f;
         m_CameraState = Mathf.Clamp01(m_CameraState);
 
         // Set the layer masks

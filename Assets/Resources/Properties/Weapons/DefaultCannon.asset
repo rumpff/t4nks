@@ -30,3 +30,4 @@ MonoBehaviour:
     type: 3}
   ExplosionProperties: {fileID: 11400000, guid: a99dd22dd5aceed4e9b9eee3fa9aef98,
     type: 2}
+  ReloadAnimation: {fileID: 11400000, guid: 5a3b9ac380c15c24a882af7aaa1d4054, type: 2}

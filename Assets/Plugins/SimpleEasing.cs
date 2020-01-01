@@ -6,45 +6,277 @@ using UnityEngine;
 
 namespace SimpleEasing
 {
+    public enum EaseType
+    {
+        EaseInBack,
+        EaseInBounce,
+        EaseInCirc,
+        EaseInCubic,
+        EaseInElastic,
+        EaseInExpo,
+        EaseInQuad,
+        EaseInQuart,
+        EaseInQuint,
+        EaseInSine,
+
+        EaseInOutBack,
+        EaseInOutBounce,
+        EaseInOutCirc,
+        EaseInOutCubic,
+        EaseInOutElastic,
+        EaseInOutExpo,
+        EaseInOutQuad,
+        EaseInOutQuart,
+        EaseInOutQuint,
+        EaseInOutSine,
+
+        EaseLinear,
+
+        EaseOutBack,
+        EaseOutBounce,
+        EaseOutCirc,
+        EaseOutCubic,
+        EaseOutElastic,
+        EaseOutExpo,
+        EaseOutQuad,
+        EaseOutQuart,
+        EaseOutQuint,
+        EaseOutSine
+    }
+
     public static class Easing
     {
-        public enum EaseType
+
+        /// <summary>
+        /// Ease from 0 to 1 with a duration of 1
+        /// </summary>
+        /// <param name="ease"></param>
+        /// <param name="time"></param>
+        /// <returns></returns>
+        public static float Ease(EaseType ease, float time)
         {
-            EaseInBack,
-            EaseInBounce,
-            EaseInCirc,
-            EaseInCubic,
-            EaseInElastic,
-            EaseInExpo,
-            EaseInQuad,
-            EaseInQuart,
-            EaseInQuint,
-            EaseInSine,
+            float start = 0;
+            float change = 1;
+            float duration = 1;
 
-            EaseInOutBack,
-            EaseInOutBounce,
-            EaseInOutCirc,
-            EaseInOutCubic,
-            EaseInOutElastic,
-            EaseInOutExpo,
-            EaseInOutQuad,
-            EaseInOutQuart,
-            EaseInOutQuint,
-            EaseInOutSine,
+            switch (ease)
+            {
+                case EaseType.EaseInBack:
+                    return easeInBack(time, start, change, duration);
 
-            EaseLinear,
+                case EaseType.EaseInBounce:
+                    return easeInBounce(time, start, change, duration);
 
-            EaseOutBack,
-            EaseOutBounce,
-            EaseOutCirc,
-            EaseOutCubic,
-            EaseOutElastic,
-            EaseOutExpo,
-            EaseOutQuad,
-            EaseOutQuart,
-            EaseOutQuint,
-            EaseOutSine
+                case EaseType.EaseInCirc:
+                    return easeInCirc(time, start, change, duration);
+
+                case EaseType.EaseInCubic:
+                    return easeInCubic(time, start, change, duration);
+
+                case EaseType.EaseInElastic:
+                    return easeInElastic(time, start, change, duration);
+
+                case EaseType.EaseInExpo:
+                    return easeInExpo(time, start, change, duration);
+
+                case EaseType.EaseInQuad:
+                    return easeInQuad(time, start, change, duration);
+
+                case EaseType.EaseInQuart:
+                    return easeInQuart(time, start, change, duration);
+
+                case EaseType.EaseInQuint:
+                    return easeInQuint(time, start, change, duration);
+
+                case EaseType.EaseInSine:
+                    return easeInSine(time, start, change, duration);
+
+                case EaseType.EaseInOutBack:
+                    return easeInOutBack(time, start, change, duration);
+
+                case EaseType.EaseInOutBounce:
+                    return easeInOutBounce(time, start, change, duration);
+
+                case EaseType.EaseInOutCirc:
+                    return easeInOutCirc(time, start, change, duration);
+
+                case EaseType.EaseInOutCubic:
+                    return easeInOutCubic(time, start, change, duration);
+
+                case EaseType.EaseInOutElastic:
+                    return easeInOutElastic(time, start, change, duration);
+
+                case EaseType.EaseInOutExpo:
+                    return easeInOutExpo(time, start, change, duration);
+
+                case EaseType.EaseInOutQuad:
+                    return easeInOutQuad(time, start, change, duration);
+
+                case EaseType.EaseInOutQuart:
+                    return easeInOutQuart(time, start, change, duration);
+
+                case EaseType.EaseInOutQuint:
+                    return easeInOutQuint(time, start, change, duration);
+
+                case EaseType.EaseInOutSine:
+                    return easeInOutSine(time, start, change, duration);
+
+                case EaseType.EaseLinear:
+                    return easeLiniear(time, start, change, duration);
+
+                case EaseType.EaseOutBack:
+                    return easeOutBack(time, start, change, duration);
+
+                case EaseType.EaseOutBounce:
+                    return easeOutBounce(time, start, change, duration);
+
+                case EaseType.EaseOutCirc:
+                    return easeOutCirc(time, start, change, duration);
+
+                case EaseType.EaseOutCubic:
+                    return easeOutCubic(time, start, change, duration);
+                case EaseType.EaseOutElastic:
+                    return easeOutElastic(time, start, change, duration);
+
+                case EaseType.EaseOutExpo:
+                    return easeOutExpo(time, start, change, duration);
+
+                case EaseType.EaseOutQuad:
+                    return easeOutQuad(time, start, change, duration);
+
+                case EaseType.EaseOutQuart:
+                    return easeOutQuart(time, start, change, duration);
+
+                case EaseType.EaseOutQuint:
+                    return easeOutQuint(time, start, change, duration);
+
+                case EaseType.EaseOutSine:
+                    return easeOutSine(time, start, change, duration);
+
+                default:
+                    Debug.LogError("Unkown Easing type");
+                    return 0;
+            }
         }
+        /// <summary>
+        /// Ease from 0 to 1 with the defined duration
+        /// </summary>
+        /// <param name="ease"></param>
+        /// <param name="time"></param>
+        /// <returns></returns>
+        public static float Ease(EaseType ease, float time, float duration)
+        {
+            float start = 0;
+            float change = 1;
+
+            switch (ease)
+            {
+                case EaseType.EaseInBack:
+                    return easeInBack(time, start, change, duration);
+
+                case EaseType.EaseInBounce:
+                    return easeInBounce(time, start, change, duration);
+
+                case EaseType.EaseInCirc:
+                    return easeInCirc(time, start, change, duration);
+
+                case EaseType.EaseInCubic:
+                    return easeInCubic(time, start, change, duration);
+
+                case EaseType.EaseInElastic:
+                    return easeInElastic(time, start, change, duration);
+
+                case EaseType.EaseInExpo:
+                    return easeInExpo(time, start, change, duration);
+
+                case EaseType.EaseInQuad:
+                    return easeInQuad(time, start, change, duration);
+
+                case EaseType.EaseInQuart:
+                    return easeInQuart(time, start, change, duration);
+
+                case EaseType.EaseInQuint:
+                    return easeInQuint(time, start, change, duration);
+
+                case EaseType.EaseInSine:
+                    return easeInSine(time, start, change, duration);
+
+                case EaseType.EaseInOutBack:
+                    return easeInOutBack(time, start, change, duration);
+
+                case EaseType.EaseInOutBounce:
+                    return easeInOutBounce(time, start, change, duration);
+
+                case EaseType.EaseInOutCirc:
+                    return easeInOutCirc(time, start, change, duration);
+
+                case EaseType.EaseInOutCubic:
+                    return easeInOutCubic(time, start, change, duration);
+
+                case EaseType.EaseInOutElastic:
+                    return easeInOutElastic(time, start, change, duration);
+
+                case EaseType.EaseInOutExpo:
+                    return easeInOutExpo(time, start, change, duration);
+
+                case EaseType.EaseInOutQuad:
+                    return easeInOutQuad(time, start, change, duration);
+
+                case EaseType.EaseInOutQuart:
+                    return easeInOutQuart(time, start, change, duration);
+
+                case EaseType.EaseInOutQuint:
+                    return easeInOutQuint(time, start, change, duration);
+
+                case EaseType.EaseInOutSine:
+                    return easeInOutSine(time, start, change, duration);
+
+                case EaseType.EaseLinear:
+                    return easeLiniear(time, start, change, duration);
+
+                case EaseType.EaseOutBack:
+                    return easeOutBack(time, start, change, duration);
+
+                case EaseType.EaseOutBounce:
+                    return easeOutBounce(time, start, change, duration);
+
+                case EaseType.EaseOutCirc:
+                    return easeOutCirc(time, start, change, duration);
+
+                case EaseType.EaseOutCubic:
+                    return easeOutCubic(time, start, change, duration);
+                case EaseType.EaseOutElastic:
+                    return easeOutElastic(time, start, change, duration);
+
+                case EaseType.EaseOutExpo:
+                    return easeOutExpo(time, start, change, duration);
+
+                case EaseType.EaseOutQuad:
+                    return easeOutQuad(time, start, change, duration);
+
+                case EaseType.EaseOutQuart:
+                    return easeOutQuart(time, start, change, duration);
+
+                case EaseType.EaseOutQuint:
+                    return easeOutQuint(time, start, change, duration);
+
+                case EaseType.EaseOutSine:
+                    return easeOutSine(time, start, change, duration);
+
+                default:
+                    Debug.LogError("Unkown Easing type");
+                    return 0;
+            }
+        }
+        /// <summary>
+        /// Ease using the defined values
+        /// </summary>
+        /// <param name="ease"></param>
+        /// <param name="time"></param>
+        /// <param name="start"></param>
+        /// <param name="change"></param>
+        /// <param name="duration"></param>
+        /// <returns></returns>
         public static float Ease(EaseType ease, float time, float start, float change, float duration)
         {
             switch (ease)

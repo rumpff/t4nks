@@ -20,7 +20,7 @@ MonoBehaviour:
   BrakeTorque: 1e+9
   JumpForce: 2000000
   AirJumpAmount: 1
-  AirControl: 60000
+  AirControl: 100000
   DefaultWeapon: {fileID: 11400000, guid: f0e71a1d43305944e8c5d045aa720212, type: 2}
   ExplosionPrefab: {fileID: 311277447111648344, guid: 1b5def60f5ac74a429640f7002ee573e,
     type: 3}

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using XboxCtrlrInput;
 using TMPro;
+using static UnityEngine.ParticleSystem;
 
 public class Player : MonoBehaviour
 {
@@ -52,6 +53,14 @@ public class Player : MonoBehaviour
     private int m_JumpsLeft = 0;
 
     private float m_PlayerHeightOffset;
+
+    private enum ParticleType
+    {
+        JumpThruster
+    }
+
+    private Dictionary<ParticleType, ParticleSystem> m_ParticleSystems;
+    private Dictionary<ParticleType, float> m_ParticleEmission;
 
     private void Awake()
     {
@@ -109,12 +118,32 @@ public class Player : MonoBehaviour
         // Set the layer masks
         MeshRenderer[] meshObjects = transform.GetComponentsInChildren<MeshRenderer>();
         UpdatePlayerLayerMasks(meshObjects, playerIndex);
+
+        // Find and store all particle systems
+        ParticleSystem[] particleSystems = transform.GetComponentsInChildren<ParticleSystem>();
+        m_ParticleSystems = new Dictionary<ParticleType, ParticleSystem>();
+        m_ParticleEmission = new Dictionary<ParticleType, float>();
+
+        foreach (ParticleSystem p in particleSystems)
+        {
+            foreach(ParticleType type in (ParticleType[])Enum.GetValues(typeof(ParticleType)))
+            {
+                if (p.transform.name.Contains(type.ToString()))
+                {
+                    m_ParticleSystems.Add(type, p);
+                    m_ParticleEmission.Add(type, 0.0f);
+
+                    break;
+                }
+            }
+        }
     }
 
     private void Update()
     {
-        CarThing();
-        TimerThing();
+        CarUpdate();
+        ParticleUpdate();
+        TimerUpdate();
 
         if (m_PlayerIndex == 0 && Input.GetKey(KeyCode.T))
             Health.DamagePlayer(30, this);
@@ -123,8 +152,8 @@ public class Player : MonoBehaviour
     private void FixedUpdate()
     {
         ApplyCarMotion();
-        AircontrolThing();
-        JumpThing();
+        AircontrolUpdate();
+        JumpUpdate();
     }
 
     public void UpdatePlayerLayerMasks(MeshRenderer[] meshObjects, int playerIndex)
@@ -140,7 +169,7 @@ public class Player : MonoBehaviour
     }
 
     /*  Tank  */
-    private void CarThing()
+    private void CarUpdate()
     {
         // Handle torque
         #region old torque
@@ -178,7 +207,7 @@ public class Player : MonoBehaviour
         // Handle brake
         m_BrakeTorque = (PInput.Brake) ? m_TankProperties.BrakeTorque : 0;
     }
-    private void AircontrolThing()
+    private void AircontrolUpdate()
     {
         if (IsOnGround())
             return; // Not in the air
@@ -186,7 +215,7 @@ public class Player : MonoBehaviour
         Rigidbody.AddTorque(transform.up * (PInput.AirControl.x * m_TankProperties.AirControl));
         Rigidbody.AddTorque(-transform.right * (PInput.AirControl.y * m_TankProperties.AirControl));
     }
-    private void JumpThing()
+    private void JumpUpdate()
     {
         if (PInput.Jump && m_JumpTimer <= 0)
         {
@@ -199,14 +228,24 @@ public class Player : MonoBehaviour
 
             m_JumpsLeft--;
             m_JumpTimer = JumpCooldown;
+
+            m_ParticleEmission[ParticleType.JumpThruster] = 2500;
         }
     }
-    private void TimerThing()
+    private void TimerUpdate()
     {
         // Jumping
         if (IsOnGround())
             m_JumpsLeft = m_TankProperties.AirJumpAmount;
         m_JumpTimer -= Time.deltaTime;
+    }
+    private void ParticleUpdate()
+    {
+        EmissionModule JumpThrust = m_ParticleSystems[ParticleType.JumpThruster].emission;
+        JumpThrust.rateOverTime = m_ParticleEmission[ParticleType.JumpThruster];
+
+        // Bring emission rates to 0
+        m_ParticleEmission[ParticleType.JumpThruster] = Mathf.Lerp(m_ParticleEmission[ParticleType.JumpThruster], 0, 16 * Time.deltaTime);
     }
     private void ApplyCarMotion()
     {

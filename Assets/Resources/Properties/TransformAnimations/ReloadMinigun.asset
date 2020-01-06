@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c0cb6cd51687d7b46a0bcb4cd4ef0d41, type: 3}
-  m_Name: MinigunReload
+  m_Name: ReloadMinigun
   m_EditorClassIdentifier: 
   TXActive: 0
   TXEaseType: 0

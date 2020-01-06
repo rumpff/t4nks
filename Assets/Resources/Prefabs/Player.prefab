@@ -4547,7 +4547,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2101368720246238620}
   m_Layer: 16
-  m_Name: WheelsLeft
+  m_Name: WheelsRight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4973,7 +4973,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.6
+      scalar: 0.35
       minScalar: 0.3
       maxCurve:
         serializedVersion: 2
@@ -18534,7 +18534,7 @@ GameObject:
   - component: {fileID: 6350327767742564325}
   - component: {fileID: 6350327767742564330}
   m_Layer: 16
-  m_Name: WheelBackRight
+  m_Name: WheelBackLeft
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18609,13 +18609,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6350327767876470000}
-  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 2.5, y: -1, z: 0}
-  m_LocalScale: {x: 1, y: 7, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 7}
   m_Children: []
   m_Father: {fileID: 6350327769541755175}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &6350327767876470007
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -18673,7 +18673,7 @@ GameObject:
   - component: {fileID: 6350327768169280053}
   - component: {fileID: 6350327768169280058}
   m_Layer: 16
-  m_Name: WheelFrontLeft
+  m_Name: WheelFrontRight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18748,13 +18748,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6350327768421108459}
-  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -2.44, y: -1, z: 0}
-  m_LocalScale: {x: 1, y: 7, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 7}
   m_Children: []
   m_Father: {fileID: 6350327769541755175}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &6350327768421108462
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -18812,7 +18812,7 @@ GameObject:
   - component: {fileID: 6350327768951854875}
   - component: {fileID: 6350327768951854872}
   m_Layer: 16
-  m_Name: WheelBackLeft
+  m_Name: WheelBackRight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19009,10 +19009,10 @@ MonoBehaviour:
   m_TankHead: {fileID: 6350327767451424619}
   m_TankBarrel: {fileID: 0}
   m_Controller: 0
-  m_WheelFrontLeft: {fileID: 6350327768169280058}
-  m_WheelFrontRight: {fileID: 6350327769519087493}
-  m_WheelBackLeft: {fileID: 6350327768951854872}
-  m_WheelBackRight: {fileID: 6350327767742564330}
+  m_WheelLeftFront: {fileID: 6350327769519087493}
+  m_WheelRightFront: {fileID: 6350327768169280058}
+  m_WheelLeftBack: {fileID: 6350327767742564330}
+  m_WheelRightBack: {fileID: 6350327768951854872}
   m_GroundSensor: {fileID: 2730784968278174272}
   m_GroundSensorIgnore:
     serializedVersion: 2
@@ -19128,7 +19128,7 @@ GameObject:
   - component: {fileID: 6350327769519087492}
   - component: {fileID: 6350327769519087493}
   m_Layer: 16
-  m_Name: WheelFrontRight
+  m_Name: WheelFrontLeft
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19223,7 +19223,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1591302205409453539}
   m_Layer: 16
-  m_Name: WheelsRight
+  m_Name: WheelsLeft
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c0cb6cd51687d7b46a0bcb4cd4ef0d41, type: 3}
-  m_Name: DefaultReload
+  m_Name: ReloadDefault
   m_EditorClassIdentifier: 
   TXActive: 0
   TXEaseType: 0
@@ -42,18 +42,18 @@ MonoBehaviour:
   RZStart: 0
   RZChange: 0
   RZDuration: 0
-  SXActive: 0
-  SXEaseType: 0
-  SXStart: 0
-  SXChange: 0
-  SXDuration: 0
-  SYActive: 0
-  SYEaseType: 0
-  SYStart: 0
-  SYChange: 0
-  SYDuration: 0
-  SZActive: 0
-  SZEaseType: 0
-  SZStart: 0
-  SZChange: 0
-  SZDuration: 0
+  SXActive: 1
+  SXEaseType: 26
+  SXStart: 2
+  SXChange: -1
+  SXDuration: 1
+  SYActive: 1
+  SYEaseType: 26
+  SYStart: 2
+  SYChange: -1
+  SYDuration: 1
+  SZActive: 1
+  SZEaseType: 26
+  SZStart: 0.5
+  SZChange: 0.5
+  SZDuration: 1

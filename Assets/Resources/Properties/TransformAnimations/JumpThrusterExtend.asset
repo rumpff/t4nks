@@ -17,31 +17,31 @@ MonoBehaviour:
   TXStart: 0
   TXChange: 0
   TXDuration: 0
-  TYActive: 0
-  TYEaseType: 0
-  TYStart: 0
-  TYChange: 0
-  TYDuration: 0
+  TYActive: 1
+  TYEaseType: 22
+  TYStart: -0.7
+  TYChange: 0.7
+  TYDuration: 1
   TZActive: 0
   TZEaseType: 0
   TZStart: 0
   TZChange: 0
   TZDuration: 0
   RXActive: 0
-  RXEaseType: 0
+  RXEaseType: 20
   RXStart: 0
-  RXChange: 0
-  RXDuration: 0
-  RYActive: 0
-  RYEaseType: 0
+  RXChange: 123
+  RXDuration: 1
+  RYActive: 1
+  RYEaseType: 5
   RYStart: 0
-  RYChange: 0
-  RYDuration: 0
+  RYChange: 90
+  RYDuration: 1
   RZActive: 0
-  RZEaseType: 0
-  RZStart: 0
-  RZChange: 0
-  RZDuration: 0
+  RZEaseType: 5
+  RZStart: -180
+  RZChange: 180
+  RZDuration: 1
   SXActive: 0
   SXEaseType: 0
   SXStart: 0

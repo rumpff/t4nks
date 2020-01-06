@@ -33,7 +33,7 @@ public class Player : MonoBehaviour
     private XboxController m_Controller;
 
     [SerializeField]
-    private WheelCollider m_WheelFrontLeft, m_WheelFrontRight, m_WheelBackLeft, m_WheelBackRight;
+    private WheelCollider m_WheelLeftFront, m_WheelRightFront, m_WheelLeftBack, m_WheelRightBack;
     private List<WheelCollider> m_WheelsLeft, m_WheelsRight;
     private List<WheelHit> m_WheelHits;
 
@@ -53,6 +53,8 @@ public class Player : MonoBehaviour
     private int m_JumpsLeft = 0;
 
     private float m_PlayerHeightOffset;
+
+    private Transform m_TireLeft, m_TireRight;
 
     private Transform m_JumpThruster;
     private Vector3 m_JumpThrusterDefaultPos;
@@ -119,6 +121,9 @@ public class Player : MonoBehaviour
                 m_WheelsRight.Add(wheel);
             }
         }
+
+        m_TireLeft = transform.Find("Mesh/TireLeft");
+        m_TireRight = transform.Find("Mesh/TireRight");
 
         // Set the layer masks
         MeshRenderer[] meshObjects = transform.GetComponentsInChildren<MeshRenderer>();
@@ -275,28 +280,32 @@ public class Player : MonoBehaviour
     private void ApplyCarMotion()
     {
         // Driving
-        m_WheelFrontLeft.motorTorque = m_TorqueOld;
-        m_WheelFrontRight.motorTorque = m_TorqueOld;
+        m_WheelLeftFront.motorTorque = m_TorqueOld;
+        m_WheelRightFront.motorTorque = m_TorqueOld;
 
-        m_WheelBackLeft.motorTorque = m_TorqueOld;
-        m_WheelBackRight.motorTorque = m_TorqueOld;
+        m_WheelLeftBack.motorTorque = m_TorqueOld;
+        m_WheelRightBack.motorTorque = m_TorqueOld;
 
         // Steering
-        m_WheelFrontLeft.steerAngle = m_StreerAngle;
-        m_WheelFrontRight.steerAngle = m_StreerAngle;
+        m_WheelLeftFront.steerAngle = m_StreerAngle;
+        m_WheelRightFront.steerAngle = m_StreerAngle;
 
-        m_WheelBackLeft.steerAngle = -m_StreerAngle;
-        m_WheelBackRight.steerAngle = -m_StreerAngle;
+        m_WheelLeftBack.steerAngle = -m_StreerAngle;
+        m_WheelRightBack.steerAngle = -m_StreerAngle;
 
         // Handbrake
-        m_WheelFrontLeft.brakeTorque = m_BrakeTorque;
-        m_WheelFrontRight.brakeTorque = m_BrakeTorque;
+        m_WheelLeftFront.brakeTorque = m_BrakeTorque;
+        m_WheelRightFront.brakeTorque = m_BrakeTorque;
 
-        m_WheelBackLeft.brakeTorque = m_BrakeTorque;
-        m_WheelBackRight.brakeTorque = m_BrakeTorque;
+        m_WheelLeftBack.brakeTorque = m_BrakeTorque;
+        m_WheelRightBack.brakeTorque = m_BrakeTorque;
     }
     private void VisualsAndEffectsUpdate()
     {
+        // Tire positions
+        SetTirePos(ref m_TireLeft, m_WheelLeftFront, m_WheelLeftBack);
+        SetTirePos(ref m_TireRight, m_WheelRightFront, m_WheelRightBack);
+
         ParticleUpdate();
 
         // JumpThruster
@@ -305,6 +314,28 @@ public class Player : MonoBehaviour
         m_JumpThruster.localPosition = JTanim.GetTranslate(m_JumpThrusterAnimationTimer) + m_JumpThrusterDefaultPos;
         m_JumpThruster.localEulerAngles = JTanim.GetEuler(m_JumpThrusterAnimationTimer);
         m_JumpThruster.localScale = JTanim.GetScale(m_JumpThrusterAnimationTimer);
+
+        // Drifing
+    }
+    private void SetTirePos(ref Transform tire, WheelCollider frontWheel, WheelCollider backWheel)
+    {
+        float wheelYoffset = -0.5f;
+
+        Vector3 frontPos = WheelPosition(frontWheel);
+        Vector3 backPos = WheelPosition(backWheel);
+
+        frontPos.y += wheelYoffset;
+        backPos.y += wheelYoffset;
+
+        // X pos will never change
+        // Center pos within 2 wheels
+        float y = Mathf.Lerp(frontPos.y, backPos.y, 0f);
+
+        float angle = 0;
+
+        // Apply values
+        tire.position = new Vector3(tire.position.x, y, tire.position.z);
+        tire.localEulerAngles = new Vector3(angle, tire.localEulerAngles.y, tire.localEulerAngles.z);
     }
     private void ExplodeTank()
     {
@@ -369,19 +400,34 @@ public class Player : MonoBehaviour
             m_WheelHits = new List<WheelHit>();
             WheelHit hit;
 
-            if (m_WheelFrontLeft.GetGroundHit(out hit))
+            if (m_WheelLeftFront.GetGroundHit(out hit))
                 m_WheelHits.Add(hit);
 
-            if (m_WheelFrontRight.GetGroundHit(out hit))
+            if (m_WheelRightFront.GetGroundHit(out hit))
                 m_WheelHits.Add(hit);
 
-            if (m_WheelBackLeft.GetGroundHit(out hit))
+            if (m_WheelLeftBack.GetGroundHit(out hit))
                 m_WheelHits.Add(hit);
 
-            if (m_WheelBackRight.GetGroundHit(out hit))
+            if (m_WheelRightBack.GetGroundHit(out hit))
                 m_WheelHits.Add(hit);
         }
 
+    }
+
+    private Vector3 WheelPosition(WheelCollider wheel)
+    {
+        RaycastHit hit;
+        Vector3 wheelCenter = wheel.transform.TransformPoint(wheel.center);
+
+        if (Physics.Raycast(wheelCenter, -wheel.transform.up, out hit, wheel.suspensionDistance + wheel.radius))
+        {
+            return hit.point + (wheel.transform.up * wheel.radius);
+        }
+        else
+        {
+            return wheelCenter - (wheel.transform.up * wheel.suspensionDistance);
+        }
     }
 
     /// <summary>

@@ -88,34 +88,12 @@ public class PlayerWeapon : MonoBehaviour
     private void BarrelAnimation()
     {
         float time = m_BarrelAnimationTimer;
-        BarrelAnimation anim = m_EquippedWeapon.ReloadAnimation;
-
-        // Calculate values
-
-        Vector3 translate = new Vector3
-        {
-            x = (anim.TXActive) ? Easing.Ease(anim.TXEaseType, time, anim.TXStart, anim.TXChange, anim.TXDuration) : 0,
-            y = (anim.TYActive) ? Easing.Ease(anim.TYEaseType, time, anim.TYStart, anim.TYChange, anim.TYDuration) : 0,
-            z = (anim.TZActive) ? Easing.Ease(anim.TZEaseType, time, anim.TZStart, anim.TZChange, anim.TZDuration) : 0
-        };
-
-        Vector3 rotate = new Vector3
-        {
-            x = (anim.RXActive) ? Easing.Ease(anim.RXEaseType, time, anim.RXStart, anim.RXChange, anim.RXDuration) : 0,
-            y = (anim.RYActive) ? Easing.Ease(anim.RYEaseType, time, anim.RYStart, anim.RYChange, anim.RYDuration) : 0,
-            z = (anim.RZActive) ? Easing.Ease(anim.RZEaseType, time, anim.RZStart, anim.RZChange, anim.RZDuration) : 0
-        };
-        Vector3 scale = new Vector3
-        {
-            x = (anim.SXActive) ? Easing.Ease(anim.SXEaseType, time, anim.SXStart, anim.SXChange, anim.SXDuration) : 1,
-            y = (anim.SYActive) ? Easing.Ease(anim.SYEaseType, time, anim.SYStart, anim.SYChange, anim.SYDuration) : 1,
-            z = (anim.SZActive) ? Easing.Ease(anim.SZEaseType, time, anim.SZStart, anim.SZChange, anim.SZDuration) : 1
-        };
+        TransformAnimation anim = m_EquippedWeapon.ReloadAnimation;
 
         // Apply values
-        m_Barrel.localPosition = translate;
-        m_Barrel.localEulerAngles = rotate;
-        m_Barrel.localScale = scale;
+        m_Barrel.localPosition = anim.GetTranslate(time);
+        m_Barrel.localEulerAngles = anim.GetEuler(time);
+        m_Barrel.localScale = anim.GetScale(time);
 
 
         // Timer

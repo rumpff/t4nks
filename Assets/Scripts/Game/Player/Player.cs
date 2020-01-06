@@ -54,9 +54,14 @@ public class Player : MonoBehaviour
 
     private float m_PlayerHeightOffset;
 
+    private Transform m_JumpThruster;
+    private Vector3 m_JumpThrusterDefaultPos;
+    private float m_JumpThrusterAnimationTimer;
+
     private enum ParticleType
     {
-        JumpThruster
+        JumpThrusterEmission,
+        JumpThrusterExplosion
     }
 
     private Dictionary<ParticleType, ParticleSystem> m_ParticleSystems;
@@ -137,12 +142,18 @@ public class Player : MonoBehaviour
                 }
             }
         }
+
+        // JumpThruster
+
+        m_JumpThruster = transform.Find("Mesh/JumpThruster");
+        m_JumpThrusterDefaultPos = m_JumpThruster.localPosition;
+        m_JumpThrusterAnimationTimer = 9999.0f;
     }
 
     private void Update()
     {
         CarUpdate();
-        ParticleUpdate();
+        VisualsAndEffectsUpdate();
         TimerUpdate();
 
         if (m_PlayerIndex == 0 && Input.GetKey(KeyCode.T))
@@ -229,7 +240,13 @@ public class Player : MonoBehaviour
             m_JumpsLeft--;
             m_JumpTimer = JumpCooldown;
 
-            m_ParticleEmission[ParticleType.JumpThruster] = 2500;
+            if(IsOnGround())
+            {
+                m_ParticleEmission[ParticleType.JumpThrusterExplosion] = 1500;
+            }
+
+            m_JumpThrusterAnimationTimer = 0;
+            m_ParticleEmission[ParticleType.JumpThrusterEmission] = 500;
         }
     }
     private void TimerUpdate()
@@ -238,14 +255,22 @@ public class Player : MonoBehaviour
         if (IsOnGround())
             m_JumpsLeft = m_TankProperties.AirJumpAmount;
         m_JumpTimer -= Time.deltaTime;
+
+        // Visuals and Effects
+        m_JumpThrusterAnimationTimer += Time.deltaTime;
     }
     private void ParticleUpdate()
     {
-        EmissionModule JumpThrust = m_ParticleSystems[ParticleType.JumpThruster].emission;
-        JumpThrust.rateOverTime = m_ParticleEmission[ParticleType.JumpThruster];
+        // Apply Emissionrates
+        foreach (ParticleType type in (ParticleType[])Enum.GetValues(typeof(ParticleType)))
+        {
+            EmissionModule JumpThrust = m_ParticleSystems[type].emission;
+            JumpThrust.rateOverTime = m_ParticleEmission[type];
+        }
 
         // Bring emission rates to 0
-        m_ParticleEmission[ParticleType.JumpThruster] = Mathf.Lerp(m_ParticleEmission[ParticleType.JumpThruster], 0, 16 * Time.deltaTime);
+        m_ParticleEmission[ParticleType.JumpThrusterEmission] = Mathf.Lerp(m_ParticleEmission[ParticleType.JumpThrusterEmission], 0, 8 * Time.deltaTime);
+        m_ParticleEmission[ParticleType.JumpThrusterExplosion] = Mathf.Lerp(m_ParticleEmission[ParticleType.JumpThrusterExplosion], 0, 15 * Time.deltaTime);
     }
     private void ApplyCarMotion()
     {
@@ -269,6 +294,17 @@ public class Player : MonoBehaviour
 
         m_WheelBackLeft.brakeTorque = m_BrakeTorque;
         m_WheelBackRight.brakeTorque = m_BrakeTorque;
+    }
+    private void VisualsAndEffectsUpdate()
+    {
+        ParticleUpdate();
+
+        // JumpThruster
+        TransformAnimation JTanim = m_TankProperties.JumpThrusterAnimation;
+
+        m_JumpThruster.localPosition = JTanim.GetTranslate(m_JumpThrusterAnimationTimer) + m_JumpThrusterDefaultPos;
+        m_JumpThruster.localEulerAngles = JTanim.GetEuler(m_JumpThrusterAnimationTimer);
+        m_JumpThruster.localScale = JTanim.GetScale(m_JumpThrusterAnimationTimer);
     }
     private void ExplodeTank()
     {

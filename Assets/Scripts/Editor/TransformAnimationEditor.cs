@@ -4,12 +4,12 @@ using UnityEngine;
 using UnityEditor;
 using SimpleEasing;
 
-[CustomEditor(typeof(BarrelAnimation))]
-public class BarrelAnimationEditor : Editor
+[CustomEditor(typeof(TransformAnimation))]
+public class TransformAnimationEditor : Editor
 {
 	override public void OnInspectorGUI()
 	{
-		var anim = target as BarrelAnimation;
+		var anim = target as TransformAnimation;
 
 		GUIStyle header = new GUIStyle();
 		header.fontStyle = FontStyle.Bold;
@@ -118,5 +118,7 @@ public class BarrelAnimationEditor : Editor
 			anim.SZDuration = EditorGUILayout.FloatField("Duration:", anim.SZDuration);
 		}
 		#endregion
+
+		EditorUtility.SetDirty(anim);
 	}
 }

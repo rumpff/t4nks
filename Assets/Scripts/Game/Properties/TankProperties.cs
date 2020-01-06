@@ -6,6 +6,7 @@ using UnityEngine;
 public class TankProperties : ScriptableObject
 {
     public string Name;
+    [Space(5)]
     public float MaxHealth;
     public float MaxTorque;
     public float AccelerateRate;
@@ -14,8 +15,10 @@ public class TankProperties : ScriptableObject
     public float JumpForce;
     public int AirJumpAmount;
     public float AirControl;
-
+    [Space(5)]
     public WeaponProperties DefaultWeapon;
     public GameObject ExplosionPrefab;
     public ExplosionProperties DestroyExplosionProperties;
+    [Space(5)]
+    public TransformAnimation JumpThrusterAnimation;
 }

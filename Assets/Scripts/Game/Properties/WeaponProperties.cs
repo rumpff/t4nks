@@ -31,5 +31,5 @@ public class WeaponProperties : ScriptableObject
     public ExplosionProperties ExplosionProperties;
 
     [Space(5)]
-    public BarrelAnimation ReloadAnimation;
+    public TransformAnimation ReloadAnimation;
 }

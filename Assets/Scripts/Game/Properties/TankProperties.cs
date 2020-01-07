@@ -7,6 +7,8 @@ public class TankProperties : ScriptableObject
 {
     public string Name;
     [Space(5)]
+    public float TireGroundOffset;
+    [Space(5)]
     public float MaxHealth;
     public float MaxTorque;
     public float AccelerateRate;

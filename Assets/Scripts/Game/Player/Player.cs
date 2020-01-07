@@ -60,6 +60,9 @@ public class Player : MonoBehaviour
     private Vector3 m_JumpThrusterDefaultPos;
     private float m_JumpThrusterAnimationTimer;
 
+    private float m_previousVelocity;
+    private float m_currentVelocity;
+
     private enum ParticleType
     {
         JumpThrusterEmission,
@@ -247,7 +250,7 @@ public class Player : MonoBehaviour
 
             if(IsOnGround())
             {
-                m_ParticleEmission[ParticleType.JumpThrusterExplosion] = 1500;
+                m_ParticleEmission[ParticleType.JumpThrusterExplosion] = 10000;
             }
 
             m_JumpThrusterAnimationTimer = 0;
@@ -275,7 +278,7 @@ public class Player : MonoBehaviour
 
         // Bring emission rates to 0
         m_ParticleEmission[ParticleType.JumpThrusterEmission] = Mathf.Lerp(m_ParticleEmission[ParticleType.JumpThrusterEmission], 0, 8 * Time.deltaTime);
-        m_ParticleEmission[ParticleType.JumpThrusterExplosion] = Mathf.Lerp(m_ParticleEmission[ParticleType.JumpThrusterExplosion], 0, 15 * Time.deltaTime);
+        m_ParticleEmission[ParticleType.JumpThrusterExplosion] = Mathf.Lerp(m_ParticleEmission[ParticleType.JumpThrusterExplosion], 0, 100 * Time.deltaTime);
     }
     private void ApplyCarMotion()
     {
@@ -315,27 +318,28 @@ public class Player : MonoBehaviour
         m_JumpThruster.localEulerAngles = JTanim.GetEuler(m_JumpThrusterAnimationTimer);
         m_JumpThruster.localScale = JTanim.GetScale(m_JumpThrusterAnimationTimer);
 
-        // Drifing
+        // Camera shake on impact
+        m_previousVelocity = m_currentVelocity;
+        m_currentVelocity = Vector3.Distance(Vector3.zero, Rigidbody.velocity);
+
+        float difference = m_previousVelocity - m_currentVelocity;
+
+        if (difference > 10)
+            Camera.AddScreenshake(0.02f * difference);
     }
     private void SetTirePos(ref Transform tire, WheelCollider frontWheel, WheelCollider backWheel)
     {
-        float wheelYoffset = -0.5f;
-
         Vector3 frontPos = WheelPosition(frontWheel);
         Vector3 backPos = WheelPosition(backWheel);
 
-        frontPos.y += wheelYoffset;
-        backPos.y += wheelYoffset;
+        Vector3 pos = Vector3.Lerp(frontPos, backPos, 0.5f);
+        Quaternion rotation =  Quaternion.LookRotation(frontPos - pos, transform.up);
 
-        // X pos will never change
-        // Center pos within 2 wheels
-        float y = Mathf.Lerp(frontPos.y, backPos.y, 0f);
-
-        float angle = 0;
+        pos.y += m_TankProperties.TireGroundOffset;
 
         // Apply values
-        tire.position = new Vector3(tire.position.x, y, tire.position.z);
-        tire.localEulerAngles = new Vector3(angle, tire.localEulerAngles.y, tire.localEulerAngles.z);
+        tire.position = pos;
+        tire.rotation = rotation;
     }
     private void ExplodeTank()
     {

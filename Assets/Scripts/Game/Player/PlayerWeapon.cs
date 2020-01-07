@@ -59,7 +59,7 @@ public class PlayerWeapon : MonoBehaviour
             Vector3 angle = new Vector3(TankBarrel.eulerAngles.x, m_TankHead.eulerAngles.y, m_Player.transform.eulerAngles.z);
             Quaternion projectileRotation = Quaternion.Euler(angle);
 
-            ProjectileBehaviour p = Instantiate(m_EquippedWeapon.ProjectilePrefab, BarrelEnd.position, projectileRotation).GetComponent<ProjectileBehaviour>();
+            ProjectileBehaviour p = Instantiate(m_EquippedWeapon.ProjectilePrefab, FirePosition(), projectileRotation).GetComponent<ProjectileBehaviour>();
 
             //p.Initalize(m_Player, m_EquippedWeapon, TankBarrel.forward);
 
@@ -171,7 +171,7 @@ public class PlayerWeapon : MonoBehaviour
     
     public Vector3 AimPosition()
     {
-        Ray ray = new Ray(BarrelEnd.position, TankBarrel.forward);
+        Ray ray = new Ray(TankBarrel.position, TankBarrel.forward);
         bool hasHit = Physics.Raycast(ray, out RaycastHit hit, 4040.0f);
 
         if (hasHit)
@@ -179,6 +179,20 @@ public class PlayerWeapon : MonoBehaviour
 
         else // Defaults to x meters in front of tank if noting is hit
             return (TankBarrel.position + (TankBarrel.forward * 4040.0f));
+    }
+
+    public Vector3 FirePosition()
+    {
+        float headToBarrelDistance = Vector3.Distance(TankBarrel.position, BarrelEnd.position);
+
+        Ray ray = new Ray(TankBarrel.position, TankBarrel.forward);
+        bool hasHit = Physics.Raycast(ray, out RaycastHit hit, headToBarrelDistance);
+
+        if (hasHit)
+            return hit.point;
+
+        else
+            return BarrelEnd.position;
     }
 
     public float AimDistance()

@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0cb6cd51687d7b46a0bcb4cd4ef0d41, type: 3}
+  m_Name: newBarrelAnimation
+  m_EditorClassIdentifier: 
+  TXActive: 0
+  TXEaseType: 0
+  TXStart: 0
+  TXChange: 0
+  TXDuration: 0
+  TYActive: 0
+  TYEaseType: 0
+  TYStart: 0
+  TYChange: 0
+  TYDuration: 0
+  TZActive: 0
+  TZEaseType: 0
+  TZStart: 0
+  TZChange: 0
+  TZDuration: 0
+  RXActive: 0
+  RXEaseType: 0
+  RXStart: 0
+  RXChange: 0
+  RXDuration: 0
+  RYActive: 0
+  RYEaseType: 0
+  RYStart: 0
+  RYChange: 0
+  RYDuration: 0
+  RZActive: 0
+  RZEaseType: 0
+  RZStart: 0
+  RZChange: 0
+  RZDuration: 0
+  SXActive: 0
+  SXEaseType: 0
+  SXStart: 0
+  SXChange: 0
+  SXDuration: 0
+  SYActive: 0
+  SYEaseType: 0
+  SYStart: 0
+  SYChange: 0
+  SYDuration: 0
+  SZActive: 0
+  SZEaseType: 0
+  SZStart: 0
+  SZChange: 0
+  SZDuration: 0

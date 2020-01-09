@@ -35,8 +35,8 @@ public class PlayerHealth : MonoBehaviour
         if (Health <= 0)
             return;
 
-        AddHealth(-damageAmount);
         RecentDamager = damager;
+        AddHealth(-damageAmount);
 
         if (DamageEvent != null)
             DamageEvent.Invoke(damageAmount);
@@ -60,8 +60,6 @@ public class PlayerHealth : MonoBehaviour
     {
         if (DeathEvent != null)
             DeathEvent.Invoke(RecentDamager);
-
-        // Add the kill stat
 
         // Since we destroy this instance we remove all subscribers
         DeathEvent = null;

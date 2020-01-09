@@ -6,9 +6,11 @@ using SimpleEasing;
 
 public class PlayerCamera : MonoBehaviour
 {
-    public enum CameraStates { following, zoomed }
-    private Dictionary<CameraStates, CameraValues> m_CameraValues;
-    private float m_CameraState = 0;
+    private enum CameraState { FollowingPlayer, DeathCam }
+    public enum CameraMode { following, zoomed }
+    private Dictionary<CameraMode, CameraValues> m_CameraValues;
+    private float m_CameraMode = 0;
+    private CameraState m_CameraState = CameraState.FollowingPlayer;
 
     private Camera m_Camera;
     private CameraProperties m_CameraProperties;
@@ -66,9 +68,9 @@ public class PlayerCamera : MonoBehaviour
             childCameras[i].rect = viewport;
         }
 
-        m_CameraValues = new Dictionary<CameraStates, CameraValues>();
-        m_CameraValues.Add(CameraStates.following, new CameraValues(90.0f));
-        m_CameraValues.Add(CameraStates.zoomed, new CameraValues(55.0f));
+        m_CameraValues = new Dictionary<CameraMode, CameraValues>();
+        m_CameraValues.Add(CameraMode.following, new CameraValues(90.0f));
+        m_CameraValues.Add(CameraMode.zoomed, new CameraValues(55.0f));
 
         GetComponentInChildren<AttitudeIndicator>().Initalize(playerIndex, gameManager);
 
@@ -89,15 +91,32 @@ public class PlayerCamera : MonoBehaviour
 
             UpdateVariables();
 
-            UpdateFollowState();
-            UpdateZoomedState();
+            switch(m_CameraState)
+            {
+                case CameraState.FollowingPlayer:
+                    {
+                        UpdateFollowState();
+                        UpdateZoomedState();
 
-            // Apply values
-            float t = Easing.Ease(EaseType.EaseInOutCirc, m_CameraState);
+                        // Apply values
+                        float t = Easing.Ease(EaseType.EaseInOutCirc, m_CameraMode);
 
-            transform.position = CameraValues.Lerp(m_CameraValues[CameraStates.following], m_CameraValues[CameraStates.zoomed], t).Position;
-            transform.rotation = CameraValues.Lerp(m_CameraValues[CameraStates.following], m_CameraValues[CameraStates.zoomed], t).Rotation;
-            m_Camera.fieldOfView = CameraValues.Lerp(m_CameraValues[CameraStates.following], m_CameraValues[CameraStates.zoomed], t).FOV;
+                        transform.position = CameraValues.Lerp(m_CameraValues[CameraMode.following], m_CameraValues[CameraMode.zoomed], t).Position;
+                        transform.rotation = CameraValues.Lerp(m_CameraValues[CameraMode.following], m_CameraValues[CameraMode.zoomed], t).Rotation;
+                        m_Camera.fieldOfView = CameraValues.Lerp(m_CameraValues[CameraMode.following], m_CameraValues[CameraMode.zoomed], t).FOV;
+                    }
+                    break;
+
+                case CameraState.DeathCam:
+                    {
+                        transform.position = m_CameraValues[CameraMode.following].Position;
+                        m_Camera.fieldOfView = m_CameraValues[CameraMode.following].FOV;
+
+                        if (PlayerKiller != null)
+                            transform.LookAt(PlayerKiller);
+                    }
+                    break;
+            }
 
             // Apply post effects
             transform.position += m_BumpOffset;
@@ -109,7 +128,7 @@ public class PlayerCamera : MonoBehaviour
 
     private void UpdateFollowState()
     {
-        CameraValues v = m_CameraValues[CameraStates.following];
+        CameraValues v = m_CameraValues[CameraMode.following];
 
         // Lerp the rotation
         m_ViewAngle = Mathf.LerpAngle(m_ViewAngle, m_angleDest + m_AimOffset.x, LerpInterpolation);
@@ -124,12 +143,12 @@ public class PlayerCamera : MonoBehaviour
         if (m_GameManager.Players[m_PlayerIndex].Player != null)
             v.Rotation = Quaternion.LookRotation(m_GameManager.Players[m_PlayerIndex].Player.transform.position - v.Position);
 
-        m_CameraValues[CameraStates.following] = v;
+        m_CameraValues[CameraMode.following] = v;
     }
 
     private void UpdateZoomedState()
     {
-        CameraValues v = m_CameraValues[CameraStates.zoomed];
+        CameraValues v = m_CameraValues[CameraMode.zoomed];
 
         // Calculate the final position
         v.Position = m_PlayerHeadPos;
@@ -137,7 +156,7 @@ public class PlayerCamera : MonoBehaviour
         if (m_GameManager.Players[m_PlayerIndex].Player != null)
             v.Rotation = m_GameManager.Players[m_PlayerIndex].Player.Weapon.TankBarrel.rotation;
 
-        m_CameraValues[CameraStates.zoomed] = v;
+        m_CameraValues[CameraMode.zoomed] = v;
     }
     
     private void UpdateZoomThing()
@@ -148,12 +167,12 @@ public class PlayerCamera : MonoBehaviour
             state = m_GameManager.Players[m_PlayerIndex].Player.PInput.Zoom ? 1 : -1;
 
 
-        m_CameraState += state * Time.deltaTime * 3.0f;
-        m_CameraState = Mathf.Clamp01(m_CameraState);
+        m_CameraMode += state * Time.deltaTime * 3.0f;
+        m_CameraMode = Mathf.Clamp01(m_CameraMode);
 
         // Set the layer masks
         string mask = "P" + (m_PlayerIndex + 1).ToString() + "FPHidden";
-        if (m_CameraState > 0.6f)
+        if (m_CameraMode > 0.6f)
             CameraExtensions.LayerCullingHide(m_Camera, mask);
         else
             CameraExtensions.LayerCullingShow(m_Camera, mask);
@@ -178,20 +197,26 @@ public class PlayerCamera : MonoBehaviour
 
     private void UpdateVariables()
     {
-        if (m_GameManager.Players[m_PlayerIndex].Player == null)
-            return;
+        if (m_GameManager.Players[m_PlayerIndex].Player != null)
+        {
+            m_CameraState = CameraState.FollowingPlayer;
 
-        m_PlayerPos = m_GameManager.Players[m_PlayerIndex].Player.transform.position;
+            m_PlayerPos = m_GameManager.Players[m_PlayerIndex].Player.transform.position;
 
-        m_PlayerHeadPos = m_GameManager.Players[m_PlayerIndex].Player.Weapon.TankHead;
+            m_PlayerHeadPos = m_GameManager.Players[m_PlayerIndex].Player.Weapon.TankHead;
 
-        // Only update the angle when the player is on the ground
-        if (m_GameManager.Players[m_PlayerIndex].Player.IsOnGround())
-            m_angleDest = m_GameManager.Players[m_PlayerIndex].Player.transform.eulerAngles.y;
+            // Only update the angle when the player is on the ground
+            if (m_GameManager.Players[m_PlayerIndex].Player.IsOnGround())
+                m_angleDest = m_GameManager.Players[m_PlayerIndex].Player.transform.eulerAngles.y;
 
-        m_AimOffset = new Vector2(
-            m_GameManager.Players[m_PlayerIndex].Player.Weapon.AbsuluteAim.x * 45.0f,
-            m_GameManager.Players[m_PlayerIndex].Player.Weapon.AbsuluteAim.y * 20); // 15.0f
+            m_AimOffset = new Vector2(
+                m_GameManager.Players[m_PlayerIndex].Player.Weapon.AbsuluteAim.x * 45.0f,
+                m_GameManager.Players[m_PlayerIndex].Player.Weapon.AbsuluteAim.y * 20); // 15.0f
+        }
+        else
+        {
+            m_CameraState = CameraState.DeathCam;
+        }
     }
 
     public void AddScreenshake(float amount)
@@ -213,6 +238,11 @@ public class PlayerCamera : MonoBehaviour
     public Camera Camera
     {
         get { return m_Camera; }
+    }
+
+    public Transform PlayerKiller
+    {
+        get; set;
     }
 }
 

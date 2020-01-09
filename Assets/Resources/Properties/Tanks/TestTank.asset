@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: TestTank
   m_EditorClassIdentifier: 
   Name: Default boi
-  TireGroundOffset: -0.4
-  MaxHealth: 150
+  TireGroundOffset: -0.3
+  MaxHealth: 10
   MaxTorque: 6000
   AccelerateRate: 6000
   MaxSteer: 30

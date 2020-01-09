@@ -152,13 +152,13 @@ public class GameManager : MonoBehaviour
     {
         Players[playerId].State = PlayerState.Destroyed;
 
-        if(playerId == killer.Index)
+        if (playerId != killer.Index)
         {
-            AddScore(playerId, StatTypes.SelfKill);
+            AddScore(killer.Index, StatTypes.Kill);
         }
         else
         {
-            AddScore(killer.Index, StatTypes.Kill);
+            AddScore(playerId, StatTypes.SelfKill);
         }
 
         StartCoroutine(RespawnPlayer(playerId));

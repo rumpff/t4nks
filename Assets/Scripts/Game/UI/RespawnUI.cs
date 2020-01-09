@@ -54,7 +54,7 @@ public class RespawnUI : MonoBehaviour
 
         // Timer
         float respawnTime = m_GameManager.Players[m_PlayerIndex].RespawnTimer;
-        string respawnText = respawnTime.ToString();
+        string respawnText = respawnTime.ToString("000.000");
 
         if (respawnTime <= 0)
             respawnText = "press [jump] to respawn!";

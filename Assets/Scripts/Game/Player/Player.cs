@@ -381,6 +381,8 @@ public class Player : MonoBehaviour
 
     private void OnDeath(Player damager)
     {
+        Camera.PlayerKiller = damager.transform;
+
         if (DestroyedEvent != null)
             DestroyedEvent.Invoke(m_PlayerIndex, damager);
 

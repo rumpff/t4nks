@@ -17,7 +17,7 @@ public class ItemPickup : MonoBehaviour
 
     [SerializeField]
     private PickupType m_PickupType;
-    private IPickupItem m_PickupItem;
+    private PickupItem m_PickupItem;
 
     [SerializeField]
     [Tooltip("Only needed for weapon pickups")]
@@ -131,36 +131,43 @@ public class ItemPickup : MonoBehaviour
     }
 }
 
-public interface IPickupItem
+public class PickupItem
 {
-    void Init(ItemPickup itemPickup);
-    GameObject GetPickupModel();
-    ItemPickup.PickupState GetState();
-    IEnumerator OnPickup(Player p);
-}
+    protected ItemPickup m_ItemPickup;
+    protected ItemPickup.PickupState m_State;
 
-public class HealthPickup : IPickupItem
-{
-    private ItemPickup m_ItemPickup;
-    private ItemPickup.PickupState m_State;
-
-    public void Init(ItemPickup itemPickup)
+    public virtual void Init(ItemPickup itemPickup)
     {
         m_ItemPickup = itemPickup;
         m_State = ItemPickup.PickupState.Active;
     }
 
-    public GameObject GetPickupModel()
+    public virtual GameObject GetPickupModel()
     {
-        return Resources.Load("Prefabs/GameObjects/HealthBlock") as GameObject;
+        Debug.LogError("Pickup model has not been set!");
+        return null;
     }
 
-    public ItemPickup.PickupState GetState()
+    public virtual ItemPickup.PickupState GetState()
     {
         return m_State;
     }
 
-    public IEnumerator OnPickup(Player p)
+    public virtual IEnumerator OnPickup(Player p)
+    {
+        Debug.LogError("No pickup behaviour has been set!");
+        yield return null;
+    }
+}
+
+public class HealthPickup : PickupItem
+{
+    public override GameObject GetPickupModel()
+    {
+        return Resources.Load("Prefabs/GameObjects/HealthBlock") as GameObject;
+    }
+
+    public override IEnumerator OnPickup(Player p)
     {
         if (m_State == ItemPickup.PickupState.Cooldown)
             yield break;
@@ -180,28 +187,14 @@ public class HealthPickup : IPickupItem
     }
 }
 
-public class WeaponPickup : IPickupItem
+public class WeaponPickup : PickupItem
 {
-    private ItemPickup m_ItemPickup;
-    private ItemPickup.PickupState m_State;
-
-    public void Init(ItemPickup itemPickup)
-    {
-        m_ItemPickup = itemPickup;
-        m_State = ItemPickup.PickupState.Active;
-    }
-
-    public GameObject GetPickupModel()
+    public override GameObject GetPickupModel()
     {
         return m_ItemPickup.WeaponProperties.BarrelPrefab;
     }
 
-    public ItemPickup.PickupState GetState()
-    {
-        return m_State;
-    }
-
-    public IEnumerator OnPickup(Player p)
+    public override IEnumerator OnPickup(Player p)
     {
         if (m_State == ItemPickup.PickupState.Cooldown)
             yield break;

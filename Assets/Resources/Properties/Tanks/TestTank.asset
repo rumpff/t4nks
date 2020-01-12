@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Default boi
   TireGroundOffset: -0.3
-  MaxHealth: 10
+  MaxHealth: 150
   MaxTorque: 6000
   AccelerateRate: 6000
   MaxSteer: 30

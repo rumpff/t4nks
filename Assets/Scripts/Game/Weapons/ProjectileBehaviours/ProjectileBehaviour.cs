@@ -113,7 +113,6 @@ public class ProjectileBehaviour : MonoBehaviour
         }
 
         h.TravelDistance = distance;
-        Debug.Log("travel distance: " + distance);
 
         h.AttackerPlayerIndex = m_Owner.Index;
         if (collider != null)

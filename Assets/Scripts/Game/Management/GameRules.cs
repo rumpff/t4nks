@@ -13,6 +13,8 @@ public class GameRules
     public float HealthPickupHealthAmount;
     public float HealthPickupRespawnTime;
 
+    public float WeaponPickupRespawnTime;
+
     public float LonghitThreshold;
 
     public GameRules()
@@ -25,10 +27,12 @@ public class GameRules
         // Hardcode default values
         TimeLimit = 600.0f;
         ScoreLimit = 20;
-        RespawnDelay = 3.0f;
+        RespawnDelay = 0.5f;
 
         HealthPickupHealthAmount = 100;
         HealthPickupRespawnTime = 3.0f;
+
+        WeaponPickupRespawnTime = 3.0f;
 
         LonghitThreshold = 350.0f;
 

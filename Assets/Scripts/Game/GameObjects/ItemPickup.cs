@@ -6,7 +6,8 @@ public class ItemPickup : MonoBehaviour
 {
     public enum PickupType
     {
-        Heath
+        Health,
+        Weapon
     };
     public enum PickupState
     {
@@ -17,6 +18,10 @@ public class ItemPickup : MonoBehaviour
     [SerializeField]
     private PickupType m_PickupType;
     private IPickupItem m_PickupItem;
+
+    [SerializeField]
+    [Tooltip("Only needed for weapon pickups")]
+    private WeaponProperties m_WeaponType;
 
     private Transform m_ObjectParent;
 
@@ -42,8 +47,12 @@ public class ItemPickup : MonoBehaviour
         // Assign the pickup item
         switch (m_PickupType)
         {
-            case PickupType.Heath:
+            case PickupType.Health:
                 m_PickupItem = new HealthPickup();
+                break;
+
+            case PickupType.Weapon:
+                m_PickupItem = new WeaponPickup();
                 break;
 
             default:
@@ -114,6 +123,12 @@ public class ItemPickup : MonoBehaviour
         Explosion explsn = (Instantiate(m_ExplosionObject, transform.position, Quaternion.Euler(0, 0, 0)) as GameObject).GetComponent<Explosion>();
         explsn.Initalize(owner, m_ExplosionProperties, new HitProperties(false));
     }
+
+
+    public WeaponProperties WeaponProperties
+    {
+        get { return m_WeaponType; }
+    }
 }
 
 public interface IPickupItem
@@ -155,6 +170,46 @@ public class HealthPickup : IPickupItem
         // Add health to the player
         if (p != null)
             p.Health.AddHealth(GameManager.I.Rules.HealthPickupHealthAmount);
+
+        // Handle the pickup
+        m_ItemPickup.CreatePickupExplosion(p);
+
+        yield return new WaitForSeconds(GameManager.I.Rules.HealthPickupRespawnTime);
+
+        m_State = ItemPickup.PickupState.Active;
+    }
+}
+
+public class WeaponPickup : IPickupItem
+{
+    private ItemPickup m_ItemPickup;
+    private ItemPickup.PickupState m_State;
+
+    public void Init(ItemPickup itemPickup)
+    {
+        m_ItemPickup = itemPickup;
+        m_State = ItemPickup.PickupState.Active;
+    }
+
+    public GameObject GetPickupModel()
+    {
+        return m_ItemPickup.WeaponProperties.BarrelPrefab;
+    }
+
+    public ItemPickup.PickupState GetState()
+    {
+        return m_State;
+    }
+
+    public IEnumerator OnPickup(Player p)
+    {
+        if (m_State == ItemPickup.PickupState.Cooldown)
+            yield break;
+
+        m_State = ItemPickup.PickupState.Cooldown;
+
+        if (p != null)
+            p.Weapon.SwitchWeapon(m_ItemPickup.WeaponProperties);
 
         // Handle the pickup
         m_ItemPickup.CreatePickupExplosion(p);

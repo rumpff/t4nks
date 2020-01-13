@@ -152,7 +152,6 @@ public class Player : MonoBehaviour
         }
 
         // JumpThruster
-
         m_JumpThruster = transform.Find("Mesh/JumpThruster");
         m_JumpThrusterDefaultPos = m_JumpThruster.localPosition;
         m_JumpThrusterAnimationTimer = 9999.0f;
@@ -341,6 +340,7 @@ public class Player : MonoBehaviour
         tire.position = pos;
         tire.rotation = rotation;
     }
+
     private void ExplodeTank()
     {
         MeshFilter[] meshes = GetComponentsInChildren<MeshFilter>();
@@ -349,7 +349,7 @@ public class Player : MonoBehaviour
         // Copy the tank in loose parts
         for (int i = 0; i < meshes.Length; i++)
         {
-            GameObject o = new GameObject(("Player" + m_PlayerIndex + "debris part"));
+            GameObject o = new GameObject(("Player" + m_PlayerIndex + "debris part " + (i+1)));
 
             o.transform.position = meshes[i].transform.position;
             o.transform.rotation = meshes[i].transform.rotation;

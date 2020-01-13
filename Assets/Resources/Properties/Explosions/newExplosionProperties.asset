@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: newExplosionProperties
   m_EditorClassIdentifier: 
   BaseDamage: 50
-  ExplosionForce: 3000000
+  ExplosionForce: 800000
   ExplosionRadius: 20
   MaxLifeTime: 2.5

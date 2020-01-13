@@ -163,8 +163,8 @@ public class Player : MonoBehaviour
         VisualsAndEffectsUpdate();
         TimerUpdate();
 
-        if (m_PlayerIndex == 0 && Input.GetKey(KeyCode.T))
-            Health.DamagePlayer(30, this);
+        if (Input.GetKey(KeyCode.T))
+            Health.DamagePlayer(3000, this);
     }
 
     private void FixedUpdate()

@@ -97,7 +97,7 @@ public class PlayerInput : MonoBehaviour
             Steer = SteerDir;// MoveTowardsLiniar(Steer, SteerDir, -1, 1, 1.0f);
 
             Brake = Input.GetKey(KeyCode.LeftShift);
-            Jump = Input.GetKeyDown(KeyCode.Space);
+            Jump = Input.GetKey(KeyCode.Space);
             Shoot = Input.GetMouseButton(0);
             Zoom = Input.GetMouseButton(1);
 

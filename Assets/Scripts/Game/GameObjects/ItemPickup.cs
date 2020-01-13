@@ -72,9 +72,6 @@ public class ItemPickup : MonoBehaviour
         m_PickupModel.transform.localPosition = offsets[0];
         m_PickupModel.transform.localEulerAngles = offsets[1];
         m_PickupModel.transform.localScale = offsets[2];
-
-        // Set light
-        transform.GetComponentInChildren<Light>().color = m_PickupItem.LightColor;
     }
 
     private void OnDestroy()
@@ -146,8 +143,6 @@ public class ItemPickup : MonoBehaviour
 
 public class PickupItem
 {
-    public Color LightColor { get; protected set; }
-
     protected ItemPickup m_ItemPickup;
     protected ItemPickup.PickupState m_State;
 
@@ -188,13 +183,6 @@ public class PickupItem
 
 public class HealthPickup : PickupItem
 {
-    public override void Init(ItemPickup itemPickup)
-    {
-        base.Init(itemPickup);
-
-        LightColor = Color.cyan;
-    }
-
     public override GameObject GetPickupModel()
     {
         return Resources.Load("Prefabs/GameObjects/HealthBlock") as GameObject;
@@ -222,13 +210,6 @@ public class HealthPickup : PickupItem
 
 public class WeaponPickup : PickupItem
 {
-    public override void Init(ItemPickup itemPickup)
-    {
-        base.Init(itemPickup);
-
-        LightColor = new Color(0.968f, 0.545f, 0.172f);
-    }
-
     public override GameObject GetPickupModel()
     {
         return m_ItemPickup.WeaponProperties.BarrelPrefab;

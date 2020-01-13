@@ -24,6 +24,7 @@ public class ItemPickup : MonoBehaviour
     private WeaponProperties m_WeaponType;
 
     private Transform m_ObjectParent;
+    private GameObject m_PickupModel;
 
     private GameObject m_ExplosionObject;
     private ExplosionProperties m_ExplosionProperties;
@@ -64,9 +65,16 @@ public class ItemPickup : MonoBehaviour
 
         // Set the model
         GameObject pickupModel = m_PickupItem.GetPickupModel();
-        GameObject obj = Instantiate(pickupModel, m_ObjectParent);
+        m_PickupModel = Instantiate(pickupModel, m_ObjectParent);
 
-        obj.transform.localPosition = Vector3.zero;
+        List<Vector3> offsets = m_PickupItem.GetLocalTransformOffset();
+
+        m_PickupModel.transform.localPosition = offsets[0];
+        m_PickupModel.transform.localEulerAngles = offsets[1];
+        m_PickupModel.transform.localScale = offsets[2];
+
+        // Set light
+        transform.GetComponentInChildren<Light>().color = m_PickupItem.LightColor;
     }
 
     private void OnDestroy()
@@ -118,10 +126,10 @@ public class ItemPickup : MonoBehaviour
         StartCoroutine(m_PickupItem.OnPickup(p));
     }
 
-    public void CreatePickupExplosion(Player owner)
+    public void CreatePickupExplosion(Player player)
     {
-        Explosion explsn = (Instantiate(m_ExplosionObject, transform.position, Quaternion.Euler(0, 0, 0)) as GameObject).GetComponent<Explosion>();
-        explsn.Initalize(owner, m_ExplosionProperties, new HitProperties(false));
+        Explosion explosion = (Instantiate(m_ExplosionObject, transform.position, Quaternion.Euler(0, 0, 0)) as GameObject).GetComponent<Explosion>();
+        explosion.Initalize(player, m_ExplosionProperties, new HitProperties(false));
     }
 
 
@@ -129,10 +137,17 @@ public class ItemPickup : MonoBehaviour
     {
         get { return m_WeaponType; }
     }
+
+    public GameObject PickupModel
+    {
+        get { return m_PickupModel; }
+    }
 }
 
 public class PickupItem
 {
+    public Color LightColor { get; protected set; }
+
     protected ItemPickup m_ItemPickup;
     protected ItemPickup.PickupState m_State;
 
@@ -153,6 +168,17 @@ public class PickupItem
         return m_State;
     }
 
+    public virtual List<Vector3> GetLocalTransformOffset()
+    {
+        List<Vector3> transformOffset = new List<Vector3>();
+
+        transformOffset.Add(Vector3.zero);
+        transformOffset.Add(Vector3.zero);
+        transformOffset.Add(Vector3.one);
+
+        return transformOffset;
+    }
+
     public virtual IEnumerator OnPickup(Player p)
     {
         Debug.LogError("No pickup behaviour has been set!");
@@ -162,6 +188,13 @@ public class PickupItem
 
 public class HealthPickup : PickupItem
 {
+    public override void Init(ItemPickup itemPickup)
+    {
+        base.Init(itemPickup);
+
+        LightColor = Color.cyan;
+    }
+
     public override GameObject GetPickupModel()
     {
         return Resources.Load("Prefabs/GameObjects/HealthBlock") as GameObject;
@@ -189,9 +222,31 @@ public class HealthPickup : PickupItem
 
 public class WeaponPickup : PickupItem
 {
+    public override void Init(ItemPickup itemPickup)
+    {
+        base.Init(itemPickup);
+
+        LightColor = new Color(0.968f, 0.545f, 0.172f);
+    }
+
     public override GameObject GetPickupModel()
     {
         return m_ItemPickup.WeaponProperties.BarrelPrefab;
+    }
+
+    public override List<Vector3> GetLocalTransformOffset()
+    {
+        List<Vector3> transformOffset = new List<Vector3>();
+        float scale = 2.5f;
+
+        // Position the barrel in the center
+        float z = -(Vector3.Distance(m_ItemPickup.PickupModel.transform.position, m_ItemPickup.PickupModel.transform.Find("BarrelEnd").position));
+
+        transformOffset.Add(new Vector3(0,0,z));
+        transformOffset.Add(Vector3.zero);
+        transformOffset.Add(Vector3.one * scale);
+
+        return transformOffset;
     }
 
     public override IEnumerator OnPickup(Player p)

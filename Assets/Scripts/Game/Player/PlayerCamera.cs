@@ -207,8 +207,6 @@ public class PlayerCamera : MonoBehaviour
 
             m_PlayerHeadPos = player.Weapon.TankHead;
 
-            m_PlayerFloorAngleOffset = -Vector3.Angle(player.GetGroundNormal(Vector3.up), Vector3.up);
-
             // Only update the angle when the player is on the ground
             if (player.IsOnGround())
                 m_angleDest = player.transform.eulerAngles.y;
@@ -216,6 +214,18 @@ public class PlayerCamera : MonoBehaviour
             m_AimOffset = new Vector2(
                 player.Weapon.AbsuluteAim.x * 45.0f,
                 player.Weapon.AbsuluteAim.y * 20); // 15.0f
+
+            if(player.IsOnGround())
+            {
+
+                float dot = Vector3.Dot(Quaternion.AngleAxis(-90, player.transform.right) * player.GetGroundNormal(), player.transform.forward);
+                m_PlayerFloorAngleOffset = (Vector3.Angle(player.GetGroundNormal(), Vector3.up) * dot);
+            }
+            else
+            {
+                m_PlayerFloorAngleOffset = 0;
+            }
+
         }
         else
         {

@@ -472,30 +472,35 @@ public class Player : MonoBehaviour
 
         return normal;
     }
+    /// <summary>
+    /// Returns normal of the ground, or Vector3.up when in the air
+    /// </summary>
+    /// <returns></returns>
+    public Vector3 GetGroundNormal()
+    {
+        return GetGroundNormal(Vector3.up);
+    }
 
     public float GetHeightFromGround()
     {
-        float height = 0;
         RaycastHit hit;
 
         Physics.Raycast(m_GroundSensor.position, Vector3.down, out hit, float.PositiveInfinity, m_GroundSensorIgnore);
-        height = hit.distance;
+        float height = hit.distance;
 
         return height;
     }
 
-    public Vector3 V3RandomRange(float min, float max)
+    /// <summary>
+    /// Gets transform beneath the player center
+    /// </summary>
+    /// <returns></returns>
+    public Transform GetGroundTransform()
     {
-        System.Random rand = new System.Random(Guid.NewGuid().GetHashCode());
+        RaycastHit hit;
 
-        Vector3 output = new Vector3
-        {
-            x = (float)rand.Next((int)min * 10000, (int)max * 10000) / 10000.0f,
-            y = (float)rand.Next((int)min * 10000, (int)max * 10000) / 10000.0f,
-            z = (float)rand.Next((int)min * 10000, (int)max * 10000) / 10000.0f,
-        };
-
-        return output;
+        Physics.Raycast(m_GroundSensor.position, Vector3.down, out hit, float.PositiveInfinity, m_GroundSensorIgnore);
+        return hit.transform;
     }
 
     public void SetCamera(PlayerCamera c)
@@ -528,5 +533,19 @@ public class Player : MonoBehaviour
     public int Index
     {
         get { return m_PlayerIndex; }
+    }
+
+    private Vector3 V3RandomRange(float min, float max)
+    {
+        System.Random rand = new System.Random(Guid.NewGuid().GetHashCode());
+
+        Vector3 output = new Vector3
+        {
+            x = (float)rand.Next((int)min * 10000, (int)max * 10000) / 10000.0f,
+            y = (float)rand.Next((int)min * 10000, (int)max * 10000) / 10000.0f,
+            z = (float)rand.Next((int)min * 10000, (int)max * 10000) / 10000.0f,
+        };
+
+        return output;
     }
 }

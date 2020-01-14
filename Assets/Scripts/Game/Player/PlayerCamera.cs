@@ -217,9 +217,9 @@ public class PlayerCamera : MonoBehaviour
 
             if(player.IsOnGround())
             {
-
-                float dot = Vector3.Dot(Quaternion.AngleAxis(-90, player.transform.right) * player.GetGroundNormal(), player.transform.forward);
-                m_PlayerFloorAngleOffset = (Vector3.Angle(player.GetGroundNormal(), Vector3.up) * dot);
+                //float dot = Vector3.Dot(Quaternion.AngleAxis(-90, player.transform.right) * player.GetGroundNormal(), player.transform.forward);
+                float dot = Vector3.Dot(player.transform.forward, Vector3.up);
+                m_PlayerFloorAngleOffset = -(Vector3.Angle(player.GetGroundNormal(), Vector3.up) * dot);
             }
             else
             {

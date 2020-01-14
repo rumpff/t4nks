@@ -43,6 +43,7 @@ public class PlayerCamera : MonoBehaviour
 
     // The player's thingz
     private Vector3 m_PlayerPos, m_PlayerHeadPos;
+    private float m_PlayerFloorAngleOffset;
 
     // Screenshake
     private readonly float m_ScreenshakeMaxPosition = 2;
@@ -132,7 +133,7 @@ public class PlayerCamera : MonoBehaviour
 
         // Lerp the rotation
         m_ViewAngle = Mathf.LerpAngle(m_ViewAngle, m_angleDest + m_AimOffset.x, LerpInterpolation);
-        m_HeightAngle = Mathf.LerpAngle(m_HeightAngle, m_BaseHeight + m_AimOffset.y, LerpInterpolation);
+        m_HeightAngle = Mathf.LerpAngle(m_HeightAngle, m_BaseHeight + m_AimOffset.y + m_PlayerFloorAngleOffset, LerpInterpolation);
         m_Distance = Mathf.Lerp(m_Distance, m_BaseDistance, LerpInterpolation);
 
         // Calculate the final position
@@ -197,21 +198,24 @@ public class PlayerCamera : MonoBehaviour
 
     private void UpdateVariables()
     {
-        if (m_GameManager.Players[m_PlayerIndex].Player != null)
+        Player player = m_GameManager.Players[m_PlayerIndex].Player;
+        if (player != null)
         {
             m_CameraState = CameraState.FollowingPlayer;
 
-            m_PlayerPos = m_GameManager.Players[m_PlayerIndex].Player.transform.position;
+            m_PlayerPos = player.transform.position;
 
-            m_PlayerHeadPos = m_GameManager.Players[m_PlayerIndex].Player.Weapon.TankHead;
+            m_PlayerHeadPos = player.Weapon.TankHead;
+
+            m_PlayerFloorAngleOffset = -Vector3.Angle(player.GetGroundNormal(Vector3.up), Vector3.up);
 
             // Only update the angle when the player is on the ground
-            if (m_GameManager.Players[m_PlayerIndex].Player.IsOnGround())
-                m_angleDest = m_GameManager.Players[m_PlayerIndex].Player.transform.eulerAngles.y;
+            if (player.IsOnGround())
+                m_angleDest = player.transform.eulerAngles.y;
 
             m_AimOffset = new Vector2(
-                m_GameManager.Players[m_PlayerIndex].Player.Weapon.AbsuluteAim.x * 45.0f,
-                m_GameManager.Players[m_PlayerIndex].Player.Weapon.AbsuluteAim.y * 20); // 15.0f
+                player.Weapon.AbsuluteAim.x * 45.0f,
+                player.Weapon.AbsuluteAim.y * 20); // 15.0f
         }
         else
         {

@@ -37,6 +37,7 @@ public class PlayerCamera : MonoBehaviour
 
     // The desired angle
     private float m_angleDest;
+    private float m_aimAngleDest;
 
     // The angle of the camera to the player
     private float m_ViewAngle;
@@ -107,11 +108,13 @@ public class PlayerCamera : MonoBehaviour
                         UpdateZoomedState();
 
                         // Apply values
-                        float t = Easing.Ease(EaseType.EaseInOutCirc, m_CameraMode);
+                        float tPos = Easing.Ease(EaseType.EaseInOutQuart, m_CameraMode);
+                        float tRot = Easing.Ease(EaseType.EaseInOutQuart, m_CameraMode);
+                        float tFov = Easing.Ease(EaseType.EaseInOutQuart, m_CameraMode);
 
-                        transform.position = CameraValues.Lerp(m_CameraValues[CameraMode.following], m_CameraValues[CameraMode.zoomed], t).Position;
-                        transform.rotation = CameraValues.Lerp(m_CameraValues[CameraMode.following], m_CameraValues[CameraMode.zoomed], t).Rotation;
-                        m_Camera.fieldOfView = CameraValues.Lerp(m_CameraValues[CameraMode.following], m_CameraValues[CameraMode.zoomed], t).FOV;
+                        transform.position = CameraValues.Lerp(m_CameraValues[CameraMode.following], m_CameraValues[CameraMode.zoomed], tPos).Position;
+                        transform.rotation = CameraValues.Lerp(m_CameraValues[CameraMode.following], m_CameraValues[CameraMode.zoomed], tRot).Rotation;
+                        m_Camera.fieldOfView = CameraValues.Lerp(m_CameraValues[CameraMode.following], m_CameraValues[CameraMode.zoomed], tFov).FOV;
                     }
                     break;
 
@@ -136,17 +139,27 @@ public class PlayerCamera : MonoBehaviour
 
     private void UpdateFollowState()
     {
-        CameraValues v = m_CameraValues[CameraMode.following];
+        CameraValues cameraValues = m_CameraValues[CameraMode.following];
 
-        // Lerp the rotation
-        m_ViewAngle = Mathf.LerpAngle(m_ViewAngle, m_angleDest + m_AimOffset.x, LerpInterpolation);
+        switch (m_LookMode)
+        {
+            case LookMode.drive:
+                m_ViewAngle = Mathf.LerpAngle(m_ViewAngle, m_angleDest + m_AimOffset.x, LerpInterpolation);
+                break;
+
+            case LookMode.aim:
+                m_ViewAngle = Mathf.LerpAngle(m_ViewAngle, m_aimAngleDest + (m_AimOffset.x / 2.0f), LerpInterpolation);
+                break;
+        }
+
+
         m_HeightAngle = Mathf.LerpAngle(m_HeightAngle, m_BaseHeight + m_AimOffset.y + m_PlayerFloorAngleOffset, LerpInterpolation);
         m_Distance = Mathf.Lerp(m_Distance, m_BaseDistance, LerpInterpolation);
 
         // Calculate the final position
-        v.Position.x = m_PlayerPos.x + Mathf.Sin((m_ViewAngle - 180) * Mathf.Deg2Rad) * (Mathf.Cos(m_HeightAngle * Mathf.Deg2Rad) * m_Distance);
-        v.Position.y = m_PlayerPos.y + Mathf.Sin(m_HeightAngle * Mathf.Deg2Rad) * m_Distance;
-        v.Position.z = m_PlayerPos.z + Mathf.Cos((m_ViewAngle - 180) * Mathf.Deg2Rad) * (Mathf.Cos(m_HeightAngle * Mathf.Deg2Rad) * m_Distance);
+        cameraValues.Position.x = m_PlayerPos.x + Mathf.Sin((m_ViewAngle - 180) * Mathf.Deg2Rad) * (Mathf.Cos(m_HeightAngle * Mathf.Deg2Rad) * m_Distance);
+        cameraValues.Position.y = m_PlayerPos.y + Mathf.Sin(m_HeightAngle * Mathf.Deg2Rad) * m_Distance;
+        cameraValues.Position.z = m_PlayerPos.z + Mathf.Cos((m_ViewAngle - 180) * Mathf.Deg2Rad) * (Mathf.Cos(m_HeightAngle * Mathf.Deg2Rad) * m_Distance);
 
         if (m_GameManager.Players[m_PlayerIndex].Player != null)
         {
@@ -167,11 +180,11 @@ public class PlayerCamera : MonoBehaviour
                     break;
             }
 
-            v.Rotation = Quaternion.Lerp(v.Rotation, Quaternion.LookRotation(lookTarget - v.Position), LerpInterpolation);
+            cameraValues.Rotation = Quaternion.Lerp(cameraValues.Rotation, Quaternion.LookRotation(lookTarget - cameraValues.Position), LerpInterpolation);
         }
 
 
-        m_CameraValues[CameraMode.following] = v;
+        m_CameraValues[CameraMode.following] = cameraValues;
     }
 
     private void UpdateZoomedState()
@@ -253,9 +266,11 @@ public class PlayerCamera : MonoBehaviour
             if (player.IsOnGround())
                 m_angleDest = player.transform.eulerAngles.y;
 
+            m_aimAngleDest = player.Weapon.TankBarrel.eulerAngles.y;
+
             m_AimOffset = new Vector2(
                 player.Weapon.AbsuluteAim.x * 45.0f,
-                player.Weapon.AbsuluteAim.y * 20); // 15.0f
+                player.Weapon.AbsuluteAim.y * 40); // 15.0f
 
             if(player.IsOnGround())
             {

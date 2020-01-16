@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52c11659320a7a643afd44c8ac587a29, type: 3}
+  m_Name: PalleteDefault
+  m_EditorClassIdentifier: 
+  Name: IceCream
+  Primary: {r: 0.54901963, g: 0.50980395, b: 0.9882353, a: 0}
+  Secundary: {r: 0.9372549, g: 0.98039216, b: 0.49411765, a: 0}
+  Accesories: {r: 0.15686275, g: 1, b: 0.61960787, a: 0}
+  Highlight: {r: 0.77254903, g: 0.23529412, b: 0.39215687, a: 0}

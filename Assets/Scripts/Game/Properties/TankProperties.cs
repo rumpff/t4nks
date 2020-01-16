@@ -25,4 +25,6 @@ public class TankProperties : ScriptableObject
     public ExplosionProperties DestroyExplosionProperties;
     [Space(5)]
     public TransformAnimation JumpThrusterAnimation;
+    [Space(5)]
+    public ColorPallete ColorPallete;
 }

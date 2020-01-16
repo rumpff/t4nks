@@ -30,3 +30,4 @@ MonoBehaviour:
     type: 2}
   JumpThrusterAnimation: {fileID: 11400000, guid: 24e9620a2336d334a88f805876e533eb,
     type: 2}
+  ColorPallete: {fileID: 11400000, guid: 0e15df59544beb04895692e3353076bf, type: 2}

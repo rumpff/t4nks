@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using XboxCtrlrInput;
-using TMPro;
 using static UnityEngine.ParticleSystem;
 
 public class Player : MonoBehaviour
@@ -21,6 +20,7 @@ public class Player : MonoBehaviour
     private int m_PlayerIndex;
     private PlayerProperties m_PlayerProperties;
     private TankProperties m_TankProperties;
+    private PalleteController m_PalleteController;
 
     public PlayerHealth Health { get; private set; }
     public PlayerWeapon Weapon { get; private set; }
@@ -78,6 +78,8 @@ public class Player : MonoBehaviour
         Health = GetComponent<PlayerHealth>();
         Rigidbody = GetComponent<Rigidbody>();
         PInput = GetComponent<PlayerInput>();
+
+        m_PalleteController = GetComponent<PalleteController>();
 
         m_WheelHits = new List<WheelHit>();
     }
@@ -162,6 +164,8 @@ public class Player : MonoBehaviour
         CarUpdate();
         VisualsAndEffectsUpdate();
         TimerUpdate();
+
+        m_PalleteController.UpdateColors(m_TankProperties.ColorPallete);
 
         if (Input.GetKey(KeyCode.T))
             Health.DamagePlayer(3000, this);
@@ -470,6 +474,18 @@ public class Player : MonoBehaviour
         {
             return wheelCenter - (wheel.transform.up * wheel.suspensionDistance);
         }
+    }
+
+    private void ApplyColorPallete(ColorPallete pallete, Material mat)
+    {
+        // Create materials
+        Material primary = new Material(mat);
+
+        // Set Colors
+        primary.color = pallete.Primary;
+
+        // Apply materials
+
     }
 
     /// <summary>

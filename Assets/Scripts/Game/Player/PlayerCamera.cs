@@ -6,6 +6,7 @@ using SimpleEasing;
 
 public class PlayerCamera : MonoBehaviour
 {
+    private enum LookMode { drive, aim }
     private enum CameraState { FollowingPlayer, DeathCam }
     public enum CameraMode { following, zoomed }
     private Dictionary<CameraMode, CameraValues> m_CameraValues;
@@ -16,6 +17,8 @@ public class PlayerCamera : MonoBehaviour
     private CameraProperties m_CameraProperties;
     private GameManager m_GameManager;
     private int m_PlayerIndex;
+
+    private LookMode m_LookMode;
 
     [SerializeField] // The distance of the camera to the object
     private float m_BaseDistance;
@@ -53,6 +56,9 @@ public class PlayerCamera : MonoBehaviour
     private Vector3 m_ScreenshakePosition;
     private Vector3 m_ScreenshakeRotation;
 
+    private float m_LookmodeToggleTimer;
+    private const float LookmodeToggleTime = 0.25f;
+
     public void Initalize(int playerIndex, CameraProperties cameraProperties, Rect viewport, GameManager gameManager)
     {
         m_PlayerIndex = playerIndex;
@@ -81,6 +87,7 @@ public class PlayerCamera : MonoBehaviour
     private void Update()
     {
         UpdateZoomThing();
+        UpdateLookModeToggle();
         UpdatePostEffects();
     }
 
@@ -142,7 +149,27 @@ public class PlayerCamera : MonoBehaviour
         v.Position.z = m_PlayerPos.z + Mathf.Cos((m_ViewAngle - 180) * Mathf.Deg2Rad) * (Mathf.Cos(m_HeightAngle * Mathf.Deg2Rad) * m_Distance);
 
         if (m_GameManager.Players[m_PlayerIndex].Player != null)
-            v.Rotation = Quaternion.LookRotation(m_GameManager.Players[m_PlayerIndex].Player.transform.position - v.Position);
+        {
+            Vector3 lookTarget;
+
+            switch (m_LookMode)
+            {
+                case LookMode.drive:
+                    lookTarget = m_GameManager.Players[m_PlayerIndex].Player.transform.position;
+                    break;
+
+                case LookMode.aim:
+                    lookTarget = m_GameManager.Players[m_PlayerIndex].Player.Weapon.AimPosition();
+                    break;
+
+                default:
+                    lookTarget = Vector3.zero;
+                    break;
+            }
+
+            v.Rotation = Quaternion.Lerp(v.Rotation, Quaternion.LookRotation(lookTarget - v.Position), LerpInterpolation);
+        }
+
 
         m_CameraValues[CameraMode.following] = v;
     }
@@ -177,6 +204,21 @@ public class PlayerCamera : MonoBehaviour
             CameraExtensions.LayerCullingHide(m_Camera, mask);
         else
             CameraExtensions.LayerCullingShow(m_Camera, mask);
+    }
+
+    private void UpdateLookModeToggle()
+    {
+        if(m_GameManager.Players[m_PlayerIndex].Player.PInput.Zoom)
+        {
+            m_LookmodeToggleTimer += Time.deltaTime;
+        }
+        else
+        {
+            if (m_LookmodeToggleTimer <= LookmodeToggleTime && m_LookmodeToggleTimer > 0.0f)
+                ToggleLookMode();
+
+            m_LookmodeToggleTimer = 0.0f;
+        }
     }
 
     private void UpdatePostEffects()
@@ -236,6 +278,21 @@ public class PlayerCamera : MonoBehaviour
     public void AddScreenshake(float amount)
     {
         m_ScreenshakeAmount += amount;
+    }
+
+    public void ToggleLookMode()
+    {
+        if (m_LookMode == LookMode.aim)
+        {
+            m_LookMode = LookMode.drive;
+            return;
+        }
+
+        if (m_LookMode == LookMode.drive)
+        {
+            m_LookMode = LookMode.aim;
+            return;
+        }
     }
 
     private float LerpInterpolation

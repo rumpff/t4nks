@@ -16,12 +16,13 @@ MonoBehaviour:
   TireGroundOffset: -0.3
   MaxHealth: 150
   MaxTorque: 6000
-  AccelerateRate: 6000
+  AccelerateRate: 60000
   MaxSteer: 30
   BrakeTorque: 1e+9
   JumpForce: 2000000
   AirJumpAmount: 1
   AirControl: 100000
+  Downforce: 5
   DefaultWeapon: {fileID: 11400000, guid: 4d15d8a8828872f498cfdfc19f131dfe, type: 2}
   ExplosionPrefab: {fileID: 311277447111648344, guid: 1b5def60f5ac74a429640f7002ee573e,
     type: 3}

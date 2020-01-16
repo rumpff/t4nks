@@ -173,6 +173,8 @@ public class Player : MonoBehaviour
         AircontrolUpdate();
         JumpUpdate();
         DownforceUpdate();
+        AntiRollUpdate(m_WheelLeftFront, m_WheelRightFront);
+        AntiRollUpdate(m_WheelLeftBack, m_WheelRightBack);
     }
 
     public void UpdatePlayerLayerMasks(MeshRenderer[] meshObjects, int playerIndex)
@@ -261,6 +263,31 @@ public class Player : MonoBehaviour
     {
         float lift = -m_TankProperties.Downforce * Rigidbody.velocity.sqrMagnitude;
         Rigidbody.AddForceAtPosition(lift * transform.up, transform.position);
+    }
+    private void AntiRollUpdate(WheelCollider WheelL, WheelCollider WheelR)
+    {
+        WheelHit hit;
+        float AntiRoll = 5000.0f;
+
+        float travelL = 1.0f;
+        float travelR = 1.0f;
+
+        var groundedL = WheelL.GetGroundHit(out hit);
+        if (groundedL)
+            travelL = (-WheelL.transform.InverseTransformPoint(hit.point).y - WheelL.radius) / WheelL.suspensionDistance;
+
+        var groundedR = WheelR.GetGroundHit(out hit);
+        if (groundedR)
+            travelR = (-WheelR.transform.InverseTransformPoint(hit.point).y - WheelR.radius) / WheelR.suspensionDistance;
+
+        var antiRollForce = (travelL - travelR) * AntiRoll;
+
+        if (groundedL)
+            Rigidbody.AddForceAtPosition(WheelL.transform.up * -antiRollForce,
+                   WheelL.transform.position);
+        if (groundedR)
+            Rigidbody.AddForceAtPosition(WheelR.transform.up * antiRollForce,
+                   WheelR.transform.position);
     }
     private void TimerUpdate()
     {

@@ -4547,7 +4547,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2101368720246238620}
   m_Layer: 16
-  m_Name: WheelsRight
+  m_Name: WheelsFront
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4564,8 +4564,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 6350327769519087492}
   - {fileID: 6350327768169280053}
-  - {fileID: 6350327768951854875}
   m_Father: {fileID: 6350327769499092326}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -19974,7 +19974,7 @@ WheelCollider:
     m_ExtremumValue: 1
     m_AsymptoteSlip: 0.8
     m_AsymptoteValue: 0.5
-    m_Stiffness: 1
+    m_Stiffness: 2
   m_Enabled: 1
 --- !u!1 &6350327768169280052
 GameObject:
@@ -20005,7 +20005,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2101368720246238620}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!146 &6350327768169280058
 WheelCollider:
@@ -20065,8 +20065,8 @@ Transform:
   m_LocalPosition: {x: 2.5, y: -0.1, z: -3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 2101368720246238620}
-  m_RootOrder: 1
+  m_Father: {fileID: 1591302205409453539}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!146 &6350327768951854872
 WheelCollider:
@@ -20096,7 +20096,7 @@ WheelCollider:
     m_ExtremumValue: 1
     m_AsymptoteSlip: 0.8
     m_AsymptoteValue: 0.5
-    m_Stiffness: 1
+    m_Stiffness: 2
   m_Enabled: 1
 --- !u!1 &6350327769385851270
 GameObject:
@@ -20289,7 +20289,7 @@ Transform:
   m_LocalPosition: {x: -2.5, y: -0.1, z: 3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1591302205409453539}
+  m_Father: {fileID: 2101368720246238620}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!146 &6350327769519087493
@@ -20320,7 +20320,7 @@ WheelCollider:
     m_ExtremumValue: 1
     m_AsymptoteSlip: 0.8
     m_AsymptoteValue: 0.5
-    m_Stiffness: 1
+    m_Stiffness: 2
   m_Enabled: 1
 --- !u!1 &6351007262477673771
 GameObject:
@@ -20845,7 +20845,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1591302205409453539}
   m_Layer: 16
-  m_Name: WheelsLeft
+  m_Name: WheelsRear
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20862,7 +20862,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 6350327769519087492}
+  - {fileID: 6350327768951854875}
   - {fileID: 6350327767742564325}
   m_Father: {fileID: 6350327769499092326}
   m_RootOrder: 1

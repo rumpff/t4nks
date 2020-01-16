@@ -48,7 +48,7 @@ public class PlayerInput : MonoBehaviour
             Steer = XCI.GetAxis(XboxAxis.LeftStickX, controller);
 
             Brake = XCI.GetButton(XboxButton.LeftBumper, m_Controller);
-            Jump = XCI.GetButtonDown(XboxButton.A, m_Controller);
+            Jump = XCI.GetButton(XboxButton.A, m_Controller);
             Shoot = (XCI.GetAxis(XboxAxis.RightTrigger, controller) >= TriggerButtonThreshold) ? true : false;
             Zoom = (XCI.GetAxis(XboxAxis.LeftTrigger, controller) >= TriggerButtonThreshold) ? true : false;
 

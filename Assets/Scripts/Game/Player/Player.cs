@@ -10,7 +10,7 @@ public class Player : MonoBehaviour
 {
     private const string DriveableTag = "Driveable";
     private const string TireTag = "TankTire";
-    private const float JumpCooldown = 0.2f;
+    private const float JumpCooldown = 0.4f;
     public readonly Vector2 MaxAim = new Vector2(67.5f, 22.5f);
 
     private GameManager m_GameManager;
@@ -172,6 +172,7 @@ public class Player : MonoBehaviour
         ApplyCarMotion();
         AircontrolUpdate();
         JumpUpdate();
+        DownforceUpdate();
     }
 
     public void UpdatePlayerLayerMasks(MeshRenderer[] meshObjects, int playerIndex)
@@ -256,12 +257,20 @@ public class Player : MonoBehaviour
             m_ParticleEmission[ParticleType.JumpThrusterEmission] = 500;
         }
     }
+    private void DownforceUpdate()
+    {
+        float lift = -m_TankProperties.Downforce * Rigidbody.velocity.sqrMagnitude;
+        Rigidbody.AddForceAtPosition(lift * transform.up, transform.position);
+    }
     private void TimerUpdate()
     {
         // Jumping
         if (IsOnGround())
             m_JumpsLeft = m_TankProperties.AirJumpAmount;
         m_JumpTimer -= Time.deltaTime;
+
+        if (!PInput.Jump)
+            m_JumpTimer = 0;
 
         // Visuals and Effects
         m_JumpThrusterAnimationTimer += Time.deltaTime;

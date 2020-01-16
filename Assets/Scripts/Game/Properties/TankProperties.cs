@@ -10,6 +10,7 @@ public class TankProperties : ScriptableObject
     public float TireGroundOffset;
     [Space(5)]
     public float MaxHealth;
+    [Space(5)]
     public float MaxTorque;
     public float AccelerateRate;
     public float MaxSteer;
@@ -17,6 +18,7 @@ public class TankProperties : ScriptableObject
     public float JumpForce;
     public int AirJumpAmount;
     public float AirControl;
+    public float Downforce;
     [Space(5)]
     public WeaponProperties DefaultWeapon;
     public GameObject ExplosionPrefab;

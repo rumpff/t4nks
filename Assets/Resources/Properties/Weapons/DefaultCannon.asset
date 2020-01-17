@@ -18,7 +18,7 @@ MonoBehaviour:
   ProjectilePrefab: {fileID: 4915445817152070343, guid: c99cc595de50a4c4b895fe7eda1d3c7b,
     type: 3}
   StartingAmmo: 0
-  TankForce: 1000000
+  TankForce: 3000000
   Cooldown: 1
   CameraImpact: 0.5
   Mass: 1

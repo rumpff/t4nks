@@ -20,7 +20,7 @@ MonoBehaviour:
   MaxSteer: 30
   BrakeTorque: 1e+9
   JumpForce: 2000000
-  AirJumpAmount: 1
+  AirJumpAmount: 100000
   AirControl: 100000
   Downforce: 5
   DefaultWeapon: {fileID: 11400000, guid: 4d15d8a8828872f498cfdfc19f131dfe, type: 2}

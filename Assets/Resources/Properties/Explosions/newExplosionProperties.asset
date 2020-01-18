@@ -15,4 +15,4 @@ MonoBehaviour:
   BaseDamage: 50
   ExplosionForce: 1600000
   ExplosionRadius: 20
-  MaxLifeTime: 2.5
+  MaxLifeTime: 25

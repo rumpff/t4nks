@@ -26,7 +26,7 @@ MonoBehaviour:
   InitialForce: 10000
   MaxLifeTime: 3.5
   BurnoutTime: 5
-  Explosion: {fileID: 1429774812742334492, guid: a190bdf81d9c3d4468a966b7f998602b,
+  Explosion: {fileID: 1429774812742334492, guid: d72360a0c4e99784b99e641a4c317cab,
     type: 3}
   ExplosionProperties: {fileID: 11400000, guid: a99dd22dd5aceed4e9b9eee3fa9aef98,
     type: 2}
